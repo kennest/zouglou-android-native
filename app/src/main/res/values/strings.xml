@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Zouglou</string>
+    <string name="mapbox_access_token">pk.eyJ1IjoiYnVtYmxlYmVlNDciLCJhIjoiY2phdjA0Ym11MHFodjJ6bjAxbnF2NXdtayJ9.WW82rcFdL6_o4pVs1itgcQ</string>
 </resources>

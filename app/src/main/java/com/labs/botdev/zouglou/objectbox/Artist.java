@@ -6,12 +6,13 @@ import io.objectbox.relation.ToOne;
 
 @Entity
 public class Artist {
-    @Id(assignable = true)
+    @Id
     public long id;
     private int raw_id;
     private String name;
     private String avatar;
     private String sample;
+    private int event_id;
 
     public ToOne<Event> event;
 
@@ -53,5 +54,13 @@ public class Artist {
 
     public void setSample(String sample) {
         this.sample = sample;
+    }
+
+    public int getEvent_id() {
+        return event_id;
+    }
+
+    public void setEvent_id(int event_id) {
+        this.event_id = event_id;
     }
 }

@@ -6,13 +6,14 @@ import io.objectbox.relation.ToOne;
 
 @Entity
 public class Address {
-    @Id(assignable = true)
+    @Id
     public long id;
     private int raw_id;
     private String commune;
     private String quartier;
     private Double latitude;
     private Double longitude;
+    private int place_id;
 
     public ToOne<Place> place;
 
@@ -62,5 +63,13 @@ public class Address {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public int getPlace_id() {
+        return place_id;
+    }
+
+    public void setPlace_id(int place_id) {
+        this.place_id = place_id;
     }
 }

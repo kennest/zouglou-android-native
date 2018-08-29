@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:elevation="8dp"
+    android:layout_gravity="center_horizontal|center_vertical"
+    android:padding="5dp">
+
+    <LinearLayout
+        android:id="@+id/info_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/picture"
+            android:layout_width="194dp"
+            android:layout_height="194dp"
+            android:contentDescription="image"
+            android:elevation="6dp"
+            app:srcCompat="@drawable/fifth_bg" />
+
+        <TextView
+            android:id="@+id/info_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="title"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/snippet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="snippet"
+            android:textSize="30sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight="6">
+            <TextView
+                android:id="@+id/begin"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="begin" />
+                <TextView
+                    android:id="@+id/end"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="end" />
+            </LinearLayout>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/detail"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:textColor="@color/white"
+                android:text="Voir..." />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

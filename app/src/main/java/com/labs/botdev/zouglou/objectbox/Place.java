@@ -7,7 +7,7 @@ import io.objectbox.relation.ToOne;
 
 @Entity
 public class Place {
-    @Id(assignable = true)
+    @Id
     public long id;
     private int raw_id;
     private String title;

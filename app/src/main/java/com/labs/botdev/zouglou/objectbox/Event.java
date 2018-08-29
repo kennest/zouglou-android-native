@@ -8,7 +8,7 @@ import io.objectbox.relation.ToOne;
 
 @Entity
 public class Event {
-    @Id(assignable = true)
+    @Id
     public long id;
     private int raw_id;
     private String title;
@@ -16,6 +16,8 @@ public class Event {
     private String picture;
     private String begin;
     private String end;
+
+    private int place_id;
 
     @Backlink
     public ToMany<Artist> artists;
@@ -77,5 +79,13 @@ public class Event {
 
     public void setEnd(String end) {
         this.end = end;
+    }
+
+    public int getPlace_id() {
+        return place_id;
+    }
+
+    public void setPlace_id(int place_id) {
+        this.place_id = place_id;
     }
 }
