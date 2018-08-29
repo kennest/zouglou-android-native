@@ -8,15 +8,15 @@ import java.util.ArrayList;
 public class EventsResponse {
     @SerializedName("events")
     @Expose
-    private ArrayList<Event> events;
+    public ArrayList<Event> events;
 
     @SerializedName("artists")
     @Expose
-    private ArrayList<Artist> artists;
+    public ArrayList<Artist> artists;
 
     @SerializedName("places")
     @Expose
-    private Place place;
+    public Place place;
 
     public ArrayList<Event> getEvents() {
         return events;

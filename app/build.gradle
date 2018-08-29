@@ -4,7 +4,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.labs.botdev.zouglou"
-        minSdkVersion 25
+        minSdkVersion 19
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -38,6 +38,7 @@ dependencies {
         force = true
     }
     releaseImplementation "io.objectbox:objectbox-android:$objectboxVersion"
+    debugImplementation "io.objectbox:objectbox-android-objectbrowser:$objectboxVersion"
     implementation 'com.codemybrainsout.onboarding:onboarder:1.0.4'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
     implementation 'com.github.jetradarmobile:android-rxlocationsettings:1.1.0'

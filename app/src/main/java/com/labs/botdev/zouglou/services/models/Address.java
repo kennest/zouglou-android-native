@@ -3,7 +3,7 @@ package com.labs.botdev.zouglou.services.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Adresse {
+public class Address {
     @SerializedName("id")
     @Expose
     private int id;

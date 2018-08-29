@@ -3,22 +3,28 @@ package com.labs.botdev.zouglou.services.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class Artist {
     @SerializedName("id")
     @Expose
-    private int id;
+    protected int id;
 
     @SerializedName("name")
     @Expose
-    private String name;
+    protected String name;
 
     @SerializedName("avatar")
     @Expose
-    private String avatar;
+    protected String avatar;
 
     @SerializedName("urlsample")
     @Expose
-    private String sample;
+    protected String sample;
+
+    @SerializedName("events")
+    @Expose
+    public ArrayList<Event> events;
 
     public int getId() {
         return id;
@@ -50,5 +56,13 @@ public class Artist {
 
     public void setSample(String sample) {
         this.sample = sample;
+    }
+
+    public ArrayList<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(ArrayList<Event> events) {
+        this.events = events;
     }
 }

@@ -1,0 +1,163 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:8931064215270660771",
+      "lastPropertyId": "8:7439475203810892152",
+      "name": "Event",
+      "properties": [
+        {
+          "id": "1:2647451164388692787",
+          "name": "id"
+        },
+        {
+          "id": "2:509627044932471636",
+          "name": "raw_id"
+        },
+        {
+          "id": "3:9166956172243302323",
+          "name": "title"
+        },
+        {
+          "id": "4:696752829728567858",
+          "name": "description"
+        },
+        {
+          "id": "5:8608634361413527961",
+          "name": "picture"
+        },
+        {
+          "id": "6:2971887036830419469",
+          "name": "begin"
+        },
+        {
+          "id": "7:5363368018866891068",
+          "name": "end"
+        },
+        {
+          "id": "8:7439475203810892152",
+          "indexId": "1:8135963419157607369",
+          "name": "placeId"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:7947027506439882393",
+      "lastPropertyId": "7:2286651911418363807",
+      "name": "Address",
+      "properties": [
+        {
+          "id": "1:5345389346493441915",
+          "name": "id"
+        },
+        {
+          "id": "2:523035929338410589",
+          "name": "raw_id"
+        },
+        {
+          "id": "3:4988686127493472791",
+          "name": "commune"
+        },
+        {
+          "id": "4:311113788446363786",
+          "name": "quartier"
+        },
+        {
+          "id": "5:2636523485828571161",
+          "name": "latitude"
+        },
+        {
+          "id": "6:908589177910689650",
+          "name": "longitude"
+        },
+        {
+          "id": "7:2286651911418363807",
+          "indexId": "2:7847052591272668699",
+          "name": "placeId"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:8074964601350303950",
+      "lastPropertyId": "6:8215370914209154069",
+      "name": "Place",
+      "properties": [
+        {
+          "id": "1:3809866811642116943",
+          "name": "id"
+        },
+        {
+          "id": "2:6395855798088979398",
+          "name": "raw_id"
+        },
+        {
+          "id": "3:2603902862578261430",
+          "name": "title"
+        },
+        {
+          "id": "4:991898032694772381",
+          "name": "picture"
+        },
+        {
+          "id": "5:714135524675930403",
+          "indexId": "3:5983682181115155182",
+          "name": "eventId"
+        },
+        {
+          "id": "6:8215370914209154069",
+          "indexId": "4:3773294363437993793",
+          "name": "addressId"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:602093567176532522",
+      "lastPropertyId": "6:8089739341138841556",
+      "name": "Artist",
+      "properties": [
+        {
+          "id": "1:3811961543053919851",
+          "name": "id"
+        },
+        {
+          "id": "2:8678912345544559284",
+          "name": "raw_id"
+        },
+        {
+          "id": "3:2927136232417211971",
+          "name": "name"
+        },
+        {
+          "id": "4:3006890191904756024",
+          "name": "avatar"
+        },
+        {
+          "id": "5:7004779894149155257",
+          "name": "sample"
+        },
+        {
+          "id": "6:8089739341138841556",
+          "indexId": "5:8845101118240539128",
+          "name": "eventId"
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "4:602093567176532522",
+  "lastIndexId": "5:8845101118240539128",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 4,
+  "modelVersionParserMinimum": 4,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}

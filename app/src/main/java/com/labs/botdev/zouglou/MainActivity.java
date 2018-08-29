@@ -11,10 +11,14 @@ import com.github.florent37.rxgps.RxGps;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.jetradarmobile.rxlocationsettings.RxLocationSettings;
+import com.labs.botdev.zouglou.objectbox.Address;
+import com.labs.botdev.zouglou.objectbox.Artist;
+import com.labs.botdev.zouglou.objectbox.Place;
 import com.labs.botdev.zouglou.services.APIClient;
 import com.labs.botdev.zouglou.services.APIService;
 import com.labs.botdev.zouglou.services.models.Event;
 import com.labs.botdev.zouglou.services.models.EventsResponse;
+import com.labs.botdev.zouglou.utils.AppController;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineProvider;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
@@ -31,6 +35,7 @@ import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.objectbox.Box;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -68,11 +73,12 @@ public class MainActivity extends AppCompatActivity {
                         .title("Moi")
                         .snippet("Ma position")
                 );
-                mapboxMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(41.885, -87.679))
-                        .title("Chicago")
-                        .snippet("Illinois")
-                );
+
+//                mapboxMap.addMarker(new MarkerOptions()
+//                        .position(new LatLng(41.885, -87.679))
+//                        .title("Chicago")
+//                        .snippet("Illinois")
+//                );
             }
         });
 
@@ -106,8 +112,10 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         RxLocationSettings.with(this).ensure(locationSettingsRequest)
                 .subscribe(enabled -> {
-                    Toast.makeText(getApplicationContext(), "GPS ENABLED", Toast.LENGTH_LONG).show();
-                    startLocationService();
+                    if(enabled) {
+                        Toast.makeText(getApplicationContext(), "GPS ENABLED", Toast.LENGTH_LONG).show();
+                        startLocationService();
+                    }
                 });
     }
 
@@ -115,18 +123,21 @@ public class MainActivity extends AppCompatActivity {
     protected void startLocationService() {
         new RxGps(this).locationLowPower()
                 .subscribeOn(Schedulers.newThread())
-                .observeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(location -> {
                     FastSave.getInstance().saveString("lat", String.valueOf(location.getLatitude()));
                     FastSave.getInstance().saveString("long", String.valueOf(location.getLongitude()));
                     Log.v(getLocalClassName(), "LONG:" + location.getLongitude() + "/" + "LAT:" + location.getLatitude());
+                    Toast.makeText(getApplicationContext(),"LAT:"+location.getLatitude()+"/"+"LONG:"+location.getLongitude(), Toast.LENGTH_LONG).show();
                     addMarker(location.getLatitude(), location.getLongitude(), "My position", "Im here!");
                     //you've got the location
                 }, throwable -> {
                     if (throwable instanceof RxGps.PermissionException) {
                         //the user does not allow the permission
+                        Toast.makeText(getApplicationContext(),"Error"+throwable.getMessage(), Toast.LENGTH_LONG).show();
                     } else if (throwable instanceof RxGps.PlayServicesNotAvailableException) {
                         //the user do not have play services
+                        Toast.makeText(getApplicationContext(),"Error"+throwable.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
     }
@@ -146,10 +157,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadEventsRx() {
+        Box<com.labs.botdev.zouglou.objectbox.Event> eventBox= AppController.boxStore.boxFor(com.labs.botdev.zouglou.objectbox.Event.class);
+        Box<Artist> artistBox=AppController.boxStore.boxFor(Artist.class);
+        Box<Place> placeBox=AppController.boxStore.boxFor(Place.class);
+        Box<Address> addressBox=AppController.boxStore.boxFor(Address.class);
+
         Observer mObserver = new Observer<EventsResponse>() {
 
             @Override
             public void onSubscribe(Disposable disposable) {
+                eventBox.removeAll();
                 Toast.makeText(getApplicationContext(), "events load Init", Toast.LENGTH_LONG).show();
             }
 
@@ -157,6 +174,14 @@ public class MainActivity extends AppCompatActivity {
             public void onNext(EventsResponse response) {
                 for (Event e : response.getEvents()) {
                     Toast.makeText(getApplicationContext(), "Event title: " + e.getTitle(), Toast.LENGTH_LONG).show();
+                    com.labs.botdev.zouglou.objectbox.Event eb=new com.labs.botdev.zouglou.objectbox.Event();
+                    eb.setRaw_id(e.getId());
+                    eb.setTitle(e.getTitle());
+                    eb.setDescription(e.getDescription());
+                    eb.setBegin(e.getBegin());
+                    eb.setEnd(e.getEnd());
+                    eb.setPicture(e.getPicture());
+                    eventBox.put(eb);
                 }
             }
 
@@ -168,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onComplete() {
-                Toast.makeText(getApplicationContext(), "Load finished total", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Event total: "+eventBox.count(), Toast.LENGTH_LONG).show();
             }
         };
 
