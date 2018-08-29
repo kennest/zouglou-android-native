@@ -24,7 +24,6 @@ import nl.psdcompany.duonavigationdrawer.views.DuoMenuView;
 import nl.psdcompany.duonavigationdrawer.widgets.DuoDrawerToggle;
 
 public class ListEventsActivity extends AppCompatActivity {
-    ListView list;
     Toolbar toolbar;
     LayoutInflater inflater;
     @Override

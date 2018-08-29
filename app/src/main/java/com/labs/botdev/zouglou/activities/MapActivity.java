@@ -1,4 +1,4 @@
-package com.labs.botdev.zouglou;
+package com.labs.botdev.zouglou.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -23,7 +23,7 @@ import com.github.florent37.rxgps.RxGps;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.jetradarmobile.rxlocationsettings.RxLocationSettings;
-import com.labs.botdev.zouglou.activities.ListEventsActivity;
+import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.objectbox.Address;
 import com.labs.botdev.zouglou.objectbox.Address_;
 import com.labs.botdev.zouglou.objectbox.Artist;
@@ -61,7 +61,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity {
+public class MapActivity extends AppCompatActivity {
     private MapView mapView;
     private MapboxNavigation navigation;
     TextView title,snippet;
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, ListEventsActivity.class));
+                startActivity(new Intent(MapActivity.this, ListEventsActivity.class));
             }
         });
 
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
 
                         // The info window layout is created dynamically, parent is the info window
                         // container
-                        RelativeLayout parent = new RelativeLayout(MainActivity.this);
+                        RelativeLayout parent = new RelativeLayout(MapActivity.this);
                         parent= (RelativeLayout) infowindow;
                         picture =parent.findViewById(R.id.picture);
                         title=parent.findViewById(R.id.info_title);
@@ -163,19 +163,19 @@ public class MainActivity extends AppCompatActivity {
                         // have many markers using different images, extending Marker and
                         // baseMarkerOptions, adding additional options such as the image, might be
                         // a better choice.
-                        ImageView countryFlagImage = new ImageView(MainActivity.this);
-                        //TextView title=new TextView(MainActivity.this);
-                        //TextView snippet=new TextView(MainActivity.this);
+                        ImageView countryFlagImage = new ImageView(MapActivity.this);
+                        //TextView title=new TextView(MapActivity.this);
+                        //TextView snippet=new TextView(MapActivity.this);
                         switch (marker.getTitle()) {
                             case "spain":
                                 picture.setImageDrawable(ContextCompat.getDrawable(
-                                        MainActivity.this, R.drawable.ic_view_list_black_48dp));
+                                        MapActivity.this, R.drawable.ic_view_list_black_48dp));
                                 title.setText(marker.getTitle());
                                 snippet.setText(marker.getSnippet());
                                 break;
                             case "egypt":
                                 countryFlagImage.setImageDrawable(ContextCompat.getDrawable(
-                                        MainActivity.this, R.drawable.ic_format_list_bulleted_white_36dp));
+                                        MapActivity.this, R.drawable.ic_format_list_bulleted_white_36dp));
                                 title.setText(marker.getTitle());
                                 snippet.setText(marker.getSnippet());
                                 break;
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                                 // By default all markers without a matching title will use the
                                 // Germany flag
                                 countryFlagImage.setImageDrawable(ContextCompat.getDrawable(
-                                        MainActivity.this, R.drawable.ic_format_list_bulleted_black_48dp));
+                                        MapActivity.this, R.drawable.ic_format_list_bulleted_black_48dp));
                                 title.setText(marker.getTitle());
                                 snippet.setText(marker.getSnippet());
                                 break;
