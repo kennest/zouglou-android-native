@@ -1,9 +1,11 @@
 package com.labs.botdev.zouglou;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +23,7 @@ import com.github.florent37.rxgps.RxGps;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.jetradarmobile.rxlocationsettings.RxLocationSettings;
+import com.labs.botdev.zouglou.activities.ListEventsActivity;
 import com.labs.botdev.zouglou.objectbox.Address;
 import com.labs.botdev.zouglou.objectbox.Address_;
 import com.labs.botdev.zouglou.objectbox.Artist;
@@ -38,7 +41,6 @@ import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.mapboxsdk.annotations.MarkerViewOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -46,7 +48,6 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigation;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.objectbox.Box;
@@ -66,104 +67,32 @@ public class MainActivity extends AppCompatActivity {
     TextView title,snippet;
     ImageView picture;
     ViewGroup infowindow;
+    FloatingActionButton menu;
     //private static String access_token = "pk.eyJ1IjoiYnVtYmxlYmVlNDciLCJhIjoiY2phdjA0Ym11MHFodjJ6bjAxbnF2NXdtayJ9.WW82rcFdL6_o4pVs1itgcQ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_map);
         navigation = new MapboxNavigation(this, getResources().getString(R.string.mapbox_access_token));
         Mapbox.getInstance(this, getResources().getString(R.string.mapbox_access_token));
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_map);
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
 
         infowindow= (ViewGroup) getLayoutInflater().inflate(R.layout.place_info_window, null);
+        menu=findViewById(R.id.menu);
 
+        menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, ListEventsActivity.class));
+            }
+        });
 
         getLocation();
 
         loadEventsRx();
-
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(MapboxMap mapboxMap) {
-
-                mapboxMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(40.416717, -3.703771))
-                        .title("spain")
-                        .setSnippet("Europe"));
-
-                mapboxMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(26.794531, 29.781524))
-                        .title("egypt")
-                .setSnippet("Afrique"));
-
-                mapboxMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(50.981488, 10.384677))
-                        .title("germany")
-                .setSnippet("Europe"));
-
-                mapboxMap.setInfoWindowAdapter(new MapboxMap.InfoWindowAdapter() {
-                    @Nullable
-                    @Override
-                    public View getInfoWindow(@NonNull Marker marker) {
-
-                        // The info window layout is created dynamically, parent is the info window
-                        // container
-                        RelativeLayout parent = new RelativeLayout(MainActivity.this);
-                        parent= (RelativeLayout) infowindow;
-                        picture =parent.findViewById(R.id.picture);
-                        title=parent.findViewById(R.id.info_title);
-                        snippet=parent.findViewById(R.id.snippet);
-                        parent.setLayoutParams(new LinearLayout.LayoutParams(
-                                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                       // parent.setOrientation(LinearLayout.VERTICAL);
-                        parent.setBackgroundColor(Color.parseColor("#FFFFFF"));
-
-                        // Depending on the marker title, the correct image source is used. If you
-                        // have many markers using different images, extending Marker and
-                        // baseMarkerOptions, adding additional options such as the image, might be
-                        // a better choice.
-                        ImageView countryFlagImage = new ImageView(MainActivity.this);
-                        //TextView title=new TextView(MainActivity.this);
-                        //TextView snippet=new TextView(MainActivity.this);
-                        switch (marker.getTitle()) {
-                            case "spain":
-                                picture.setImageDrawable(ContextCompat.getDrawable(
-                                        MainActivity.this, R.drawable.ic_view_list_black_48dp));
-                                title.setText(marker.getTitle());
-                                snippet.setText(marker.getSnippet());
-                                break;
-                            case "egypt":
-                                countryFlagImage.setImageDrawable(ContextCompat.getDrawable(
-                                        MainActivity.this, R.drawable.ic_format_list_bulleted_white_36dp));
-                                title.setText(marker.getTitle());
-                                snippet.setText(marker.getSnippet());
-                                break;
-                            default:
-                                // By default all markers without a matching title will use the
-                                // Germany flag
-                                countryFlagImage.setImageDrawable(ContextCompat.getDrawable(
-                                        MainActivity.this, R.drawable.ic_format_list_bulleted_black_48dp));
-                                title.setText(marker.getTitle());
-                                snippet.setText(marker.getSnippet());
-                                break;
-                        }
-
-                        // Set the size of the image
-                        //picture.setLayoutParams(new android.view.ViewGroup.LayoutParams(200, 200));
-
-                        // add the image view to the parent layout
-//                        parent.addView(countryFlagImage);
-//                        parent.addView(title);
-//                        parent.addView(snippet);
-
-                        return parent;
-                    }
-                });
-            }
-        });
     }
 
     private void getLocation() {
@@ -384,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
                     List<Address> addresses = addressBox.query().equal(Address_.place_id, p.getRaw_id()).build().find();
                     for(Address a:addresses) {
                         Toast.makeText(getApplicationContext(), "Place latitude: " + a.getLatitude(), Toast.LENGTH_LONG).show();
-                        addMarker(a.getLatitude(), a.getLongitude(), e.getTitle(), e.getDescription(), e.getPicture());
+                        addMarker(a.getLatitude(), a.getLongitude(), e.getTitle(), e.getDescription(), "http://www.berakatravel"+e.getPicture());
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), "Place latitude: NULL", Toast.LENGTH_LONG).show();

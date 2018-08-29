@@ -11,13 +11,9 @@ import com.labs.botdev.zouglou.objectbox.MyObjectBox;
 import com.labs.botdev.zouglou.objectbox.Place;
 import com.labs.botdev.zouglou.services.APIClient;
 import com.labs.botdev.zouglou.services.APIService;
-import com.labs.botdev.zouglou.services.models.ArtistsResponse;
 import com.labs.botdev.zouglou.services.models.EventsResponse;
-import com.labs.botdev.zouglou.services.models.PlacesResponse;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import io.objectbox.Box;
 import io.objectbox.BoxStore;
 import io.reactivex.Observable;

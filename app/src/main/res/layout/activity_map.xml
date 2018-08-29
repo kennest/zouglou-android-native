@@ -15,12 +15,16 @@
             android:id="@+id/mapView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            mapbox:mapbox_cameraZoom="2">
+            mapbox:mapbox_cameraTargetLat="5.339547"
+            mapbox:mapbox_cameraTargetLng="-4.026484"
+            mapbox:mapbox_cameraZoom="10"
+            mapbox:mapbox_cameraZoomMax="10.41"
+            mapbox:mapbox_cameraZoomMin="6">
 
         </com.mapbox.mapboxsdk.maps.MapView>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/list"
+            android:id="@+id/menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
