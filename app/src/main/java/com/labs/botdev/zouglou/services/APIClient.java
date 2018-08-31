@@ -19,6 +19,7 @@ public class APIClient {
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
         int cacheSize = 40 * 1024 * 1024; // 40 MiB
         File cacheDirectory=new File(Environment.getDataDirectory().getAbsolutePath()+"/zouglou_okhttp_cache/");
         Cache cache = new Cache(cacheDirectory, cacheSize);
@@ -31,7 +32,6 @@ public class APIClient {
                 .addInterceptor(interceptor)
                 .build();
 
-        //String base_url="http://192.168.1.75:8000/";
         String base_url="http://www.berakatravel.com/";
 
         retrofit = new Retrofit.Builder()

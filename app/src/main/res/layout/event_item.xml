@@ -24,7 +24,7 @@
                 android:layout_width="129dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:padding="5dp"
+                android:padding="8dp"
                 app:srcCompat="@drawable/fifth_bg" />
 
             <LinearLayout
@@ -45,6 +45,7 @@
                 <TextView
                     android:id="@+id/place"
                     android:layout_width="282dp"
+                    android:textStyle="bold"
                     android:layout_height="wrap_content"
                     android:text="place" />
 

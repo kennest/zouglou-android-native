@@ -1,9 +1,11 @@
 package com.labs.botdev.zouglou.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork;
 import com.labs.botdev.zouglou.objectbox.Address;
 import com.labs.botdev.zouglou.objectbox.Artist;
 import com.labs.botdev.zouglou.objectbox.Event;
@@ -20,6 +22,7 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class AppController extends Application {
@@ -32,16 +35,28 @@ public class AppController extends Application {
 
     static APIService service;
 
+    @SuppressLint("CheckResult")
     @Override
     public void onCreate() {
         super.onCreate();
         service = APIClient.getClient().create(APIService.class);
         boxStore = MyObjectBox.builder().androidContext(this).build();
-        SyncData();
+
+        ReactiveNetwork.checkInternetConnectivity()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) throws Exception {
+                        if (aBoolean) {
+                            SyncData();
+                        }
+                    }
+                });
     }
 
     private void SyncData() {
-        SyncEvents();
+        //SyncEvents();
     }
 
     private void SyncEvents() {
@@ -57,7 +72,7 @@ public class AppController extends Application {
                 placeBox.removeAll();
                 addressBox.removeAll();
                 artistBox.removeAll();
-                //Toast.makeText(getApplicationContext(), "events load Init", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "App events load Init", Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -92,7 +107,6 @@ public class AppController extends Application {
                     address.setQuartier(e.place.address.getQuartier());
                     address.setPlace_id(place.getRaw_id());
                     addressBox.put(address);
-
                     eventBox.put(eb);
                 }
             }

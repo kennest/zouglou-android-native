@@ -6,6 +6,8 @@ import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.objectbox.Event;
@@ -19,7 +21,7 @@ public class EventPagerAdapter extends PagerAdapter {
     private List<View> fragmentList;
     private Context context;
     ListView list;
-    Box<Event> eventBox= AppController.boxStore.boxFor(Event.class);
+    ListEventAdapter adapter;
 
     public EventPagerAdapter(List<View> fragmentList, Context ctx) {
         this.fragmentList = fragmentList;
@@ -42,15 +44,36 @@ public class EventPagerAdapter extends PagerAdapter {
         View view = null;
         switch (position) {
             case 0:
+                //Current Events
+                Box<Event> eventBox= AppController.boxStore.boxFor(Event.class);
+                adapter = new ListEventAdapter(eventBox.getAll(), context);
                 view=fragmentList.get(0);
                 list=view.findViewById(R.id.curent_events);
-                list.setAdapter(new ListEventAdapter(eventBox.getAll(),context));
+                list.setAdapter(adapter);
+
+                SearchView mSearchView =view.findViewById(R.id.search_view);
+                mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        //Toast.makeText(context,"Query Text "+newText,Toast.LENGTH_LONG).show();
+                        adapter.getFilter().filter(newText);
+                        adapter.notifyDataSetChanged();
+                        return false;
+                    }
+                });
                 break;
             case 1:
+                //Passed Events
                 view=fragmentList.get(1);
                 break;
         }
         container.addView(view);
         return view;
     }
+
 }

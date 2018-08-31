@@ -3,9 +3,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ListView
-        android:id="@+id/curent_events"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        android:orientation="vertical">
+
+        <SearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:iconifiedByDefault="false"
+            android:padding="2dp"
+            android:queryHint="Search....">
+
+        </SearchView>
+
+        <ListView
+            android:id="@+id/curent_events"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
 </RelativeLayout>

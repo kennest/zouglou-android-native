@@ -11,14 +11,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.SearchView;
+
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.adapters.DrawerListAdapter;
 import com.labs.botdev.zouglou.adapters.EventPagerAdapter;
+import com.labs.botdev.zouglou.adapters.ListEventAdapter;
+import com.labs.botdev.zouglou.objectbox.Event;
+import com.labs.botdev.zouglou.utils.AppController;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import io.objectbox.Box;
 import nl.psdcompany.duonavigationdrawer.views.DuoDrawerLayout;
 import nl.psdcompany.duonavigationdrawer.views.DuoMenuView;
 import nl.psdcompany.duonavigationdrawer.widgets.DuoDrawerToggle;
@@ -26,12 +33,13 @@ import nl.psdcompany.duonavigationdrawer.widgets.DuoDrawerToggle;
 public class ListEventsActivity extends AppCompatActivity {
     Toolbar toolbar;
     LayoutInflater inflater;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_events);
 
-        inflater=LayoutInflater.from(getApplicationContext());
+        inflater = LayoutInflater.from(getApplicationContext());
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Courants"));
         tabLayout.addTab(tabLayout.newTab().setText("Passés"));
@@ -46,7 +54,7 @@ public class ListEventsActivity extends AppCompatActivity {
         fragmentList.add(current);
         fragmentList.add(passed);
 
-        final EventPagerAdapter adapter = new EventPagerAdapter(fragmentList,getApplicationContext());
+        final EventPagerAdapter adapter = new EventPagerAdapter(fragmentList, getApplicationContext());
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -72,7 +80,7 @@ public class ListEventsActivity extends AppCompatActivity {
     private void InitSideMenu() {
         toolbar = findViewById(R.id.toolbar);
         String timeStamp = new SimpleDateFormat("dd.MM.yy").format(new Date());
-        toolbar.setTitle("Salut,aujourd'hui est "+timeStamp);
+        toolbar.setTitle("Salut,aujourd'hui est " + timeStamp);
         DuoDrawerLayout drawerLayout = (DuoDrawerLayout) findViewById(R.id.drawerlayout);
         DuoDrawerToggle drawerToggle = new DuoDrawerToggle(this, drawerLayout, toolbar,
                 R.string.navigation_drawer_open,
@@ -129,4 +137,5 @@ public class ListEventsActivity extends AppCompatActivity {
             }
         });
     }
+
 }
