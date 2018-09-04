@@ -2,6 +2,8 @@ package com.labs.botdev.zouglou.services;
 
 import android.os.Environment;
 
+import com.labs.botdev.zouglou.utils.Constants;
+
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
@@ -32,10 +34,8 @@ public class APIClient {
                 .addInterceptor(interceptor)
                 .build();
 
-        String base_url="http://www.berakatravel.com/";
-
         retrofit = new Retrofit.Builder()
-                .baseUrl(base_url)
+                .baseUrl(Constants.BASE_URL)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)

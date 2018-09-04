@@ -72,7 +72,7 @@
             </android.support.v4.view.ViewPager>
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/new_alert"
+                android:id="@+id/mapView"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentBottom="true"
@@ -80,9 +80,8 @@
                 android:layout_marginBottom="18dp"
                 android:layout_marginEnd="32dp"
                 android:clickable="true"
-                android:backgroundTint="@color/colorPrimaryDark"
                 android:focusable="true"
-                app:srcCompat="@drawable/ic_google_maps_white_48dp"
+                android:src="@drawable/ic_google_maps_white_48dp"
                 app:fabSize="normal"
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="54dp" />

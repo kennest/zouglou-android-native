@@ -1,6 +1,7 @@
 package com.labs.botdev.zouglou.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.labs.botdev.zouglou.R;
+import com.labs.botdev.zouglou.activities.DetailsEventActivity;
 import com.labs.botdev.zouglou.objectbox.Artist;
 import com.labs.botdev.zouglou.objectbox.Artist_;
 import com.labs.botdev.zouglou.objectbox.Event;
@@ -75,6 +77,8 @@ public class ListEventAdapter extends BaseAdapter implements Filterable{
         TextView description=view.findViewById(R.id.description);
         TextView date=view.findViewById(R.id.date);
 
+        view.setTag(e.getRaw_id());
+
         String url =   base_url+e.getPicture();
         Glide
                 .with(context)
@@ -91,8 +95,15 @@ public class ListEventAdapter extends BaseAdapter implements Filterable{
         }
 
         artists.setText(artist_str);
-
         date.setText(String.format("%s/%s", e.getBegin(), e.getEnd()));
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent details=new Intent(context, DetailsEventActivity.class);
+                details.putExtra("event_id", (int) v.getTag());
+                context.startActivity(details);
+            }
+        });
         return view;
     }
 

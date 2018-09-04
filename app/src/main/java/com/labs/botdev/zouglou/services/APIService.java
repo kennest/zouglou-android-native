@@ -12,22 +12,22 @@ import retrofit2.http.Path;
 
 public interface APIService {
 
-    @GET("zouglou/public/api/activeevents")
+    @GET("api/activeevents")
     Observable<EventsResponse> getEventsList();
 
-    @GET("zouglou/public/api/artists")
+    @GET("api/artists")
     Observable<ArtistsResponse> getArtistsList();
 
-    @GET("zouglou/public/api/artist/{id}")
+    @GET("api/artist/{id}")
     Observable<Artist> getArtist(@Path("id") String id);
 
-    @GET("zouglou/public/api/places/{id}")
+    @GET("api/places/{id}")
     Observable<Place> getPlace(@Path("id") String id);
 
-    @GET("zouglou/public/api/places")
+    @GET("api/places")
     Observable<PlacesResponse> getPlaces();
 
-    @GET("zouglou/public/api/placeshistory")
+    @GET("api/placeshistory")
     Observable<PlacesResponse> getPlacesHistory();
 
 }

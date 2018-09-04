@@ -1,25 +1,18 @@
 package com.labs.botdev.zouglou.activities;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ListView;
-import android.widget.SearchView;
-
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.adapters.DrawerListAdapter;
 import com.labs.botdev.zouglou.adapters.EventPagerAdapter;
-import com.labs.botdev.zouglou.adapters.ListEventAdapter;
-import com.labs.botdev.zouglou.objectbox.Event;
-import com.labs.botdev.zouglou.utils.AppController;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,9 +23,10 @@ import nl.psdcompany.duonavigationdrawer.views.DuoDrawerLayout;
 import nl.psdcompany.duonavigationdrawer.views.DuoMenuView;
 import nl.psdcompany.duonavigationdrawer.widgets.DuoDrawerToggle;
 
-public class ListEventsActivity extends AppCompatActivity {
+public class ListEventsActivity extends Activity {
     Toolbar toolbar;
     LayoutInflater inflater;
+    FloatingActionButton mapBtn;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,6 +35,7 @@ public class ListEventsActivity extends AppCompatActivity {
 
         inflater = LayoutInflater.from(getApplicationContext());
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        mapBtn=findViewById(R.id.mapView);
         tabLayout.addTab(tabLayout.newTab().setText("Courants"));
         tabLayout.addTab(tabLayout.newTab().setText("Passés"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
@@ -54,7 +49,7 @@ public class ListEventsActivity extends AppCompatActivity {
         fragmentList.add(current);
         fragmentList.add(passed);
 
-        final EventPagerAdapter adapter = new EventPagerAdapter(fragmentList, getApplicationContext());
+        final EventPagerAdapter adapter = new EventPagerAdapter(fragmentList, ListEventsActivity.this);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -71,6 +66,15 @@ public class ListEventsActivity extends AppCompatActivity {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
 
+            }
+        });
+
+        mapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent map=new Intent(ListEventsActivity.this,MapActivity.class);
+                map.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+                startActivity(map);
             }
         });
 
