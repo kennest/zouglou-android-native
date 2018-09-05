@@ -73,7 +73,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_anchor="@+id/content" />
+        app:layout_anchor="@+id/content"
+        app:layout_anchorGravity="bottom|center_horizontal"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/navigation_top"
