@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:2123693286122786699",
-      "lastPropertyId": "8:616060599001232426",
+      "lastPropertyId": "9:4733936547555590984",
       "name": "Event",
       "properties": [
         {
@@ -40,6 +40,10 @@
           "id": "8:616060599001232426",
           "indexId": "1:8247158750533578410",
           "name": "placeId"
+        },
+        {
+          "id": "9:4733936547555590984",
+          "name": "place_id"
         }
       ],
       "relations": []
@@ -115,10 +119,6 @@
           "id": "6:4671436705038650854",
           "indexId": "4:5189801701107543474",
           "name": "addressId"
-        },
-        {
-          "id": "7:7605288766080595377",
-          "name": "event_id"
         }
       ],
       "relations": []
@@ -169,7 +169,9 @@
   "modelVersionParserMinimum": 4,
   "retiredEntityUids": [],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    7605288766080595377
+  ],
   "retiredRelationUids": [],
   "version": 1
 }

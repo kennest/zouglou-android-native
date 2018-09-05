@@ -36,8 +36,9 @@
                 android:id="@+id/placename"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingTop="50dp"
                 android:layout_margin="10dp"
-                android:layout_gravity="end"
+                android:layout_gravity="start"
                 android:text="place"
                 android:textAppearance="@style/NotificationText"
                 android:textColor="@color/white"
@@ -63,9 +64,16 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include
+        <include
         android:id="@+id/content"
-        layout="@layout/content_scrolling" />
+        layout="@layout/fragment_event_details" />
+
+    <com.example.jean.jcplayer.view.JcPlayerView
+        android:id="@+id/jcplayer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_anchor="@+id/content" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/navigation_top"

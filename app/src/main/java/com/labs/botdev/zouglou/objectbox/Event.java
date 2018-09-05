@@ -18,6 +18,7 @@ public class Event {
     private String end;
 
     private int place_id;
+    private String artists_id;
 
     @Backlink
     public ToMany<Artist> artists;
@@ -87,5 +88,13 @@ public class Event {
 
     public void setPlace_id(int place_id) {
         this.place_id = place_id;
+    }
+
+    public String getArtists_id() {
+        return artists_id;
+    }
+
+    public void setArtists_id(String artists_id) {
+        this.artists_id = artists_id;
     }
 }

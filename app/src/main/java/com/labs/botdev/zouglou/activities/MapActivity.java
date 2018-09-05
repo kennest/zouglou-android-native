@@ -39,13 +39,16 @@ import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.objectbox.Address;
 import com.labs.botdev.zouglou.objectbox.Address_;
 import com.labs.botdev.zouglou.objectbox.Artist;
+import com.labs.botdev.zouglou.objectbox.Artist_;
 import com.labs.botdev.zouglou.objectbox.Place;
 import com.labs.botdev.zouglou.objectbox.Place_;
 import com.labs.botdev.zouglou.services.APIClient;
 import com.labs.botdev.zouglou.services.APIService;
 import com.labs.botdev.zouglou.services.TrackGPS;
+import com.labs.botdev.zouglou.services.models.ArtistsResponse;
 import com.labs.botdev.zouglou.services.models.Event;
 import com.labs.botdev.zouglou.services.models.EventsResponse;
+import com.labs.botdev.zouglou.services.models.PlacesResponse;
 import com.labs.botdev.zouglou.utils.AppController;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -66,6 +69,7 @@ import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigation;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import im.delight.android.location.SimpleLocation;
@@ -123,15 +127,15 @@ public class MapActivity extends AppCompatActivity {
         ensureLocationSettings();
 
         ReactiveNetwork.checkInternetConnectivity()
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Boolean>() {
                     @Override
                     public void accept(Boolean aBoolean) throws Exception {
                         if (aBoolean) {
-                            loadEventsRx();
-                        } else {
-                            placeEventsMarker();
+                            RemoteSyncData();
+                        }else{
+                            OfflineSyncData();
                         }
                     }
                 });
@@ -176,7 +180,7 @@ public class MapActivity extends AppCompatActivity {
             markerOptions.setIcon(icon);
             PlaceMarker(markerOptions);
 
-            Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
         } else {
             gps.showSettingsAlert();
         }
@@ -277,19 +281,23 @@ public class MapActivity extends AppCompatActivity {
         navigation.setLocationEngine(location);
     }
 
+    private void RemoteSyncData(){
+        loadArtistsRx();
+    }
+
+    private void OfflineSyncData(){
+        placeEventsMarker();
+    }
+
     private void loadEventsRx() {
         Box<com.labs.botdev.zouglou.objectbox.Event> eventBox = AppController.boxStore.boxFor(com.labs.botdev.zouglou.objectbox.Event.class);
         Box<Artist> artistBox = AppController.boxStore.boxFor(Artist.class);
         Box<Place> placeBox = AppController.boxStore.boxFor(Place.class);
-        Box<Address> addressBox = AppController.boxStore.boxFor(Address.class);
 
         Observer mObserver = new Observer<EventsResponse>() {
             @Override
             public void onSubscribe(Disposable disposable) {
                 eventBox.removeAll();
-                placeBox.removeAll();
-                addressBox.removeAll();
-                artistBox.removeAll();
                 //Toast.makeText(getApplicationContext(), getLocalClassName() + " Data load Init", Toast.LENGTH_LONG).show();
             }
 
@@ -299,7 +307,6 @@ public class MapActivity extends AppCompatActivity {
                     //Toast.makeText(getApplicationContext(), getLocalClassName() + " Place title: " + e.place.getTitle(), Toast.LENGTH_LONG).show();
                     com.labs.botdev.zouglou.objectbox.Event eb = new com.labs.botdev.zouglou.objectbox.Event();
                     Place place = new Place();
-                    Address address = new Address();
 
                     eb.setRaw_id(e.getId());
                     eb.setTitle(e.getTitle());
@@ -308,30 +315,16 @@ public class MapActivity extends AppCompatActivity {
                     eb.setEnd(e.getEnd());
                     eb.setPicture(e.getPicture());
 
-                    place.setRaw_id(e.place.getId());
-                    place.setPicture(e.place.getPicture());
-                    place.setTitle(e.place.getTitle());
-                    placeBox.put(place);
-
+                    place=placeBox.query().equal(Place_.raw_id,e.place.getId()).build().findFirst();
                     eb.setPlace_id(place.getRaw_id());
 
-                    address.setLatitude(Double.parseDouble(e.place.address.getLatitude()));
-                    address.setLongitude(Double.parseDouble(e.place.address.getLongitude()));
-                    address.setRaw_id(e.place.address.getId());
-                    address.setCommune(e.place.address.getCommune());
-                    address.setQuartier(e.place.address.getQuartier());
-                    address.setPlace_id(place.getRaw_id());
-                    addressBox.put(address);
-
+                    List<String> ids=new ArrayList<>();
                     for (com.labs.botdev.zouglou.services.models.Artist a : e.getArtists()) {
-                        Artist artist = new Artist();
-                        artist.setRaw_id(a.getId());
-                        artist.setName(a.getName());
-                        artist.setSample(a.getSample());
-                        artist.setAvatar(a.getAvatar());
-                        eb.artists.add(artist);
+                        Artist artist = artistBox.query().equal(Artist_.raw_id,a.getId()).build().findFirst();
+                        ids.add(String.valueOf(artist.getRaw_id()));
+                        Toast.makeText(getApplicationContext(), "off: " + artist.getRaw_id()+"/ on: "+a.getId(), Toast.LENGTH_LONG).show();
                     }
-
+                    eb.setArtists_id(ids.toString());
                     eventBox.put(eb);
                 }
             }
@@ -344,10 +337,6 @@ public class MapActivity extends AppCompatActivity {
 
             @Override
             public void onComplete() {
-                //Toast.makeText(getApplicationContext(), getLocalClassName() + " Event total: " + eventBox.count(), Toast.LENGTH_LONG).show();
-                //Toast.makeText(getApplicationContext(), getLocalClassName() + " Address total: " + addressBox.count(), Toast.LENGTH_LONG).show();
-                //Toast.makeText(getApplicationContext(), getLocalClassName() + " Place total: " + placeBox.count(), Toast.LENGTH_LONG).show();
-                //Toast.makeText(getApplicationContext(), getLocalClassName() + " Artist total: " + artistBox.count(), Toast.LENGTH_LONG).show();
                 placeEventsMarker();
             }
         };
@@ -360,19 +349,111 @@ public class MapActivity extends AppCompatActivity {
                 .subscribe(mObserver);
     }
 
+    private void loadArtistsRx(){
+        Box<Artist> artistBox = AppController.boxStore.boxFor(Artist.class);
+        Observer mObserver = new Observer<ArtistsResponse>() {
+            @Override
+            public void onSubscribe(Disposable disposable) {
+                artistBox.removeAll();
+                //Toast.makeText(getApplicationContext(), getLocalClassName() + " Data load Init", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onNext(ArtistsResponse artistsResponse) {
+                for(com.labs.botdev.zouglou.services.models.Artist a:artistsResponse.getArtists()){
+                    Artist artist = new Artist();
+                    artist.setRaw_id(a.getId());
+                    artist.setName(a.getName());
+                    artist.setSample(a.getSample());
+                    artist.setAvatar(a.getAvatar());
+                    artistBox.put(artist);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Toast.makeText(getApplicationContext(), "Data load Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e("Data load error: ", e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+                loadPlaceRx();
+                Toast.makeText(getApplicationContext(), getLocalClassName() + " Artist total: " + artistBox.count(), Toast.LENGTH_LONG).show();
+            }
+        };
+        APIService service = APIClient.getClient().create(APIService.class);
+        Observable<ArtistsResponse> observable = service.getArtistsList();
+        observable
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(mObserver);
+    }
+
+    private void loadPlaceRx(){
+        Box<Place> placeBox=AppController.boxStore.boxFor(Place.class);
+        Box<Address> addressBox=AppController.boxStore.boxFor(Address.class);
+        Observer mObserver = new Observer<PlacesResponse>() {
+            @Override
+            public void onSubscribe(Disposable disposable) {
+                placeBox.removeAll();
+            }
+
+            @Override
+            public void onNext(PlacesResponse response) {
+                for(com.labs.botdev.zouglou.services.models.Place p:response.getPlaces()){
+                    Place n=new Place();
+                    Address a=new Address();
+
+                    n.setTitle(p.getTitle());
+                    n.setPicture(p.getPicture());
+                    n.setRaw_id(p.getId());
+
+                    a.setCommune(p.address.getCommune());
+                    a.setRaw_id(p.address.getId());
+                    a.setQuartier(p.address.getQuartier());
+                    a.setLatitude(Double.parseDouble(p.address.getLatitude()));
+                    a.setLongitude(Double.parseDouble(p.address.getLongitude()));
+
+                    long place_id=placeBox.put(n);
+                    a.setPlace_id((int) place_id);
+                    addressBox.put(a);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Toast.makeText(getApplicationContext(), "Data load Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e("Data load error: ", e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+                loadEventsRx();
+                Toast.makeText(getApplicationContext(), getLocalClassName() + " Place total: " + placeBox.count(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getLocalClassName() + " Address total: " + addressBox.count(), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        APIService service = APIClient.getClient().create(APIService.class);
+        Observable<PlacesResponse> observable = service.getPlaces();
+        observable
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(mObserver);
+    }
+
     private void placeEventsMarker() {
         Box<com.labs.botdev.zouglou.objectbox.Event> eventBox = AppController.boxStore.boxFor(com.labs.botdev.zouglou.objectbox.Event.class);
-        Box<Place> placeBox = AppController.boxStore.boxFor(Place.class);
-        Box<Address> addressBox = AppController.boxStore.boxFor(Address.class);
-        for (com.labs.botdev.zouglou.objectbox.Event e : eventBox.getAll()) {
-            String upload_url = "http://www.berakatravel.com/zouglou/public/uploads/";
-            Place p = placeBox.query().equal(Place_.raw_id, e.getPlace_id()).build().findFirst();
-            if (p != null) {
-                Address a = addressBox.query().equal(Address_.place_id, p.getRaw_id()).build().findFirst();
-                Toast.makeText(getApplicationContext(), "Place latitude: " + a.getLatitude(), Toast.LENGTH_LONG).show();
-                addMarker(a.getLatitude(), a.getLongitude(), e.getTitle() + "/" + p.getTitle(), e.getDescription());
-            } else {
-                Toast.makeText(getApplicationContext(), "Place latitude: NULL", Toast.LENGTH_LONG).show();
+        if(eventBox.count()>0) {
+            Box<Place> placeBox = AppController.boxStore.boxFor(Place.class);
+            Box<Address> addressBox = AppController.boxStore.boxFor(Address.class);
+            for (com.labs.botdev.zouglou.objectbox.Event e : eventBox.getAll()) {
+                Place p = placeBox.query().equal(Place_.raw_id, e.getPlace_id()).build().findFirst();
+                if (p != null) {
+                    Address a = addressBox.query().equal(Address_.place_id, p.getRaw_id()).build().findFirst();
+                    addMarker(a.getLatitude(), a.getLongitude(), e.getTitle() + "/" + p.getTitle(), e.getDescription());
+                }
             }
         }
     }

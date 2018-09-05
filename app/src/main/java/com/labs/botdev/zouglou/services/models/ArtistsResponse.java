@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class ArtistsResponse{
     @SerializedName("artists")
     @Expose
-    private ArrayList<Artist> artists;
+    public ArrayList<Artist> artists;
 
     public ArrayList<Artist> getArtists() {
         return artists;
