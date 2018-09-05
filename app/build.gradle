@@ -83,5 +83,7 @@ dependencies {
     implementation 'com.github.delight-im:Android-SimpleLocation:v1.0.1'
     implementation 'com.karumi:dexter:5.0.0'
     implementation 'com.github.jeancsanchez:JcPlayer:2.6.12'
+    implementation 'com.google.android.exoplayer:exoplayer:2.8.4'
+
 }
 apply plugin: 'io.objectbox'

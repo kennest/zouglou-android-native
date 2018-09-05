@@ -12,35 +12,209 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <TextView
-            android:id="@+id/event_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:layout_margin="8dp"
-            android:text="Date"/>
-
-        <TextView
-            android:id="@+id/event_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:textColor="@color/grey_600"
-            android:text="@string/large_text" />
-        <HorizontalScrollView
-            app:layout_anchor="@+id/content"
-            android:id="@+id/artistsHscroll"
+        <LinearLayout
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
+
+
             <LinearLayout
-                android:id="@+id/artists_layout"
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
+                android:background="@drawable/border_set"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
                 android:layout_height="wrap_content">
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:src="@drawable/place"
+                            android:backgroundTint="@color/grey_600"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:text="Parcelle concernée"
+                            android:layout_width="match_parent"
+                            android:layout_height="20dp" />
+                        <TextView
+                            android:id="@+id/secteur_id"
+                            android:text="TITRE secteur"
+                            android:textStyle="bold"
+                            android:gravity="bottom"
+                            android:textSize="16dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="28dp" />
+                    </LinearLayout>
+                </LinearLayout>
+
             </LinearLayout>
 
-        </HorizontalScrollView>
+            <LinearLayout
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                android:background="@drawable/border_set"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent">
+                    <ImageView
+                        android:id="@+id/imid"
+                        android:src="@drawable/description"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:gravity="bottom"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+                    <TextView
+                        android:text="Description"
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp" />
+                    <TextView
+                        android:id="@+id/description_id"
+                        android:text="Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression. Le Lorem Ipsum est le faux texte standard de l'imprimerie depuis les années 1500"
+                        android:textStyle="bold"
+                        android:gravity="bottom"
+                        android:textSize="16dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+            </LinearLayout>
+            <LinearLayout
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                android:background="@drawable/border_set"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent">
+                    <ImageView
+                        android:src="@drawable/date_range"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:gravity="bottom"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:text="Période"
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp" />
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Date de debut:"
+                            android:textStyle="bold"
+                            android:gravity="bottom"
+                            android:textSize="16dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content" />
+                        <TextView
+                            android:id="@+id/datedebut_id"
+                            android:text="28/08/2018"
+                            android:textStyle="normal"
+                            android:gravity="bottom"
+                            android:textSize="16dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Date de fin:"
+                            android:textStyle="bold"
+                            android:gravity="bottom"
+                            android:textSize="16dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content" />
+                        <TextView
+                            android:id="@+id/datefin_id"
+                            android:text="28/08/2018"
+                            android:textStyle="normal"
+                            android:gravity="bottom"
+                            android:textSize="16dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:background="@drawable/border_set"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:src="@drawable/ic_account_details_grey600_48dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:text="Artistes"
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp" />
+                    <HorizontalScrollView
+                        app:layout_anchor="@+id/content"
+                        android:id="@+id/artistsHscroll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <LinearLayout
+                            android:id="@+id/artists_layout"
+                            android:orientation="horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                        </LinearLayout>
+
+                    </HorizontalScrollView>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+
+
+
     </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

@@ -32,19 +32,6 @@
                 app:layout_collapseMode="parallax"
                 tools:srcCompat="@tools:sample/avatars[4]" />
 
-            <TextView
-                android:id="@+id/placename"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="50dp"
-                android:layout_margin="10dp"
-                android:layout_gravity="start"
-                android:text="place"
-                android:textAppearance="@style/NotificationText"
-                android:textColor="@color/white"
-                android:textSize="25sp"
-                app:layout_collapseMode="parallax" />
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
@@ -68,13 +55,15 @@
         android:id="@+id/content"
         layout="@layout/fragment_event_details" />
 
-    <com.example.jean.jcplayer.view.JcPlayerView
-        android:id="@+id/jcplayer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/playerView"
         app:layout_anchor="@+id/content"
-        app:layout_anchorGravity="bottom|center_horizontal"/>
+        android:visibility="gone"
+        app:layout_anchorGravity="bottom|center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="80dp">
+
+    </com.google.android.exoplayer2.ui.PlayerView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/navigation_top"
