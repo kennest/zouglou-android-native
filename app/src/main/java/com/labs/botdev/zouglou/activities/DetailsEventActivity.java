@@ -1,33 +1,28 @@
 package com.labs.botdev.zouglou.activities;
 
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.appizona.yehiahd.fastsave.FastSave;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.jean.jcplayer.JcPlayerManagerListener;
-import com.example.jean.jcplayer.general.JcStatus;
-import com.example.jean.jcplayer.model.JcAudio;
-import com.example.jean.jcplayer.view.JcPlayerView;
+import com.gmail.samehadar.iosdialog.IOSDialog;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -48,39 +43,31 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.labs.botdev.zouglou.R;
-import com.labs.botdev.zouglou.objectbox.Address;
-import com.labs.botdev.zouglou.objectbox.Address_;
-import com.labs.botdev.zouglou.objectbox.Artist;
-import com.labs.botdev.zouglou.objectbox.Artist_;
-import com.labs.botdev.zouglou.objectbox.Event;
-import com.labs.botdev.zouglou.objectbox.Event_;
 import com.labs.botdev.zouglou.objectbox.Place;
 import com.labs.botdev.zouglou.objectbox.Place_;
+import com.labs.botdev.zouglou.services.models.Artist;
+import com.labs.botdev.zouglou.services.models.Event;
 import com.labs.botdev.zouglou.utils.AppController;
 import com.labs.botdev.zouglou.utils.Constants;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
+import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.objectbox.Box;
+
 
 public class DetailsEventActivity extends AppCompatActivity implements Player.EventListener {
     ImageView event_picture;
     Toolbar toolbar;
-    TextView description, date;
+    TextView description,place,begin,end;
     FloatingActionButton navigation_top, navigation_bottom;
-    Box<Place> placeBox = AppController.boxStore.boxFor(Place.class);
-    Box<Address> addressBox = AppController.boxStore.boxFor(Address.class);
-    Box<Artist> artistBox = AppController.boxStore.boxFor(Artist.class);
-    List<Artist> artists = new ArrayList<>();
+    List<Event> events=new ArrayList<>();
+    Event e=new Event();
     LinearLayout artists_layout;
     PlayerView playerView;
     SimpleExoPlayer player;
+    IOSDialog loader;
+    ImageView place_picture;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,55 +75,73 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         setContentView(R.layout.activity_details);
         event_picture = findViewById(R.id.header);
         toolbar = findViewById(R.id.anim_toolbar);
-        //description = findViewById(R.id.event_description);
-        //date = findViewById(R.id.event_date);
+        description = findViewById(R.id.event_description);
+        begin = findViewById(R.id.event_begin);
+        end = findViewById(R.id.event_end);
+        place = findViewById(R.id.event_place);
+        place_picture = findViewById(R.id.place_picture);
         navigation_top = findViewById(R.id.navigation_top);
         navigation_bottom = findViewById(R.id.navigation_bottom);
         artists_layout = findViewById(R.id.artists_layout);
         playerView=findViewById(R.id.playerView);
-
+        loader=LoaderProgress("Un instant","Nous chargons les données");
+        loader.show();
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         Intent intent = getIntent();
         int id = intent.getIntExtra("event_id", 0);
-        Box<Event> eventBox = AppController.boxStore.boxFor(Event.class);
-        Event e = eventBox.query().equal(Event_.raw_id, id).build().findFirst();
+
+        events= FastSave.getInstance().getObjectsList("events",Event.class);
+        for(Event n:events){
+            if(n.getId()==id){
+                e=n;
+            }
+        }
+
         Glide
                 .with(getApplicationContext())
                 .applyDefaultRequestOptions(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
                 .load(Constants.UPLOAD_URL + e.getPicture())
                 .into(event_picture);
 
-        Place p = placeBox.query().equal(Place_.raw_id, e.getPlace_id()).build().findFirst();
-        Address a = addressBox.query().equal(Address_.place_id, p.getRaw_id()).build().findFirst();
+        Glide
+                .with(getApplicationContext())
+                .applyDefaultRequestOptions(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+                .load(Constants.UPLOAD_URL + e.place.getPicture())
+                .into(place_picture);
 
+        description.setText(e.getDescription());
+        place.setText(e.place.getTitle());
+        begin.setText(e.getBegin());
+        end.setText(e.getEnd());
 
-        collapsingToolbarLayout.setTitle(e.getTitle() + "/" + p.getTitle());
+        collapsingToolbarLayout.setTitle(e.getTitle());
 
         toolbar.setTitle(e.getBegin());
+        loadArtists(e.artists);
+
+        InitAppBar();
         //date.setText(String.format("%s /%s", e.getBegin(), e.getEnd()));
 
         navigation_top.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShowOnMap(a.getLatitude(), a.getLongitude());
+                ShowOnMap(Double.parseDouble(e.place.address.getLatitude()),Double.parseDouble(e.place.address.getLongitude()));
             }
         });
 
         navigation_bottom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShowOnMap(a.getLatitude(), a.getLongitude());
+                ShowOnMap(Double.parseDouble(e.place.address.getLatitude()),Double.parseDouble(e.place.address.getLongitude()));
             }
         });
-        extractRecipient(e.getArtists_id());
-//        Toast.makeText(getApplicationContext(),"Artists IDS"+e.getArtists_id(),Toast.LENGTH_LONG).show();
-        loadArtists(artists);
 
-        //Toast.makeText(getApplicationContext(),"Event picture:"+Constants.UPLOAD_URL+e.getPicture(),Toast.LENGTH_LONG).show();
-        InitAppBar();
+        loader.dismiss();
+//        Toast.makeText(getApplicationContext(),"Artists IDS"+e.getArtists_id(),Toast.LENGTH_LONG).show();
     }
 
     private void InitAppBar() {
@@ -164,6 +169,11 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         mapIntent.setPackage("com.google.android.apps.maps");
         if (mapIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(mapIntent);
+        }else{
+            Intent navigation=new Intent(DetailsEventActivity.this, DoNavigationActivity.class);
+            String destination = lat+":"+lon;
+            navigation.putExtra("destination",destination);
+            startActivity(navigation);
         }
     }
 
@@ -192,7 +202,7 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
 
     private void loadArtists(List<Artist> artists) {
         for (Artist a : artists) {
-            Toast.makeText(getApplicationContext(), "Artist added" + a.getName(), Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "Artist added" + a.getAvatar(), Toast.LENGTH_LONG).show();
             LinearLayout parent = new LinearLayout(getApplicationContext());
             parent = (LinearLayout) getLayoutInflater().inflate(R.layout.artist_item, null);
             CircleImageView avatar = parent.findViewById(R.id.avatar);
@@ -202,7 +212,7 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
                     .with(getApplicationContext())
                     .applyDefaultRequestOptions(new RequestOptions()
                             .diskCacheStrategy(DiskCacheStrategy.ALL))
-                    .load(Constants.UPLOAD_URL + a.getAvatar())
+                    .load(Constants.UPLOAD_URL+a.getAvatar())
                     .into(avatar);
             parent.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -212,24 +222,6 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
             });
             parent.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             artists_layout.addView(parent);
-        }
-    }
-
-    private void extractRecipient(String s) {
-        Toast.makeText(getApplicationContext(), "ID: " + s, Toast.LENGTH_LONG).show();
-        Box<Artist> recipientBox = AppController.boxStore.boxFor(Artist.class);
-        String replace = s.replace("[", "");
-        System.out.println(replace);
-        String replace1 = replace.replace("]", "");
-        System.out.println(replace1);
-
-        List<String> IDlists = new ArrayList<String>(Arrays.asList(replace1.split(",")));
-
-        for (String n : IDlists) {
-            int i = Integer.parseInt(n.trim());
-            Artist x = artistBox.query().equal(Artist_.raw_id, i).build().findFirst();
-            if (x != null)
-                artists.add(x);
         }
     }
 
@@ -327,6 +319,18 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
     @Override
     public void onSeekProcessed() {
 
+    }
+
+    public IOSDialog LoaderProgress(String title, String content) {
+        final IOSDialog dialog = new IOSDialog.Builder(DetailsEventActivity.this)
+                .setTitle(title)
+                .setMessageContent(content)
+                .setSpinnerColorRes(R.color.colorPrimary)
+                .setCancelable(false)
+                .setTitleColorRes(R.color.white)
+                .setMessageContentGravity(Gravity.END)
+                .build();
+        return dialog;
     }
 }
 

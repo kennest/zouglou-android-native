@@ -15,11 +15,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.activities.DetailsEventActivity;
-import com.labs.botdev.zouglou.objectbox.Artist;
 import com.labs.botdev.zouglou.objectbox.Artist_;
 import com.labs.botdev.zouglou.objectbox.Event;
 import com.labs.botdev.zouglou.objectbox.Place;
 import com.labs.botdev.zouglou.objectbox.Place_;
+import com.labs.botdev.zouglou.services.models.Artist;
 import com.labs.botdev.zouglou.utils.AppController;
 
 import java.util.ArrayList;
@@ -30,16 +30,13 @@ import io.objectbox.Box;
 
 public class ListEventAdapter extends BaseAdapter implements Filterable{
 
-    private List<Event> eventList;
+    private List<com.labs.botdev.zouglou.services.models.Event> eventList;
     private Context context;
     private LayoutInflater inflater;
-    List<Event> filterEvents;
+    List<com.labs.botdev.zouglou.services.models.Event> filterEvents;
     private ValueFilter filter;
-    Box<Event> eventBox= AppController.boxStore.boxFor(Event.class);
-    Box<Artist> artistBox=AppController.boxStore.boxFor(Artist.class);
-    Box<Place> placeBox=AppController.boxStore.boxFor(Place.class);
 
-    public ListEventAdapter(List<Event> eventList, Context context) {
+    public ListEventAdapter(List<com.labs.botdev.zouglou.services.models.Event> eventList, Context context) {
         this.eventList = eventList;
         this.context = context;
         this.filterEvents=eventList;
@@ -52,7 +49,7 @@ public class ListEventAdapter extends BaseAdapter implements Filterable{
     }
 
     @Override
-    public Event getItem(int position) {
+    public com.labs.botdev.zouglou.services.models.Event getItem(int position) {
         return eventList.get(position);
     }
 
@@ -65,19 +62,15 @@ public class ListEventAdapter extends BaseAdapter implements Filterable{
     public View getView(int position, View view, ViewGroup parent) {
         String base_url="http://www.berakatravel.com/zouglou/public/uploads/";
         view = inflater.inflate(R.layout.event_item, parent, false);
-
-        Event e=eventList.get(position);
-        Place p=placeBox.query().equal(Place_.raw_id,e.getPlace_id()).build().findFirst();
-        List<Artist> artistList=artistBox.query().equal(Artist_.event_id,e.getRaw_id()).build().find();
+        com.labs.botdev.zouglou.services.models.Event e=eventList.get(position);
 
         ImageView picture=view.findViewById(R.id.picture);
         TextView title=view.findViewById(R.id.title);
         TextView artists=view.findViewById(R.id.artists);
         TextView place=view.findViewById(R.id.place);
-        TextView description=view.findViewById(R.id.description);
-        TextView date=view.findViewById(R.id.date);
+        //TextView date=view.findViewById(R.id.date);
 
-        view.setTag(e.getRaw_id());
+        view.setTag(e.getId());
 
         String url =   base_url+e.getPicture();
         Glide
@@ -86,16 +79,15 @@ public class ListEventAdapter extends BaseAdapter implements Filterable{
                 .into(picture);
 
         title.setText(e.getTitle());
-        description.setText(e.getDescription());
-        place.setText(Objects.requireNonNull(p.getTitle()));
+        place.setText(Objects.requireNonNull(e.place.getTitle()));
 
         String artist_str="";
-        for(Artist a:artistList){
+        for(Artist a:e.artists){
             artist_str = a.getName() + ",";
         }
 
         artists.setText(artist_str);
-        date.setText(String.format("%s/%s", e.getBegin(), e.getEnd()));
+        //date.setText(String.format("%s/%s", e.getBegin(), e.getEnd()));
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,10 +109,10 @@ public class ListEventAdapter extends BaseAdapter implements Filterable{
     }
 
     public class ValueFilter extends Filter {
-        List<Event> filterEvents;
+        List<com.labs.botdev.zouglou.services.models.Event> filterEvents;
         ListEventAdapter adapter;
 
-        ValueFilter(List<Event> filterEvents, ListEventAdapter adapter) {
+        ValueFilter(List<com.labs.botdev.zouglou.services.models.Event> filterEvents, ListEventAdapter adapter) {
             this.filterEvents = filterEvents;
             this.adapter = adapter;
         }
@@ -132,7 +124,7 @@ public class ListEventAdapter extends BaseAdapter implements Filterable{
 
             if (constraint != null && constraint.length() > 0) {
 
-                ArrayList<Event> filterList = new ArrayList<>();
+                ArrayList<com.labs.botdev.zouglou.services.models.Event> filterList = new ArrayList<>();
 
                 for (int i = 0; i < filterEvents.size(); i++) {
                     if ((filterEvents.get(i).getTitle().toUpperCase()).contains(constraint.toString().toUpperCase())) {
@@ -150,7 +142,7 @@ public class ListEventAdapter extends BaseAdapter implements Filterable{
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            adapter.eventList = (List<Event>) results.values;
+            adapter.eventList = (List<com.labs.botdev.zouglou.services.models.Event>) results.values;
             adapter.notifyDataSetChanged();
         }
     }

@@ -10,9 +10,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
+
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.adapters.DrawerListAdapter;
 import com.labs.botdev.zouglou.adapters.EventPagerAdapter;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,7 +37,7 @@ public class ListEventsActivity extends Activity {
 
         inflater = LayoutInflater.from(getApplicationContext());
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        mapBtn=findViewById(R.id.mapView);
+        mapBtn = findViewById(R.id.mapView);
         tabLayout.addTab(tabLayout.newTab().setText("Courants"));
         tabLayout.addTab(tabLayout.newTab().setText("Passés"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
@@ -72,9 +74,7 @@ public class ListEventsActivity extends Activity {
         mapBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent map=new Intent(ListEventsActivity.this,MapActivity.class);
-                map.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-                startActivity(map);
+                showMap();
             }
         });
 
@@ -119,7 +119,7 @@ public class ListEventsActivity extends Activity {
 
                 switch (position) {
                     case 0:
-
+                        showMap();
                         break;
                     case 1:
 
@@ -140,6 +140,12 @@ public class ListEventsActivity extends Activity {
                 }
             }
         });
+    }
+
+    private void showMap() {
+        Intent map = new Intent(ListEventsActivity.this, MapActivity.class);
+        map.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(map);
     }
 
 }

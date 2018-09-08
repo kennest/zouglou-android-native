@@ -4,4 +4,9 @@
     <string name="large_text" tools:ignore="StringEscaping">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus ut urna ornare erat tristique faucibus eget sit amet enim. Nullam in erat nibh. Vestibulum volutpat urna eu ligula vestibulum, in porta orci pulvinar. Quisque finibus aliquam tellus, viverra viverra augue accumsan a. Etiam ante eros, tincidunt vel posuere a, sodales eu neque. Donec nec hendrerit augue, at cursus sem. Proin volutpat, erat at semper porttitor, dui tellus pellentesque mauris, ut hendrerit orci lacus lobortis elit.
     </string>
+    <string name="start">C\'est parti!</string>
+    <string name="onboard2_title">feature1</string>
+    <string name="onboard2_description">feature_desc_1</string>
+    <string name="onboard3_title">feature2</string>
+    <string name="onboard3_description">feature_desc_2</string>
 </resources>

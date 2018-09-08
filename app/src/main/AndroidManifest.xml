@@ -17,11 +17,11 @@
         android:name=".utils.AppController"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".activities.MapActivity">
+        <activity android:name=".activities.OnboardActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,6 +30,10 @@
         </activity>
         <activity android:name=".activities.ListEventsActivity" />
         <activity android:name=".activities.DetailsEventActivity" />
+        <activity android:name=".activities.DoNavigationActivity" />
+        <activity android:name=".activities.BootActivity" />
+        <activity android:name=".activities.MapActivity" />
+        <activity android:name=".activities.EmbeddedNavigationActivity" />
 
         <service android:name=".services.TrackGPS" />
     </application>
