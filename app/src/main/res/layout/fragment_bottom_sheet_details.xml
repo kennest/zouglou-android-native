@@ -6,7 +6,10 @@
     android:layout_height="match_parent"
     android:background="@color/grey_200"
     android:orientation="vertical"
-    android:weightSum="8">
+    android:weightSum="8"
+    android:clickable="true"
+    android:elevation="2dp"
+    android:foreground="?attr/selectableItemBackground">
 
     <TextView
         android:layout_width="match_parent"

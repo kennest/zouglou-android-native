@@ -1,12 +1,17 @@
 package com.labs.botdev.zouglou.activities;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -46,6 +51,7 @@ import com.labs.botdev.zouglou.services.models.Event;
 import com.labs.botdev.zouglou.services.models.EventsResponse;
 import com.labs.botdev.zouglou.services.models.PlacesResponse;
 import com.mapbox.android.core.location.LocationEngine;
+import com.mapbox.android.core.location.LocationEngineListener;
 import com.mapbox.android.core.location.LocationEngineProvider;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.geojson.Point;
@@ -90,7 +96,7 @@ public class MapActivity extends AppCompatActivity {
     double latitude;
     private BottomSheetBehavior mbottomSheetBehavior;
     IOSDialog dialog;
-    List<Event> events=new ArrayList<>();
+    List<Event> events = new ArrayList<>();
     //private static String access_token = "pk.eyJ1IjoiYnVtYmxlYmVlNDciLCJhIjoiY2phdjA0Ym11MHFodjJ6bjAxbnF2NXdtayJ9.WW82rcFdL6_o4pVs1itgcQ";
 
     @SuppressLint("CheckResult")
@@ -122,7 +128,7 @@ public class MapActivity extends AppCompatActivity {
                         menu.setVisibility(View.VISIBLE);
                         break;
                     case BottomSheetBehavior.STATE_HIDDEN:
-                         menu.setVisibility(View.VISIBLE);
+                        menu.setVisibility(View.VISIBLE);
                         break;
                 }
             }
@@ -132,8 +138,6 @@ public class MapActivity extends AppCompatActivity {
 
             }
         });
-
-        ensureLocationSettings();
 
         menu = findViewById(R.id.menu);
         menu.setOnClickListener(new View.OnClickListener() {
@@ -155,7 +159,48 @@ public class MapActivity extends AppCompatActivity {
                         }
                     }
                 });
+
         events=FastSave.getInstance().getObjectsList("events",Event.class);
+        //getLocation();
+        ensureLocationSettings();
+    }
+
+    private void getLocation(){
+        LocationEngine locationEngine = new LocationEngineProvider(this).obtainBestLocationEngineAvailable();
+        locationEngine.activate();
+        locationEngine.addLocationEngineListener(new LocationEngineListener() {
+            @Override
+            public void onConnected() {
+                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                locationEngine.requestLocationUpdates();
+            }
+
+            @Override
+            public void onLocationChanged(Location location) {
+                MarkerOptions markerOptions = new MarkerOptions();
+                LatLng me = new LatLng();
+                IconFactory iconFactory = IconFactory.getInstance(MapActivity.this);
+                Icon icon = iconFactory.fromResource(R.drawable.ic_map_marker_radius_black_48dp);
+
+                me.setLatitude(location.getLatitude());
+                me.setLongitude(location.getLongitude());
+                FastSave.getInstance().saveObject("my_position", me);
+                markerOptions.setPosition(me);
+                markerOptions.setSnippet("Je suis Ici");
+                markerOptions.setTitle(String.valueOf(0));
+                markerOptions.setIcon(icon);
+                PlaceMarker(markerOptions);
+            }
+        });
     }
 
     //Check if Lacation is enabled and launch teask
@@ -186,7 +231,7 @@ public class MapActivity extends AppCompatActivity {
             MarkerOptions markerOptions = new MarkerOptions();
             LatLng me = new LatLng();
             IconFactory iconFactory = IconFactory.getInstance(MapActivity.this);
-            Icon icon = iconFactory.fromResource(R.drawable.ic_map_marker_radius_white_48dp);
+            Icon icon = iconFactory.fromResource(R.drawable.ic_account_location_black_48dp);
 
             me.setLatitude(latitude);
             me.setLongitude(longitude);
@@ -442,7 +487,6 @@ public class MapActivity extends AppCompatActivity {
             public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {/* ... */}
         }).check();
     }
-
 
     @Override
     public void onStart() {

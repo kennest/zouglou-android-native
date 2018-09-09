@@ -43,15 +43,10 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.labs.botdev.zouglou.R;
-import com.labs.botdev.zouglou.objectbox.Place;
-import com.labs.botdev.zouglou.objectbox.Place_;
 import com.labs.botdev.zouglou.services.models.Artist;
 import com.labs.botdev.zouglou.services.models.Event;
-import com.labs.botdev.zouglou.utils.AppController;
 import com.labs.botdev.zouglou.utils.Constants;
-import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigation;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -63,11 +58,12 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
     FloatingActionButton navigation_top, navigation_bottom;
     List<Event> events=new ArrayList<>();
     Event e=new Event();
-    LinearLayout artists_layout;
+    LinearLayout artists_layout,top_actions,bottom_actions;
     PlayerView playerView;
     SimpleExoPlayer player;
     IOSDialog loader;
     ImageView place_picture;
+    CollapsingToolbarLayout collapsingToolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,10 +80,13 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         navigation_bottom = findViewById(R.id.navigation_bottom);
         artists_layout = findViewById(R.id.artists_layout);
         playerView=findViewById(R.id.playerView);
+        top_actions=findViewById(R.id.top_actions);
+        bottom_actions=findViewById(R.id.bottom_actions);
         loader=LoaderProgress("Un instant","Nous chargons les données");
         loader.show();
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -152,10 +151,12 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
                 //Toast.makeText(getApplicationContext(),String.valueOf(appBarLayout.getHeight()),Toast.LENGTH_LONG).show();
                 if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange()) {
                     //Toast.makeText(getApplicationContext(),"collapsed",Toast.LENGTH_LONG).show();
-                    navigation_bottom.setVisibility(View.VISIBLE);
+                    top_actions.setVisibility(View.GONE);
+                    bottom_actions.setVisibility(View.VISIBLE);
                 } else if (verticalOffset == 0) {
                     //Toast.makeText(getApplicationContext(),"expanded",Toast.LENGTH_LONG).show();
-                    navigation_bottom.setVisibility(View.GONE);
+                    bottom_actions.setVisibility(View.GONE);
+                    top_actions.setVisibility(View.VISIBLE);
                 } else {
                     //Toast.makeText(getApplicationContext(),"scrolling",Toast.LENGTH_LONG).show();
                 }
@@ -208,6 +209,7 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
             CircleImageView avatar = parent.findViewById(R.id.avatar);
             ImageView pause = parent.findViewById(R.id.pause);
             ImageView play = parent.findViewById(R.id.play);
+            TextView artist_name=parent.findViewById(R.id.artist_name);
             Glide
                     .with(getApplicationContext())
                     .applyDefaultRequestOptions(new RequestOptions()
@@ -220,6 +222,7 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
                     playSample(Constants.UPLOAD_URL + a.getSample(), play, pause);
                 }
             });
+            artist_name.setText(a.getName());
             parent.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             artists_layout.addView(parent);
         }
@@ -234,17 +237,6 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
     public boolean onNavigateUp() {
         onBackPressed();
         return true;
-    }
-
-    private void InitExoPlayer() {
-        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
-        DefaultTrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-
-// 2. Create the player
-        SimpleExoPlayer  init_player = ExoPlayerFactory.newSimpleInstance(getApplicationContext(), trackSelector);
-        player=init_player;
-        playerView.setPlayer(player);
     }
 
     @Override

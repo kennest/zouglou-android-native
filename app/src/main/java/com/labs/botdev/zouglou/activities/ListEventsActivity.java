@@ -2,12 +2,16 @@ package com.labs.botdev.zouglou.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -15,6 +19,7 @@ import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.adapters.DrawerListAdapter;
 import com.labs.botdev.zouglou.adapters.EventPagerAdapter;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -93,6 +98,7 @@ public class ListEventsActivity extends Activity {
         ArrayList<String> mMenuOptions = new ArrayList<>();
         mMenuOptions.add("Voir carte");
         mMenuOptions.add("Liste artistes");
+        mMenuOptions.add("Partager l'application");
         mMenuOptions.add("Termes et conditions");
         mMenuOptions.add("A propos");
         mMenuOptions.add("Quitter");
@@ -122,12 +128,12 @@ public class ListEventsActivity extends Activity {
                         showMap();
                         break;
                     case 1:
-
-
+                        Intent list_artists = new Intent(ListEventsActivity.this, ListArtistsActivity.class);
+                        list_artists.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(list_artists);
                         break;
                     case 2:
-
-
+                        ShareApp();
                         break;
                     case 3:
 
@@ -136,7 +142,10 @@ public class ListEventsActivity extends Activity {
 
                         break;
                     case 5:
+                        break;
+                    case 6:
                         finishAffinity();
+                        break;
                 }
             }
         });
@@ -146,6 +155,26 @@ public class ListEventsActivity extends Activity {
         Intent map = new Intent(ListEventsActivity.this, MapActivity.class);
         map.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(map);
+    }
+
+    private void ShareApp() {
+        try {
+            PackageManager pm = getPackageManager();
+            ApplicationInfo ai = pm.getApplicationInfo(getPackageName(), 0);
+            File srcFile = new File(ai.publicSourceDir);
+            Log.e("ShareApp", ai.publicSourceDir);
+            Intent share = new Intent();
+            share.setAction(Intent.ACTION_SEND);
+            share.setType("application/vnd.android.package-archive");
+            share.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(srcFile));
+            startActivity(Intent.createChooser(share, "PersianCoders"));
+        } catch (Exception e) {
+            Log.e("ShareApp", e.getMessage());
+        }
+    }
+
+    private void ShowArtistList() {
+
     }
 
 }

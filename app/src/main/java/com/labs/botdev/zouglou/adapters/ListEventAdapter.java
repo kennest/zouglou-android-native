@@ -83,7 +83,11 @@ public class ListEventAdapter extends BaseAdapter implements Filterable{
 
         String artist_str="";
         for(Artist a:e.artists){
-            artist_str = a.getName() + ",";
+            if(artist_str.equals("")){
+                artist_str=a.getName();
+            }else {
+                artist_str = artist_str + "," + a.getName();
+            }
         }
 
         artists.setText(artist_str);

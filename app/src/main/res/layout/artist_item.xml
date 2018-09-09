@@ -12,6 +12,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_margin="8dp"
+        app:civ_border_color="@color/primary"
         android:src="@drawable/ic_navigation_black_48dp" />
 
     <ImageView
@@ -29,4 +30,14 @@
         android:visibility="invisible"
         app:srcCompat="@drawable/ic_pause_white_48dp" />
 </RelativeLayout>
+
+    <TextView
+        android:id="@+id/artist_name"
+        android:gravity="center_horizontal"
+        android:textStyle="bold"
+        android:textColor="@color/dark_gray_background"
+        android:textSize="18sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="artist" />
 </LinearLayout>

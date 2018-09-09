@@ -34,8 +34,16 @@
         <activity android:name=".activities.BootActivity" />
         <activity android:name=".activities.MapActivity" />
         <activity android:name=".activities.EmbeddedNavigationActivity" />
+        <activity android:name=".activities.DetailsArtistActivity" />
+        <activity android:name=".activities.DetailsPlaceActivity" />
+        <activity android:name=".activities.ListArtistsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.ListEventsActivity" />
+        </activity>
 
         <service android:name=".services.TrackGPS" />
+        <service android:name=".services.PusherEventService" />
     </application>
 
 </manifest>

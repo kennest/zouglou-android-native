@@ -37,6 +37,7 @@ public class TrackGPS extends Service implements LocationListener {
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
     protected LocationManager locationManager;
 
+
     public TrackGPS(Context mContext) {
         this.mContext = mContext;
         getLocation();

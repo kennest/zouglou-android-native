@@ -1,6 +1,7 @@
 package com.labs.botdev.zouglou.activities;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 
@@ -8,6 +9,9 @@ import com.appizona.yehiahd.fastsave.FastSave;
 import com.codemybrainsout.onboarder.AhoyOnboarderActivity;
 import com.codemybrainsout.onboarder.AhoyOnboarderCard;
 import com.labs.botdev.zouglou.R;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +19,6 @@ public class OnboardActivity extends AhoyOnboarderActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //We present the terms and privacy Dialog
         //We check if the has already passed the on board screen
         checkOnboardPassed();
 
