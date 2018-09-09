@@ -121,7 +121,7 @@ public class DetailsArtistActivity extends AppCompatActivity implements Player.E
         DefaultTrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
 
 // 2. Create the player
-        SimpleExoPlayer  player = ExoPlayerFactory.newSimpleInstance(getApplicationContext(), trackSelector);
+        player = ExoPlayerFactory.newSimpleInstance(getApplicationContext(), trackSelector);
 
         playerView.setPlayer(player);
         playerView.setVisibility(View.VISIBLE);
@@ -192,5 +192,11 @@ public class DetailsArtistActivity extends AppCompatActivity implements Player.E
     @Override
     public void onSeekProcessed() {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        player.release();
+        super.onDestroy();
     }
 }

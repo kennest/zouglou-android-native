@@ -184,7 +184,7 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         DefaultTrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
 
 // 2. Create the player
-        SimpleExoPlayer  player = ExoPlayerFactory.newSimpleInstance(getApplicationContext(), trackSelector);
+        player = ExoPlayerFactory.newSimpleInstance(getApplicationContext(), trackSelector);
 
         playerView.setPlayer(player);
         playerView.setVisibility(View.VISIBLE);
@@ -323,6 +323,12 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
                 .setMessageContentGravity(Gravity.END)
                 .build();
         return dialog;
+    }
+
+    @Override
+    protected void onDestroy() {
+        player.release();
+        super.onDestroy();
     }
 }
 
