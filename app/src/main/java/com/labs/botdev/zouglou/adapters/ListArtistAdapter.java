@@ -28,7 +28,7 @@ public class ListArtistAdapter extends BaseAdapter {
     public ListArtistAdapter(Context ctx, List<Artist> list) {
         this.context = ctx;
         this.artists = list;
-        this.inflater=LayoutInflater.from(context);
+        this.inflater = LayoutInflater.from(context);
     }
 
     @Override
@@ -48,11 +48,11 @@ public class ListArtistAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View v=inflater.inflate(R.layout.artist_list_item,null);
-        CircleImageView picture=v.findViewById(R.id.picture);
-        TextView name=v.findViewById(R.id.name);
+        View v = inflater.inflate(R.layout.artist_list_item, null);
+        CircleImageView picture = v.findViewById(R.id.picture);
+        TextView name = v.findViewById(R.id.name);
 
-        Artist a=artists.get(position);
+        Artist a = artists.get(position);
 
         Glide
                 .with(context)
@@ -64,7 +64,7 @@ public class ListArtistAdapter extends BaseAdapter {
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent details=new Intent(context, DetailsArtistActivity.class);
+                Intent details = new Intent(context, DetailsArtistActivity.class);
                 details.putExtra("artist_id", (int) v.getTag());
                 context.startActivity(details);
             }

@@ -9,23 +9,19 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SearchView;
 
-import com.appizona.yehiahd.fastsave.FastSave;
+import com.fxn.stash.Stash;
 import com.gmail.samehadar.iosdialog.IOSDialog;
 import com.labs.botdev.zouglou.R;
-import com.labs.botdev.zouglou.activities.MapActivity;
 import com.labs.botdev.zouglou.services.models.Event;
-import com.labs.botdev.zouglou.utils.AppController;
 
 import java.util.List;
 
-import io.objectbox.Box;
-
 public class EventPagerAdapter extends PagerAdapter {
-    private List<View> fragmentList;
-    private Context context;
     ListView list;
     ListEventAdapter adapter;
     IOSDialog dialog;
+    private List<View> fragmentList;
+    private Context context;
 
     public EventPagerAdapter(List<View> fragmentList, Context ctx) {
         this.fragmentList = fragmentList;
@@ -51,13 +47,13 @@ public class EventPagerAdapter extends PagerAdapter {
                 //Current Events
                 dialog = LoaderProgress("Un instant", "Nous chargons les données");
                 dialog.show();
-               List<Event> events= FastSave.getInstance().getObjectsList("events", Event.class);
+                List<Event> events = Stash.getArrayList("events", Event.class);
                 adapter = new ListEventAdapter(events, context);
-                view=fragmentList.get(0);
-                list=view.findViewById(R.id.curent_events);
+                view = fragmentList.get(0);
+                list = view.findViewById(R.id.curent_events);
                 list.setAdapter(adapter);
 
-                SearchView mSearchView =view.findViewById(R.id.search_view);
+                SearchView mSearchView = view.findViewById(R.id.search_view);
                 mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String query) {
@@ -76,7 +72,7 @@ public class EventPagerAdapter extends PagerAdapter {
                 break;
             case 1:
                 //Passed Events
-                view=fragmentList.get(1);
+                view = fragmentList.get(1);
                 break;
         }
         container.addView(view);

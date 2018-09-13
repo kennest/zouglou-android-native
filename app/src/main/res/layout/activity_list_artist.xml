@@ -3,10 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawerlayout"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/img_background"
     android:fitsSystemWindows="true"
+    android:orientation="vertical"
     tools:context=".activities.ListArtistsActivity">
 
 
@@ -35,9 +36,9 @@
         app:floatingSearch_showSearchKey="false"
         app:floatingSearch_suggestionsListAnimDuration="250" />
 
-        <ListView
-            android:background="@color/white"
-            android:id="@+id/lv_artists"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+    <ListView
+        android:id="@+id/lv_artists"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white" />
+</LinearLayout>

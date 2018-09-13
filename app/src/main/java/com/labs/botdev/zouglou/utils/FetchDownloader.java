@@ -29,7 +29,7 @@ public class FetchDownloader {
         fetch = Fetch.Impl.getInstance(fetchConfiguration);
 
 //        url = "http://www.example.com/test.txt";
-         String file =outputFile;
+        String file = outputFile;
 
         final Request request = new Request(url, file);
         request.setPriority(Priority.HIGH);

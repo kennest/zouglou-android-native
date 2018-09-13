@@ -16,26 +16,16 @@ import android.widget.Toast;
 
 public class TrackGPS extends Service implements LocationListener {
 
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
     private final Context mContext;
-
-
+    protected LocationManager locationManager;
     boolean checkGPS = false;
-
-
     boolean checkNetwork = false;
-
     boolean canGetLocation = false;
-
     Location loc;
     double latitude;
     double longitude;
-
-
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
-
-
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
-    protected LocationManager locationManager;
 
 
     public TrackGPS(Context mContext) {
@@ -81,8 +71,7 @@ public class TrackGPS extends Service implements LocationListener {
                             latitude = loc.getLatitude();
                             longitude = loc.getLongitude();
                         }
-                    }
-                    catch(SecurityException e){
+                    } catch (SecurityException e) {
 
                     }
                 }

@@ -6,25 +6,21 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 public class Artist {
-    @SerializedName("id")
-    @Expose
-    protected int id;
-
-    @SerializedName("name")
-    @Expose
-    protected String name;
-
-    @SerializedName("avatar")
-    @Expose
-    protected String avatar;
-
-    @SerializedName("urlsample")
-    @Expose
-    protected String sample;
-
     @SerializedName("events")
     @Expose
     public ArrayList<Event> events;
+    @SerializedName("id")
+    @Expose
+    protected int id;
+    @SerializedName("name")
+    @Expose
+    protected String name;
+    @SerializedName("avatar")
+    @Expose
+    protected String avatar;
+    @SerializedName("urlsample")
+    @Expose
+    protected String sample;
 
     public int getId() {
         return id;

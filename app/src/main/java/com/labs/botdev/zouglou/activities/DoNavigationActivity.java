@@ -1,48 +1,41 @@
 package com.labs.botdev.zouglou.activities;
 
-import java.util.List;
-import java.util.Locale;
-
+import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.app.AppCompatActivity;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
+import android.view.View;
 
-// classes needed to initialize map
-import com.appizona.yehiahd.fastsave.FastSave;
+import com.fxn.stash.Stash;
 import com.labs.botdev.zouglou.R;
-import com.mapbox.mapboxsdk.Mapbox;
-
-// classes needed to add location layer
+import com.mapbox.api.directions.v5.models.DirectionsResponse;
+import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.geojson.Point;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-
-import android.location.Location;
-
+import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-
-import android.support.annotation.NonNull;
-
-// classes to calculate a route
 import com.mapbox.services.android.navigation.ui.v5.NavigationView;
 import com.mapbox.services.android.navigation.ui.v5.NavigationViewOptions;
 import com.mapbox.services.android.navigation.ui.v5.OnNavigationReadyCallback;
 import com.mapbox.services.android.navigation.ui.v5.listeners.InstructionListListener;
 import com.mapbox.services.android.navigation.ui.v5.listeners.NavigationListener;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
-import com.mapbox.api.directions.v5.models.DirectionsResponse;
-import com.mapbox.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.services.android.navigation.v5.routeprogress.ProgressChangeListener;
+import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
+
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.AbsoluteSizeSpan;
+
+// classes needed to initialize map
+// classes needed to add location layer
+// classes to calculate a route
 // classes needed to launch navigation UI
-import android.view.View;
-import com.mapbox.services.android.navigation.v5.routeprogress.ProgressChangeListener;
-import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
 
 public class DoNavigationActivity extends AppCompatActivity implements OnNavigationReadyCallback,
         NavigationListener, ProgressChangeListener, InstructionListListener {
@@ -62,18 +55,18 @@ public class DoNavigationActivity extends AppCompatActivity implements OnNavigat
         navigationView.onCreate(savedInstanceState);
         navigationView.initialize(this);
 
-        String extra=getIntent().getStringExtra("destination");
-        String[] point=extra.split(":");
-        LatLng store_destination=new LatLng(Double.parseDouble(point[0]),Double.parseDouble(point[1]));
+        String extra = getIntent().getStringExtra("destination");
+        String[] point = extra.split(":");
+        LatLng store_destination = new LatLng(Double.parseDouble(point[0]), Double.parseDouble(point[1]));
 
-        LatLng me= FastSave.getInstance().getObject("my_position",LatLng.class);
+        LatLng me = (LatLng) Stash.getObject("my_position", LatLng.class);
 
         Point origin = Point.fromLngLat(me.getLongitude(), me.getLatitude());
         Point destination = Point.fromLngLat(store_destination.getLongitude(), store_destination.getLatitude());
-        fetchRoutePoint(origin,destination);
+        fetchRoutePoint(origin, destination);
     }
 
-    private void fetchRoutePoint(Point ORIGIN,Point DESTINATION) {
+    private void fetchRoutePoint(Point ORIGIN, Point DESTINATION) {
         NavigationRoute.builder(this)
                 .accessToken(Mapbox.getAccessToken())
                 .origin(ORIGIN)

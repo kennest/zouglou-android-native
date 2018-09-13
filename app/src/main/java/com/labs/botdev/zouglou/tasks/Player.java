@@ -5,9 +5,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 public class Player extends AsyncTask<String, Void, Boolean> {
-     MediaPlayer mediaPlayer= new MediaPlayer();
-     boolean initialStage = true;
-     boolean playPause;
+    MediaPlayer mediaPlayer = new MediaPlayer();
+    boolean initialStage = true;
+    boolean playPause;
+
     @Override
     protected Boolean doInBackground(String... strings) {
         Boolean prepared = false;

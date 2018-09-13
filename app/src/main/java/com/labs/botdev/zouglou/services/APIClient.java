@@ -23,12 +23,12 @@ public class APIClient {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         int cacheSize = 40 * 1024 * 1024; // 40 MiB
-        File cacheDirectory=new File(Environment.getDataDirectory().getAbsolutePath()+"/zouglou_okhttp_cache/");
+        File cacheDirectory = new File(Environment.getDataDirectory().getAbsolutePath() + "/zouglou_okhttp_cache/");
         Cache cache = new Cache(cacheDirectory, cacheSize);
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .cache(cache)
-                .connectTimeout(500,TimeUnit.SECONDS)
+                .connectTimeout(500, TimeUnit.SECONDS)
                 .writeTimeout(500, TimeUnit.SECONDS)
                 .readTimeout(500, TimeUnit.SECONDS)
                 .addInterceptor(interceptor)

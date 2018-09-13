@@ -5,18 +5,18 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.appizona.yehiahd.fastsave.FastSave;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.fxn.stash.Stash;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -43,33 +43,34 @@ import com.labs.botdev.zouglou.utils.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetailsArtistActivity extends AppCompatActivity implements Player.EventListener{
-    List<Artist> artists=new ArrayList<>();
-    Artist artist=new Artist();
+public class DetailsArtistActivity extends AppCompatActivity implements Player.EventListener {
+    List<Artist> artists = new ArrayList<>();
+    Artist artist = new Artist();
     ImageView header;
     Toolbar toolbar;
-    TextView name,description;
+    TextView name, description;
     FloatingActionButton play_sample, navigation_bottom;
-    LinearLayout events_layout,top_actions;
+    LinearLayout events_layout, top_actions;
     PlayerView playerView;
     SimpleExoPlayer player;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.artist_details);
-        header=findViewById(R.id.header);
-        top_actions=findViewById(R.id.top_actions);
+        header = findViewById(R.id.header);
+        top_actions = findViewById(R.id.top_actions);
         toolbar = findViewById(R.id.anim_toolbar);
-        name=findViewById(R.id.artist_name);
-        description=findViewById(R.id.artist_description);
-        playerView=findViewById(R.id.playerView);
-        play_sample=findViewById(R.id.play_sample);
+        name = findViewById(R.id.artist_name);
+        description = findViewById(R.id.artist_description);
+        playerView = findViewById(R.id.playerView);
+        play_sample = findViewById(R.id.play_sample);
 
-        int id=getIntent().getIntExtra("artist_id",0);
-        artists= FastSave.getInstance().getObjectsList("artists",Artist.class);
-        for(Artist a:artists){
-            if(a.getId()==id){
-                artist=a;
+        int id = getIntent().getIntExtra("artist_id", 0);
+        artists = Stash.getArrayList("artists", Artist.class);
+        for (Artist a : artists) {
+            if (a.getId() == id) {
+                artist = a;
             }
         }
 
@@ -78,7 +79,10 @@ public class DetailsArtistActivity extends AppCompatActivity implements Player.E
         toolbar.setTitle(artist.getName());
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+//Permet d'afficher le bouton de navigation up sur l'application
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         Glide
                 .with(getApplicationContext())
@@ -91,7 +95,7 @@ public class DetailsArtistActivity extends AppCompatActivity implements Player.E
         play_sample.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playSample(Constants.UPLOAD_URL+artist.getSample());
+                playSample(Constants.UPLOAD_URL + artist.getSample());
             }
         });
     }
@@ -142,6 +146,11 @@ public class DetailsArtistActivity extends AppCompatActivity implements Player.E
     public boolean onNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override
@@ -196,7 +205,8 @@ public class DetailsArtistActivity extends AppCompatActivity implements Player.E
 
     @Override
     protected void onDestroy() {
-        player.release();
+        if (player != null)
+            player.release();
         super.onDestroy();
     }
 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -14,10 +15,17 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.fxn.stash.Stash;
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.adapters.DrawerListAdapter;
 import com.labs.botdev.zouglou.adapters.EventPagerAdapter;
+import com.labs.botdev.zouglou.models.User;
+import com.labs.botdev.zouglou.utils.AppController;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -25,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import io.objectbox.Box;
 import nl.psdcompany.duonavigationdrawer.views.DuoDrawerLayout;
 import nl.psdcompany.duonavigationdrawer.views.DuoMenuView;
 import nl.psdcompany.duonavigationdrawer.widgets.DuoDrawerToggle;
@@ -34,6 +41,8 @@ public class ListEventsActivity extends Activity {
     Toolbar toolbar;
     LayoutInflater inflater;
     FloatingActionButton mapBtn;
+    TextView user_name,user_email;
+    ImageView user_picture;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,7 +106,8 @@ public class ListEventsActivity extends Activity {
 
         ArrayList<String> mMenuOptions = new ArrayList<>();
         mMenuOptions.add("Voir carte");
-        mMenuOptions.add("Liste artistes");
+        mMenuOptions.add("Personnages Zouglou");
+        mMenuOptions.add("Les coins chauds");
         mMenuOptions.add("Partager l'application");
         mMenuOptions.add("Termes et conditions");
         mMenuOptions.add("A propos");
@@ -106,6 +116,20 @@ public class ListEventsActivity extends Activity {
         drawerLayout.setDrawerListener(drawerToggle);
         drawerToggle.syncState();
         DuoMenuView duoMenuView = (DuoMenuView) findViewById(R.id.sidemenu);
+
+        View headerView= duoMenuView.getHeaderView();
+        user_name=headerView.findViewById(R.id.duo_header_title);
+        user_email=headerView.findViewById(R.id.duo_header_sub_title);
+        user_picture=headerView.findViewById(R.id.picture);
+
+        User user= (User) Stash.getObject("facebook_user", User.class);
+
+        Glide.with(getApplicationContext())
+                .load(user.getPicture())
+                .into(user_picture);
+        user_name.setText(user.getName());
+        user_email.setText(user.getEmail());
+
         DrawerListAdapter menuAdapter = new DrawerListAdapter(mMenuOptions);
         duoMenuView.setAdapter(menuAdapter);
 
@@ -133,18 +157,19 @@ public class ListEventsActivity extends Activity {
                         startActivity(list_artists);
                         break;
                     case 2:
-                        ShareApp();
+
                         break;
                     case 3:
-
+                        ShareApp();
                         break;
                     case 4:
 
                         break;
                     case 5:
+
                         break;
                     case 6:
-                        finishAffinity();
+                        quitApp();
                         break;
                 }
             }
@@ -175,6 +200,13 @@ public class ListEventsActivity extends Activity {
 
     private void ShowArtistList() {
 
+    }
+
+    public void quitApp() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            finishAffinity();
+        }
+        System.exit(0);
     }
 
 }

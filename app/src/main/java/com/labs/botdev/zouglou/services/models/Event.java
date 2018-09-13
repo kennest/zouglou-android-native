@@ -6,37 +6,30 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 public class Event {
-    @SerializedName("id")
-    @Expose
-    private int id;
-
-    @SerializedName("title")
-    @Expose
-    private String title;
-
-    @SerializedName("description")
-    @Expose
-    private String description;
-
-    @SerializedName("picture")
-    @Expose
-    private String picture;
-
-    @SerializedName("begin")
-    @Expose
-    private String begin;
-
-    @SerializedName("end")
-    @Expose
-    private String end;
-
     @SerializedName("place")
     @Expose
     public Place place;
-
     @SerializedName("artists")
     @Expose
     public ArrayList<Artist> artists;
+    @SerializedName("id")
+    @Expose
+    private int id;
+    @SerializedName("title")
+    @Expose
+    private String title;
+    @SerializedName("description")
+    @Expose
+    private String description;
+    @SerializedName("picture")
+    @Expose
+    private String picture;
+    @SerializedName("begin")
+    @Expose
+    private String begin;
+    @SerializedName("end")
+    @Expose
+    private String end;
 
     public int getId() {
         return id;

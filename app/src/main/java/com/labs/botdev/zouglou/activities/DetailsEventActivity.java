@@ -16,12 +16,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.appizona.yehiahd.fastsave.FastSave;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.fxn.stash.Stash;
 import com.gmail.samehadar.iosdialog.IOSDialog;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -46,19 +45,21 @@ import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.services.models.Artist;
 import com.labs.botdev.zouglou.services.models.Event;
 import com.labs.botdev.zouglou.utils.Constants;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class DetailsEventActivity extends AppCompatActivity implements Player.EventListener {
     ImageView event_picture;
     Toolbar toolbar;
-    TextView description,place,begin,end;
+    TextView description, place, begin, end;
     FloatingActionButton navigation_top, navigation_bottom;
-    List<Event> events=new ArrayList<>();
-    Event e=new Event();
-    LinearLayout artists_layout,top_actions,bottom_actions;
+    List<Event> events = new ArrayList<>();
+    Event e = new Event();
+    LinearLayout artists_layout, top_actions, bottom_actions;
     PlayerView playerView;
     SimpleExoPlayer player;
     IOSDialog loader;
@@ -79,10 +80,10 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         navigation_top = findViewById(R.id.navigation_top);
         navigation_bottom = findViewById(R.id.navigation_bottom);
         artists_layout = findViewById(R.id.artists_layout);
-        playerView=findViewById(R.id.playerView);
-        top_actions=findViewById(R.id.top_actions);
-        bottom_actions=findViewById(R.id.bottom_actions);
-        loader=LoaderProgress("Un instant","Nous chargons les données");
+        playerView = findViewById(R.id.playerView);
+        top_actions = findViewById(R.id.top_actions);
+        bottom_actions = findViewById(R.id.bottom_actions);
+        loader = LoaderProgress("Un instant", "Nous chargons les données");
         loader.show();
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         setSupportActionBar(toolbar);
@@ -93,10 +94,10 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         Intent intent = getIntent();
         int id = intent.getIntExtra("event_id", 0);
 
-        events= FastSave.getInstance().getObjectsList("events",Event.class);
-        for(Event n:events){
-            if(n.getId()==id){
-                e=n;
+        events = Stash.getArrayList("events", Event.class);
+        for (Event n : events) {
+            if (n.getId() == id) {
+                e = n;
             }
         }
 
@@ -128,14 +129,14 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         navigation_top.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShowOnMap(Double.parseDouble(e.place.address.getLatitude()),Double.parseDouble(e.place.address.getLongitude()));
+                ShowOnMap(Double.parseDouble(e.place.address.getLatitude()), Double.parseDouble(e.place.address.getLongitude()));
             }
         });
 
         navigation_bottom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShowOnMap(Double.parseDouble(e.place.address.getLatitude()),Double.parseDouble(e.place.address.getLongitude()));
+                ShowOnMap(Double.parseDouble(e.place.address.getLatitude()), Double.parseDouble(e.place.address.getLongitude()));
             }
         });
 
@@ -170,10 +171,10 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         mapIntent.setPackage("com.google.android.apps.maps");
         if (mapIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(mapIntent);
-        }else{
-            Intent navigation=new Intent(DetailsEventActivity.this, DoNavigationActivity.class);
-            String destination = lat+":"+lon;
-            navigation.putExtra("destination",destination);
+        } else {
+            Intent navigation = new Intent(DetailsEventActivity.this, DoNavigationActivity.class);
+            String destination = lat + ":" + lon;
+            navigation.putExtra("destination", destination);
             startActivity(navigation);
         }
     }
@@ -209,12 +210,12 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
             CircleImageView avatar = parent.findViewById(R.id.avatar);
             ImageView pause = parent.findViewById(R.id.pause);
             ImageView play = parent.findViewById(R.id.play);
-            TextView artist_name=parent.findViewById(R.id.artist_name);
+            TextView artist_name = parent.findViewById(R.id.artist_name);
             Glide
                     .with(getApplicationContext())
                     .applyDefaultRequestOptions(new RequestOptions()
                             .diskCacheStrategy(DiskCacheStrategy.ALL))
-                    .load(Constants.UPLOAD_URL+a.getAvatar())
+                    .load(Constants.UPLOAD_URL + a.getAvatar())
                     .into(avatar);
             parent.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -327,7 +328,8 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
 
     @Override
     protected void onDestroy() {
-        player.release();
+        if (player != null)
+            player.release();
         super.onDestroy();
     }
 }

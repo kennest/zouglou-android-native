@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="cardViewStyle">@style/CardView.Light</item>
     </style>
+
     <style name="NavigationMapRoute">
         <!-- Colors -->
         <item name="routeColor">@color/mapboxBlue</item>

@@ -13,9 +13,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:elevation="8dp"
-            android:translationZ="2dp "
-            android:padding="2dp">
-        </SearchView>
+            android:padding="2dp"
+            android:translationZ="2dp "></SearchView>
 
         <ListView
             android:id="@+id/curent_events"

@@ -1,57 +1,44 @@
 package com.labs.botdev.zouglou.utils;
 
 import android.annotation.SuppressLint;
-import android.app.Application;
-import android.util.Log;
-import android.widget.Toast;
-
-import com.appizona.yehiahd.fastsave.FastSave;
-import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.support.multidex.MultiDexApplication;
+import com.fxn.stash.Stash;
 import com.labs.botdev.zouglou.services.APIClient;
 import com.labs.botdev.zouglou.services.APIService;
-import com.labs.botdev.zouglou.services.models.EventsResponse;
-import java.util.ArrayList;
-import io.objectbox.BoxStore;
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
-public class AppController extends Application {
+public class AppController extends MultiDexApplication {
+    static APIService service;
     private static AppController mInstance;
-    public static BoxStore boxStore;
 
     public static synchronized AppController getInstance() {
         return mInstance;
     }
 
-    static APIService service;
-
     @SuppressLint("CheckResult")
     @Override
     public void onCreate() {
         super.onCreate();
+        Stash.init(this);
+        //FastSave.init(getApplicationContext());
         service = APIClient.getClient().create(APIService.class);
-        FastSave.init(getApplicationContext());
         //boxStore = MyObjectBox.builder().androidContext(this).build();
+        //InitFacebook();
 
-        ReactiveNetwork.checkInternetConnectivity()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean aBoolean) throws Exception {
-                        if (aBoolean) {
-                            SyncData();
-                        }
-                    }
-                });
+        if (Constants.isNetworkConnected(getApplicationContext())) {
+            SyncData();
+        }
     }
 
     private void SyncData() {
         //SyncEvents();
     }
 
+    public void quitApp() {
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(1);
+    }
 }

@@ -6,21 +6,20 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- Storage -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- Storage -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:allowBackup="true"
         android:name=".utils.AppController"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+
         <activity android:name=".activities.OnboardActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +30,7 @@
         <activity android:name=".activities.ListEventsActivity" />
         <activity android:name=".activities.DetailsEventActivity" />
         <activity android:name=".activities.DoNavigationActivity" />
-        <activity android:name=".activities.BootActivity" />
+        <activity android:name=".activities.LoginActivity" />
         <activity android:name=".activities.MapActivity" />
         <activity android:name=".activities.EmbeddedNavigationActivity" />
         <activity android:name=".activities.DetailsArtistActivity" />
@@ -41,9 +40,31 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.ListEventsActivity" />
         </activity>
+        <activity android:name=".activities.GoogleMapsActivity"/>
 
         <service android:name=".services.TrackGPS" />
         <service android:name=".services.PusherEventService" />
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
+        <activity
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

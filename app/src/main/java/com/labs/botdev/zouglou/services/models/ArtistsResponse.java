@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class ArtistsResponse{
+public class ArtistsResponse {
     @SerializedName("artists")
     @Expose
     public ArrayList<Artist> artists;
