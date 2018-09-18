@@ -19,7 +19,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-
+        <activity android:name=".activities.ListPlacesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.ListEventsActivity" />
+        </activity>
         <activity android:name=".activities.OnboardActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,14 +37,22 @@
         <activity android:name=".activities.LoginActivity" />
         <activity android:name=".activities.MapActivity" />
         <activity android:name=".activities.EmbeddedNavigationActivity" />
-        <activity android:name=".activities.DetailsArtistActivity" />
-        <activity android:name=".activities.DetailsPlaceActivity" />
+        <activity android:name=".activities.DetailsArtistActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.ListArtistsActivity" />
+        </activity>
+        <activity android:name=".activities.DetailsPlaceActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.ListPlacesActivity" />
+        </activity>
         <activity android:name=".activities.ListArtistsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.ListEventsActivity" />
         </activity>
-        <activity android:name=".activities.GoogleMapsActivity"/>
+        <activity android:name=".activities.GoogleMapsActivity" />
 
         <service android:name=".services.TrackGPS" />
         <service android:name=".services.PusherEventService" />

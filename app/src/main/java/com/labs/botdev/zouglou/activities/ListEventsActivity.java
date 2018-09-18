@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -25,7 +24,6 @@ import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.adapters.DrawerListAdapter;
 import com.labs.botdev.zouglou.adapters.EventPagerAdapter;
 import com.labs.botdev.zouglou.models.User;
-import com.labs.botdev.zouglou.utils.AppController;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -41,7 +39,7 @@ public class ListEventsActivity extends Activity {
     Toolbar toolbar;
     LayoutInflater inflater;
     FloatingActionButton mapBtn;
-    TextView user_name,user_email;
+    TextView user_name, user_email;
     ImageView user_picture;
 
     @Override
@@ -117,12 +115,12 @@ public class ListEventsActivity extends Activity {
         drawerToggle.syncState();
         DuoMenuView duoMenuView = (DuoMenuView) findViewById(R.id.sidemenu);
 
-        View headerView= duoMenuView.getHeaderView();
-        user_name=headerView.findViewById(R.id.duo_header_title);
-        user_email=headerView.findViewById(R.id.duo_header_sub_title);
-        user_picture=headerView.findViewById(R.id.picture);
+        View headerView = duoMenuView.getHeaderView();
+        user_name = headerView.findViewById(R.id.duo_header_title);
+        user_email = headerView.findViewById(R.id.duo_header_sub_title);
+        user_picture = headerView.findViewById(R.id.picture);
 
-        User user= (User) Stash.getObject("facebook_user", User.class);
+        User user = (User) Stash.getObject("facebook_user", User.class);
 
         Glide.with(getApplicationContext())
                 .load(user.getPicture())
@@ -157,7 +155,9 @@ public class ListEventsActivity extends Activity {
                         startActivity(list_artists);
                         break;
                     case 2:
-
+                        Intent list_places = new Intent(ListEventsActivity.this, ListPlacesActivity.class);
+                        list_places.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(list_places);
                         break;
                     case 3:
                         ShareApp();

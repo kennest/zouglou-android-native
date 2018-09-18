@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
+    android:clickable="true"
+    android:elevation="8dp"
+    android:translationZ="3dp"
+    android:foreground="?attr/selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/picture"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:scaleType="fitXY"
+        tools:srcCompat="@tools:sample/avatars[0]" />
+
+    <LinearLayout
+        android:id="@+id/text_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_anchorGravity="center"
+        app:layout_anchor="@+id/picture"
+        android:background="@color/black"
+        android:alpha="0.80"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/placename"
+            style="@style/Keys"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Placename"
+            android:textAppearance="@style/KeysAppearance"
+            android:textColor="@color/white"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/details"
+            style="@style/Keys"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Details "
+            android:textAppearance="@style/KeysAppearance"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        app:layout_anchor="@+id/picture"
+        app:layout_anchorGravity="right|bottom">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/navigation"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusable="true"
+            app:srcCompat="@drawable/ic_navigation_white_48dp" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/bookmark"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:backgroundTint="@color/mapboxYellow"
+            android:clickable="true"
+            android:focusable="true"
+            app:srcCompat="@drawable/ic_star_white_48dp" />
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>

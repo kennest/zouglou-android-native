@@ -25,5 +25,18 @@
         <item name="navigationViewAccent">@color/mapboxPink</item>
     </style>
 
+    <style name="Keys">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="KeysAppearance">
+        <item name="android:textSize">25sp</item>
+        <item name="android:textColor">#ffffffff</item>
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">0.0</item>
+        <item name="android:shadowDy">0.0</item>
+        <item name="android:shadowRadius">2.0</item>
+    </style>
 
 </resources>

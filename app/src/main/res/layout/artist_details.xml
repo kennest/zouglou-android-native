@@ -46,7 +46,8 @@
                 android:visibility="visible"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light" /-->
-            <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+            <android.support.v7.widget.Toolbar
+                xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/anim_toolbar"
                 android:layout_width="match_parent"
@@ -68,6 +69,7 @@
         android:id="@+id/playerView"
         android:layout_width="match_parent"
         android:layout_height="80dp"
+        android:visibility="gone"
         app:layout_anchor="@+id/content"
         app:layout_anchorGravity="bottom|center_horizontal">
 

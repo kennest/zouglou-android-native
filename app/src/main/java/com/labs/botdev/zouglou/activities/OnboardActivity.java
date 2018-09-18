@@ -36,7 +36,9 @@ public class OnboardActivity extends AhoyOnboarderActivity {
             facebookLogin();
         }
         //We check if the has already passed the on board screen
-        checkPermissions();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            checkPermissions();
+        }
         Drawable d=null;
         try {
             d = Drawable.createFromStream(getAssets().open("navigation.png"), "navigation.png");

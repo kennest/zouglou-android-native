@@ -10,8 +10,10 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.fxn.stash.Stash;
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.activities.DetailsEventActivity;
 import com.labs.botdev.zouglou.services.models.Artist;
@@ -122,7 +124,7 @@ public class ListEventAdapter extends BaseAdapter implements Filterable {
                 ArrayList<com.labs.botdev.zouglou.services.models.Event> filterList = new ArrayList<>();
 
                 for (int i = 0; i < filterEvents.size(); i++) {
-                    if ((filterEvents.get(i).getTitle().toUpperCase()).contains(constraint.toString().toUpperCase())) {
+                    if ((filterEvents.get(i).getTitle().toUpperCase()).contains(constraint.toString().toUpperCase()) || (filterEvents.get(i).place.getTitle().toUpperCase()).contains(constraint.toString().toUpperCase())) {
                         filterList.add(filterEvents.get(i));
                     }
                 }
@@ -138,6 +140,8 @@ public class ListEventAdapter extends BaseAdapter implements Filterable {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             adapter.eventList = (List<com.labs.botdev.zouglou.services.models.Event>) results.values;
+            Stash.put("filter_events",adapter.eventList);
+            Toast.makeText(adapter.context,"Filtering events "+adapter.eventList.size(),Toast.LENGTH_LONG).show();
             adapter.notifyDataSetChanged();
         }
     }

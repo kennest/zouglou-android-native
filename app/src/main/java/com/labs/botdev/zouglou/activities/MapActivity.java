@@ -13,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -33,6 +34,7 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.labs.botdev.zouglou.R;
+import com.labs.botdev.zouglou.adapters.ListEventAdapter;
 import com.labs.botdev.zouglou.services.APIClient;
 import com.labs.botdev.zouglou.services.APIService;
 import com.labs.botdev.zouglou.services.TrackGPS;
@@ -48,6 +50,7 @@ import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
@@ -81,6 +84,8 @@ public class MapActivity extends AppCompatActivity {
     private TrackGPS gps;
     private BottomSheetBehavior mbottomSheetBehavior;
     private LocationLayerPlugin locationPlugin;
+    SearchView searchView;
+    ListEventAdapter adapter;
     //private static String access_token = "pk.eyJ1IjoiYnVtYmxlYmVlNDciLCJhIjoiY2phdjA0Ym11MHFodjJ6bjAxbnF2NXdtayJ9.WW82rcFdL6_o4pVs1itgcQ";
 
     @SuppressLint("CheckResult")
@@ -93,6 +98,7 @@ public class MapActivity extends AppCompatActivity {
         setContentView(R.layout.activity_map);
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
+        searchView=findViewById(R.id.searchview);
         dialog = LoaderProgress("Un instant", "Nous chargons les données");
         bottomsheet = findViewById(R.id.details_sheet);
         mbottomSheetBehavior = BottomSheetBehavior.from(bottomsheet);
@@ -138,6 +144,26 @@ public class MapActivity extends AppCompatActivity {
 
         //events = FastSave.getInstance().getObjectsList("events", Event.class);
         events = Stash.getArrayList("events", Event.class);
+        adapter=new ListEventAdapter(events,MapActivity.this);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            //Rechercher sur la carte(Not finished yet!!)
+            @Override
+            public boolean onQueryTextChange(String newText) {
+//                adapter.getFilter().filter(newText);
+//                adapter.notifyDataSetChanged();
+//                events=Stash.getArrayList("filter_events",Event.class);
+//                Stash.put("events",events);
+//                mapView.postInvalidate();
+//                placeEventsMarker();
+               return false;
+            }
+        });
         //getLocation();
         ensureLocationSettings();
         //facebookLogin();
@@ -211,6 +237,11 @@ public class MapActivity extends AppCompatActivity {
                         .setTitle(String.valueOf(id))
                         .setSnippet(fsnippet);
                 mapboxMap.addMarker(markerOptions);
+
+                mapboxMap.getUiSettings().setZoomControlsEnabled(true);
+                mapboxMap.getUiSettings().setZoomGesturesEnabled(true);
+                mapboxMap.getUiSettings().setCompassEnabled(true);
+                mapboxMap.getUiSettings().setScrollGesturesEnabled(true);
 
                 mapboxMap.setOnMarkerClickListener(new MapboxMap.OnMarkerClickListener() {
                     @Override
@@ -329,6 +360,7 @@ public class MapActivity extends AppCompatActivity {
             @Override
             public void onError(Throwable e) {
                 Toast.makeText(getApplicationContext(), "Data load Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                dialog.dismiss();
                 Log.e("Data load error: ", e.getMessage());
             }
 
@@ -337,6 +369,7 @@ public class MapActivity extends AppCompatActivity {
                 loadArtistsRx();
                 if (Stash.getArrayList("events",Event.class) != null)
                     placeEventsMarker();
+                    dialog.dismiss();
             }
         };
 
@@ -353,7 +386,6 @@ public class MapActivity extends AppCompatActivity {
         Observer mObserver = new Observer<ArtistsResponse>() {
             @Override
             public void onSubscribe(Disposable disposable) {
-                dialog.show();
                 //Toast.makeText(getApplicationContext(), getLocalClassName() + " Data load Init", Toast.LENGTH_LONG).show();
             }
 
@@ -403,7 +435,7 @@ public class MapActivity extends AppCompatActivity {
 
             @Override
             public void onComplete() {
-                dialog.dismiss();
+
             }
         };
 
