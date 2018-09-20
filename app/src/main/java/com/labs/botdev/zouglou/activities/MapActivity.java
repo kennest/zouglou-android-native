@@ -71,7 +71,6 @@ import rx.functions.Action1;
 
 public class MapActivity extends AppCompatActivity {
     TextView title, snippet, detail_sheet_title;
-    View bottomsheet;
     ImageView picture;
     FloatingActionButton menu;
     double longitude;
@@ -82,6 +81,7 @@ public class MapActivity extends AppCompatActivity {
     private MapboxNavigation navigation;
     private MapboxMap map;
     private TrackGPS gps;
+    View bottomsheet;
     private BottomSheetBehavior mbottomSheetBehavior;
     private LocationLayerPlugin locationPlugin;
     SearchView searchView;
