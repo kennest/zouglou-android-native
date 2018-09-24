@@ -47,8 +47,12 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.plugins.building.BuildingPlugin;
+import com.mapbox.mapboxsdk.plugins.cluster.MarkerManager;
+import com.mapbox.mapboxsdk.plugins.cluster.clustering.ClusterManagerPlugin;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
 import com.mapbox.mapboxsdk.plugins.locationlayer.modes.RenderMode;
+import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin;
 import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigation;
 
 import java.util.ArrayList;
@@ -65,13 +69,14 @@ import rx.functions.Action1;
 public class MapActivity extends AppCompatActivity {
     TextView title, snippet, detail_sheet_title;
     ImageView picture;
-    FloatingActionButton menu;
+    FloatingActionButton menu,traffic;
     double longitude;
     double latitude;
     IOSDialog dialog;
     List<Event> events = new ArrayList<>();
     List<Event> tmpEvents = new ArrayList<>();
     private MapView mapView;
+    private MapboxMap map;
     private MapboxNavigation navigation;
     private TrackGPS gps;
     View bottomsheet;
@@ -79,6 +84,9 @@ public class MapActivity extends AppCompatActivity {
     private LocationLayerPlugin locationPlugin;
     SearchView searchView;
     ListEventAdapter adapter;
+    private BuildingPlugin buildingPlugin;
+    private TrafficPlugin trafficPlugin;
+    ClusterManagerPlugin clusterManagerPlugin;
 
     @SuppressLint("CheckResult")
     @Override
@@ -92,6 +100,7 @@ public class MapActivity extends AppCompatActivity {
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         searchView=findViewById(R.id.searchview);
+        traffic=findViewById(R.id.traffic);
         dialog = LoaderProgress("Un instant", "Nous chargons les données");
         bottomsheet = findViewById(R.id.details_sheet);
         mbottomSheetBehavior = BottomSheetBehavior.from(bottomsheet);
@@ -208,18 +217,10 @@ public class MapActivity extends AppCompatActivity {
             longitude = gps.getLongitude();
             latitude = gps.getLatitude();
 
-            MarkerOptions markerOptions = new MarkerOptions();
             LatLng me = new LatLng();
-            IconFactory iconFactory = IconFactory.getInstance(MapActivity.this);
-            Icon icon = iconFactory.fromResource(R.drawable.ic_account_location_black_48dp);
-
             me.setLatitude(latitude);
             me.setLongitude(longitude);
             Stash.put("my_position", me);
-            markerOptions.setPosition(me);
-            markerOptions.setSnippet("Je suis Ici");
-            markerOptions.setTitle(String.valueOf(0));
-            markerOptions.setIcon(icon);
 
             PlaceMe();
 
@@ -233,10 +234,27 @@ public class MapActivity extends AppCompatActivity {
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
+                map=mapboxMap;
                 locationPlugin = new LocationLayerPlugin(mapView, mapboxMap);
                 locationPlugin.setRenderMode(RenderMode.COMPASS);
                 getLifecycle().addObserver(locationPlugin);
                 //mapboxMap.addMarker(markerOptions);
+
+                buildingPlugin = new BuildingPlugin(mapView, mapboxMap);
+                buildingPlugin.setVisibility(true);
+
+                trafficPlugin = new TrafficPlugin(mapView, mapboxMap);
+                trafficPlugin.setVisibility(true);
+                clusterManagerPlugin=new ClusterManagerPlugin(MapActivity.this,mapboxMap);
+            }
+        });
+
+        traffic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (map != null) {
+                    trafficPlugin.setVisibility(!trafficPlugin.isVisible());
+                }
             }
         });
     }
@@ -269,7 +287,7 @@ public class MapActivity extends AppCompatActivity {
                 mapboxMap.addMarker(markerOptions);
                 //mapboxMap.clear();
 
-                mapboxMap.getUiSettings().setZoomControlsEnabled(true);
+                //mapboxMap.getUiSettings().setZoomControlsEnabled(true);
                 mapboxMap.getUiSettings().setZoomGesturesEnabled(true);
                 mapboxMap.getUiSettings().setCompassEnabled(true);
                 mapboxMap.getUiSettings().setScrollGesturesEnabled(true);

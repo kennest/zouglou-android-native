@@ -58,16 +58,36 @@
 
     </android.support.v4.widget.NestedScrollView>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/menu"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="25dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:src="@drawable/ic_view_list_white_36dp"
-        mapbox:layout_anchor="@+id/mapView"
-        mapbox:layout_anchorGravity="right|bottom" />
+        android:orientation="vertical"
+        app:layout_anchor="@+id/mapView"
+        app:layout_anchorGravity="right|bottom"
+        android:layout_marginBottom="20dp">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_view_list_white_36dp"
+            mapbox:layout_anchor="@+id/mapView"
+            />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/traffic"
+            android:backgroundTint="#F25731"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_traffic_light_white_48dp"
+            mapbox:layout_anchor="@+id/mapView" />
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
