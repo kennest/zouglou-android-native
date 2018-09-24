@@ -42,6 +42,7 @@ public class EventPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         View view = null;
+        SearchView mSearchView=null;
         switch (position) {
             case 0:
                 //Current Events
@@ -53,8 +54,10 @@ public class EventPagerAdapter extends PagerAdapter {
                 list = view.findViewById(R.id.curent_events);
                 list.setAdapter(adapter);
 
-                SearchView mSearchView = view.findViewById(R.id.search_view);
-                mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                 mSearchView = view.findViewById(R.id.searchview);
+                 mSearchView.setQueryHint("Nom artiste,maquis...");
+                 mSearchView.setIconified(true);
+                 mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String query) {
                         return false;

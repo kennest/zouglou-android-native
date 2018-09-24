@@ -65,6 +65,13 @@ Toolbar toolbar;
     @Override
     public boolean onNavigateUp() {
         onBackPressed();
-        return false;
+        return super.onNavigateUp();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent main=new Intent(ListPlacesActivity.this,ListEventsActivity.class);
+        main.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        startActivity(main);
     }
 }

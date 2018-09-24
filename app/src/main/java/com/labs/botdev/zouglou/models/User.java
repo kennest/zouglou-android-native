@@ -6,6 +6,9 @@ public class User {
     private String email;
     private String picture;
     private String token;
+    private String birthday;
+    private String gender;
+    private String fb_id;
 
     public String getId() {
         return id;
@@ -45,5 +48,29 @@ public class User {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getFb_id() {
+        return fb_id;
+    }
+
+    public void setFb_id(String fb_id) {
+        this.fb_id = fb_id;
     }
 }

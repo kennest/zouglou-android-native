@@ -25,9 +25,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
+        app:iconifiedByDefault="false"
         android:elevation="8dp"
         android:translationZ="3dp"
-        android:visibility="visible" />
+        android:visibility="visible"
+        android:queryHint="Nom du lieu,de l'artiste..."/>
 
     <com.mapbox.mapboxsdk.maps.MapView
         android:id="@+id/mapView"
@@ -43,7 +45,9 @@
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/details_sheet"
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="wrap_content"
+        android:translationZ="3dp"
+        android:elevation="8dp"
         app:behavior_hideable="true"
         app:behavior_peekHeight="0dp"
         app:layout_behavior="@string/bottom_sheet_behavior">

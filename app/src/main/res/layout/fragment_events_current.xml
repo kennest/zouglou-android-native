@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -9,12 +10,15 @@
         android:orientation="vertical">
 
         <SearchView
-            android:id="@+id/search_view"
+            android:id="@+id/searchview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:iconifiedByDefault="false"
             android:elevation="8dp"
-            android:padding="2dp"
-            android:translationZ="2dp "></SearchView>
+            android:translationZ="3dp"
+            android:visibility="visible"
+            android:queryHint="Nom du lieu,de l'artiste..." />
 
         <ListView
             android:id="@+id/curent_events"

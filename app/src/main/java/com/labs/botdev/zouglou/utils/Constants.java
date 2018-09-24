@@ -10,7 +10,6 @@ public class Constants {
     //Check if Internet is available
     public static final boolean isNetworkConnected(Context ctx) {
         ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
-
         return cm.getActiveNetworkInfo() != null;
     }
 }

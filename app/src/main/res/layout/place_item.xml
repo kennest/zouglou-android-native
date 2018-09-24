@@ -13,7 +13,7 @@
     <ImageView
         android:id="@+id/picture"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="190dp"
         android:scaleType="fitXY"
         tools:srcCompat="@tools:sample/avatars[0]" />
 
@@ -21,31 +21,27 @@
         android:id="@+id/text_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_anchorGravity="center"
+        app:layout_anchorGravity="center|bottom"
         app:layout_anchor="@+id/picture"
-        android:background="@color/black"
-        android:alpha="0.80"
+        android:background="@color/colorPrimary"
+        android:alpha="0.93"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/placename"
-            style="@style/Keys"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="start"
             android:text="Placename"
-            android:textAppearance="@style/KeysAppearance"
             android:textColor="@color/white"
             android:textSize="25sp" />
 
         <TextView
             android:id="@+id/details"
-            style="@style/Keys"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
+            android:gravity="start"
             android:text="Details "
-            android:textAppearance="@style/KeysAppearance"
             android:textColor="@color/white"
             android:textSize="16sp" />
     </LinearLayout>

@@ -21,11 +21,10 @@
     </android.support.v7.widget.Toolbar>
 
     <android.support.v7.widget.SearchView
-        android:id="@+id/SearchView"
+        android:id="@+id/searchview"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@color/white"
-        style="@style/KeysAppearance"
         android:elevation="8dp"
         android:translationZ="3dp" />
 

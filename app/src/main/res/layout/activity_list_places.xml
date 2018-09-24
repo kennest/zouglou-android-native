@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/white"
+    android:background="@drawable/img_background"
     android:orientation="vertical"
     tools:context=".activities.ListPlacesActivity">
 
@@ -23,6 +23,9 @@
             android:id="@+id/searchview"
             android:layout_width="match_parent"
             android:layout_height="60dp"
+            android:background="@color/white"
+            android:queryHint="Nom du lieu,Quartier..."
+            app:iconifiedByDefault="false"
             android:elevation="8dp"
             android:translationZ="3dp" />
 
@@ -31,6 +34,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:divider="@color/white"/>
+            android:divider="@color/grey_600"/>
 
 </LinearLayout>

@@ -20,8 +20,14 @@ import com.facebook.login.widget.LoginButton;
 import com.fxn.stash.Stash;
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.models.User;
+import com.labs.botdev.zouglou.services.APIClient;
+import com.labs.botdev.zouglou.services.APIService;
 
 import org.json.JSONException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
     LoginButton loginButton;
@@ -81,6 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                 currentAccessToken,
                 (object, response) -> {
                     try {
+                        Log.e("FB_JSON:",""+object.toString());
                         User user=new User();
                         user.setEmail(object.getString("email"));
                         user.setId(object.getString("id"));
@@ -89,13 +96,27 @@ public class LoginActivity extends AppCompatActivity {
                         user.setToken(currentAccessToken.getToken());
                         Stash.put("facebook_user",user);
                         Toast.makeText(getApplicationContext(), object.getString("name"), Toast.LENGTH_LONG).show();
+
+                        APIService service= APIClient.getClient().create(APIService.class);
+                        Call call=service.addCustomer((User) Stash.getObject("facebook_user",User.class));
+                        call.enqueue(new Callback() {
+                            @Override
+                            public void onResponse(Call call, Response response) {
+                                Toast.makeText(getApplicationContext(),"Zouglou Server saved: "+response.toString(), Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onFailure(Call call, Throwable t) {
+                                Toast.makeText(getApplicationContext(), "Zouglou server Error"+t.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
                 });
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,name,email,picture.width(80)");
+        parameters.putString("fields", "id,name,email,picture.width(100),gender,birthday");
         request.setParameters(parameters);
         request.executeAsync();
     }

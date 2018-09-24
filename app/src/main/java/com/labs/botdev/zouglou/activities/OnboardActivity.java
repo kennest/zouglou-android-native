@@ -1,12 +1,17 @@
 package com.labs.botdev.zouglou.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
+import android.util.Base64;
+import android.util.Log;
 
 import com.codemybrainsout.onboarder.AhoyOnboarderActivity;
 import com.codemybrainsout.onboarder.AhoyOnboarderCard;
@@ -19,34 +24,27 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.models.User;
 
-import org.json.JSONObject;
-
-import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OnboardActivity extends AhoyOnboarderActivity {
     //private FacebookLogin facebookLogin;
 
+    @SuppressLint("LogNotTimber")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(Stash.getObject("facebook_user", User.class)==null) {
-            facebookLogin();
-        }
-        //We check if the has already passed the on board screen
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             checkPermissions();
         }
-        Drawable d=null;
-        try {
-            d = Drawable.createFromStream(getAssets().open("navigation.png"), "navigation.png");
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (Stash.getObject("facebook_user", User.class) == null) {
+            facebookLogin();
         }
 
-        AhoyOnboarderCard navigationCard = new AhoyOnboarderCard(getString(R.string.onboard2_title), getString(R.string.onboard2_description), d);
+        AhoyOnboarderCard navigationCard = new AhoyOnboarderCard(getString(R.string.onboard2_title), getString(R.string.onboard2_description), R.drawable.navigation);
         navigationCard.setBackgroundColor(R.color.black_transparent);
         navigationCard.setTitleColor(R.color.white);
         navigationCard.setDescriptionColor(R.color.grey_200);
@@ -72,6 +70,25 @@ public class OnboardActivity extends AhoyOnboarderActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             setFinishButtonDrawableStyle(ContextCompat.getDrawable(this, R.drawable.rounded_button));
         }
+    }
+
+    private void getKeyHash(){
+        try {
+            @SuppressLint("PackageManagerGetSignatures")
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.labs.botdev.zouglou",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
+
     }
 
     @Override
@@ -112,9 +129,9 @@ public class OnboardActivity extends AhoyOnboarderActivity {
                 ).withListener(new MultiplePermissionsListener() {
             @Override
             public void onPermissionsChecked(MultiplePermissionsReport report) {
-if(report.areAllPermissionsGranted()){
-    checkOnboardPassed();
-}
+                if (report.areAllPermissionsGranted()) {
+                    checkOnboardPassed();
+                }
             }
 
             @Override

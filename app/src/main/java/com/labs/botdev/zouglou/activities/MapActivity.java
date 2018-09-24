@@ -3,14 +3,11 @@ package com.labs.botdev.zouglou.activities;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.SearchView;
@@ -21,22 +18,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.fxn.stash.Stash;
 import com.gmail.samehadar.iosdialog.IOSDialog;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.jetradarmobile.rxlocationsettings.RxLocationSettings;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.adapters.ListEventAdapter;
 import com.labs.botdev.zouglou.services.APIClient;
 import com.labs.botdev.zouglou.services.APIService;
+import com.labs.botdev.zouglou.services.PusherEventService;
 import com.labs.botdev.zouglou.services.TrackGPS;
 import com.labs.botdev.zouglou.services.models.Artist;
 import com.labs.botdev.zouglou.services.models.ArtistsResponse;
@@ -49,8 +41,9 @@ import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.annotations.MarkerView;
+import com.mapbox.mapboxsdk.annotations.MarkerViewOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
@@ -77,22 +70,22 @@ public class MapActivity extends AppCompatActivity {
     double latitude;
     IOSDialog dialog;
     List<Event> events = new ArrayList<>();
+    List<Event> tmpEvents = new ArrayList<>();
     private MapView mapView;
     private MapboxNavigation navigation;
-    private MapboxMap map;
     private TrackGPS gps;
     View bottomsheet;
     private BottomSheetBehavior mbottomSheetBehavior;
     private LocationLayerPlugin locationPlugin;
     SearchView searchView;
     ListEventAdapter adapter;
-    //private static String access_token = "pk.eyJ1IjoiYnVtYmxlYmVlNDciLCJhIjoiY2phdjA0Ym11MHFodjJ6bjAxbnF2NXdtayJ9.WW82rcFdL6_o4pVs1itgcQ";
 
     @SuppressLint("CheckResult")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        startPusherServiceEvent();
         navigation = new MapboxNavigation(this, getResources().getString(R.string.mapbox_access_token));
         Mapbox.getInstance(this, getResources().getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_map);
@@ -102,6 +95,8 @@ public class MapActivity extends AppCompatActivity {
         dialog = LoaderProgress("Un instant", "Nous chargons les données");
         bottomsheet = findViewById(R.id.details_sheet);
         mbottomSheetBehavior = BottomSheetBehavior.from(bottomsheet);
+        searchView.setQueryHint("Nom artiste,maquis...");
+        searchView.setIconified(true);
 
         mbottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -143,8 +138,7 @@ public class MapActivity extends AppCompatActivity {
         }
 
         //events = FastSave.getInstance().getObjectsList("events", Event.class);
-        events = Stash.getArrayList("events", Event.class);
-        adapter=new ListEventAdapter(events,MapActivity.this);
+
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -155,15 +149,35 @@ public class MapActivity extends AppCompatActivity {
             //Rechercher sur la carte(Not finished yet!!)
             @Override
             public boolean onQueryTextChange(String newText) {
-//                adapter.getFilter().filter(newText);
-//                adapter.notifyDataSetChanged();
-//                events=Stash.getArrayList("filter_events",Event.class);
-//                Stash.put("events",events);
-//                mapView.postInvalidate();
-//                placeEventsMarker();
-               return false;
+                if(newText.matches("")){
+                    Stash.put("events", tmpEvents);
+                    clearMap();
+                    placeEventsMarker();
+                }else {
+                    if (adapter != null) {
+                        adapter.getFilter().filter(newText);
+                        adapter.notifyDataSetChanged();
+                        events = Stash.getArrayList("filter_events", Event.class);
+                        Stash.put("events", events);
+                        clearMap();
+                        placeEventsMarker();
+                    }
+                }
+                return false;
             }
         });
+
+        searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus){
+                    Stash.put("events", tmpEvents);
+                    clearMap();
+                    placeEventsMarker();
+                }
+            }
+        });
+
         //getLocation();
         ensureLocationSettings();
         //facebookLogin();
@@ -172,7 +186,7 @@ public class MapActivity extends AppCompatActivity {
     //Check if Lacation is enabled and launch teask
     private void ensureLocationSettings() {
         LocationSettingsRequest locationSettingsRequest = new LocationSettingsRequest.Builder()
-                .addLocationRequest(LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY))
+                .addLocationRequest(LocationRequest.create().setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY))
                 .build();
         RxLocationSettings.with(MapActivity.this).ensure(locationSettingsRequest)
                 .subscribe(new Action1<Boolean>() {
@@ -227,16 +241,33 @@ public class MapActivity extends AppCompatActivity {
         });
     }
 
+    private void clearMap(){
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(MapboxMap mapboxMap) {
+                mapboxMap.deselectMarkers();
+                mapboxMap.clear();
+            }
+        });
+    }
+
+    private void startPusherServiceEvent(){
+        Intent intent = new Intent(getApplicationContext(), PusherEventService.class);
+        // manager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,calendar.getTimeInMillis(),manager.INTERVAL_HALF_HOUR,intent);
+        stopService(intent);
+        startService(intent);
+    }
+
     protected void addMarker(Double lat, Double lon, int id, String fsnippet) {
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
-
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(new LatLng(lat, lon))
                         .setTitle(String.valueOf(id))
                         .setSnippet(fsnippet);
                 mapboxMap.addMarker(markerOptions);
+                //mapboxMap.clear();
 
                 mapboxMap.getUiSettings().setZoomControlsEnabled(true);
                 mapboxMap.getUiSettings().setZoomGesturesEnabled(true);
@@ -255,6 +286,7 @@ public class MapActivity extends AppCompatActivity {
                                 mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                             } else {
                                 mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                                mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                             }
                             return true;
                         }
@@ -283,7 +315,6 @@ public class MapActivity extends AppCompatActivity {
         AppCompatButton show_details = view.findViewById(R.id.showDetails);
         AppCompatButton show_navigation = view.findViewById(R.id.showNavigation);
         //TextView date=view.findViewById(R.id.date);
-
         show_details.setTag(e.getId());
 
         view.setTag(e);
@@ -368,6 +399,9 @@ public class MapActivity extends AppCompatActivity {
             public void onComplete() {
                 loadArtistsRx();
                 if (Stash.getArrayList("events",Event.class) != null)
+                    events = Stash.getArrayList("events", Event.class);
+                    tmpEvents = Stash.getArrayList("events", Event.class);
+                    adapter=new ListEventAdapter(events,MapActivity.this);
                     placeEventsMarker();
                     dialog.dismiss();
             }
