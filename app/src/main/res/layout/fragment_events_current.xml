@@ -17,7 +17,6 @@
             app:iconifiedByDefault="false"
             android:elevation="8dp"
             android:translationZ="3dp"
-            android:visibility="visible"
             android:queryHint="Nom du lieu,de l'artiste..." />
 
         <ListView

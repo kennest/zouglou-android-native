@@ -86,8 +86,8 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         loader = LoaderProgress("Un instant", "Nous chargons les données");
         loader.show();
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -332,5 +332,11 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
             player.release();
         super.onDestroy();
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
 }
 

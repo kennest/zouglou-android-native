@@ -1,12 +1,12 @@
 package com.labs.botdev.zouglou.activities;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
@@ -14,10 +14,12 @@ import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.fxn.stash.Stash;
 import com.gmail.samehadar.iosdialog.IOSDialog;
@@ -37,28 +39,31 @@ import com.labs.botdev.zouglou.services.models.EventsResponse;
 import com.labs.botdev.zouglou.services.models.PlacesResponse;
 import com.labs.botdev.zouglou.utils.Constants;
 import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.annotations.Icon;
-import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.mapboxsdk.annotations.MarkerView;
-import com.mapbox.mapboxsdk.annotations.MarkerViewOptions;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.offline.OfflineTilePyramidRegionDefinition;
 import com.mapbox.mapboxsdk.plugins.building.BuildingPlugin;
 import com.mapbox.mapboxsdk.plugins.cluster.MarkerManager;
 import com.mapbox.mapboxsdk.plugins.cluster.clustering.ClusterManagerPlugin;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
 import com.mapbox.mapboxsdk.plugins.locationlayer.modes.RenderMode;
+import com.mapbox.mapboxsdk.plugins.offline.model.NotificationOptions;
+import com.mapbox.mapboxsdk.plugins.offline.model.OfflineDownloadOptions;
+import com.mapbox.mapboxsdk.plugins.offline.offline.OfflinePlugin;
+import com.mapbox.mapboxsdk.plugins.offline.utils.OfflineUtils;
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin;
 import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigation;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
-
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -67,9 +72,7 @@ import io.reactivex.schedulers.Schedulers;
 import rx.functions.Action1;
 
 public class MapActivity extends AppCompatActivity {
-    TextView title, snippet, detail_sheet_title;
-    ImageView picture;
-    FloatingActionButton menu,traffic;
+    FloatingActionButton menu, traffic;
     double longitude;
     double latitude;
     IOSDialog dialog;
@@ -79,14 +82,19 @@ public class MapActivity extends AppCompatActivity {
     private MapboxMap map;
     private MapboxNavigation navigation;
     private TrackGPS gps;
-    View bottomsheet;
-    private BottomSheetBehavior mbottomSheetBehavior;
     private LocationLayerPlugin locationPlugin;
     SearchView searchView;
     ListEventAdapter adapter;
     private BuildingPlugin buildingPlugin;
     private TrafficPlugin trafficPlugin;
     ClusterManagerPlugin clusterManagerPlugin;
+    MarkerManager markerManager;
+    LatLngBounds latLngBounds;
+    BottomSheetDialog bottomdialog;
+    View view;
+    FrameLayout suggestion;
+    TextView suggestionTxt;
+    View suggestion_item;
 
     @SuppressLint("CheckResult")
     @Override
@@ -99,43 +107,23 @@ public class MapActivity extends AppCompatActivity {
         setContentView(R.layout.activity_map);
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
-        searchView=findViewById(R.id.searchview);
-        traffic=findViewById(R.id.traffic);
+        searchView = findViewById(R.id.searchview);
+        traffic = findViewById(R.id.traffic);
+
+        suggestion=findViewById(R.id.suggestion);
+        suggestion_item=getLayoutInflater().inflate(R.layout.suggestion_item,null);
+        suggestionTxt=suggestion_item.findViewById(R.id.suggestionTxt);
+
         dialog = LoaderProgress("Un instant", "Nous chargons les données");
-        bottomsheet = findViewById(R.id.details_sheet);
-        mbottomSheetBehavior = BottomSheetBehavior.from(bottomsheet);
+       // mbottomSheetBehavior = BottomSheetBehavior.from(bottomsheet);
         searchView.setQueryHint("Nom artiste,maquis...");
         searchView.setIconified(true);
-
-        mbottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                switch (newState) {
-                    case BottomSheetBehavior.STATE_EXPANDED:
-                        menu.setVisibility(View.GONE);
-                        break;
-                    case BottomSheetBehavior.STATE_DRAGGING:
-                        menu.setVisibility(View.GONE);
-                        break;
-                    case BottomSheetBehavior.STATE_COLLAPSED:
-                        menu.setVisibility(View.VISIBLE);
-                        break;
-                    case BottomSheetBehavior.STATE_HIDDEN:
-                        menu.setVisibility(View.VISIBLE);
-                        break;
-                }
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-            }
-        });
 
         menu = findViewById(R.id.menu);
         menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Stash.put("events", tmpEvents);
                 startActivity(new Intent(MapActivity.this, ListEventsActivity.class));
             }
         });
@@ -158,11 +146,14 @@ public class MapActivity extends AppCompatActivity {
             //Rechercher sur la carte(Not finished yet!!)
             @Override
             public boolean onQueryTextChange(String newText) {
-                if(newText.matches("")){
+                if (newText.matches("")) {
                     Stash.put("events", tmpEvents);
                     clearMap();
                     placeEventsMarker();
-                }else {
+                    filterZoomIn(tmpEvents);
+                    suggestion.removeAllViews();
+                    suggestion.setVisibility(View.GONE);
+                } else {
                     if (adapter != null) {
                         adapter.getFilter().filter(newText);
                         adapter.notifyDataSetChanged();
@@ -170,6 +161,12 @@ public class MapActivity extends AppCompatActivity {
                         Stash.put("events", events);
                         clearMap();
                         placeEventsMarker();
+                        filterZoomIn(events);
+                        suggestion.removeAllViews();
+                        suggestionTxt.setText("");
+                        suggestionTxt.setText(String.format(Locale.FRENCH,"%d endroit(s) trouve(s)", events.size()));
+                        suggestion.addView(suggestion_item);
+                        suggestion.setVisibility(View.VISIBLE);
                     }
                 }
                 return false;
@@ -179,10 +176,13 @@ public class MapActivity extends AppCompatActivity {
         searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus){
+                if (!hasFocus) {
                     Stash.put("events", tmpEvents);
                     clearMap();
                     placeEventsMarker();
+                    filterZoomIn(tmpEvents);
+                    suggestion.removeAllViews();
+                    suggestion.setVisibility(View.GONE);
                 }
             }
         });
@@ -223,7 +223,7 @@ public class MapActivity extends AppCompatActivity {
             Stash.put("my_position", me);
 
             PlaceMe();
-
+            zoomIn();
             //Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
         } else {
             gps.showSettingsAlert();
@@ -234,7 +234,7 @@ public class MapActivity extends AppCompatActivity {
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
-                map=mapboxMap;
+                map = mapboxMap;
                 locationPlugin = new LocationLayerPlugin(mapView, mapboxMap);
                 locationPlugin.setRenderMode(RenderMode.COMPASS);
                 getLifecycle().addObserver(locationPlugin);
@@ -245,7 +245,7 @@ public class MapActivity extends AppCompatActivity {
 
                 trafficPlugin = new TrafficPlugin(mapView, mapboxMap);
                 trafficPlugin.setVisibility(true);
-                clusterManagerPlugin=new ClusterManagerPlugin(MapActivity.this,mapboxMap);
+                clusterManagerPlugin = new ClusterManagerPlugin(MapActivity.this, mapboxMap);
             }
         });
 
@@ -259,7 +259,45 @@ public class MapActivity extends AppCompatActivity {
         });
     }
 
-    private void clearMap(){
+    private void zoomIn() {
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(MapboxMap mapboxMap) {
+                LatLng me = (LatLng) Stash.getObject("my_position", LatLng.class);
+                CameraPosition position = new CameraPosition.Builder()
+                        .target(me) // Sets the new camera position
+                        .zoom(10) // Sets the zoom
+                        .bearing(25) // Rotate the camera
+                        .tilt(30) // Set the camera tilt
+                        .build();
+                mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 5000);
+            }
+        });
+    }
+
+    private void filterZoomIn(List<Event> events) {
+        List<LatLng> latLngs = new ArrayList<>();
+        for (Event e : events) {
+            LatLng p = new LatLng(Double.parseDouble(e.place.address.getLatitude()), Double.parseDouble(e.place.address.getLongitude()));
+            latLngs.add(p);
+        }
+        LatLng me = (LatLng) Stash.getObject("my_position", LatLng.class);
+        latLngs.add(me);
+        if(latLngs.size()>1) {
+            latLngBounds=null;
+            latLngBounds = new LatLngBounds.Builder()
+                    .includes(latLngs)
+                    .build();
+            mapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(MapboxMap mapboxMap) {
+                    mapboxMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 50), 7000);
+                }
+            });
+        }
+    }
+
+    private void clearMap() {
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
@@ -269,7 +307,7 @@ public class MapActivity extends AppCompatActivity {
         });
     }
 
-    private void startPusherServiceEvent(){
+    private void startPusherServiceEvent() {
         Intent intent = new Intent(getApplicationContext(), PusherEventService.class);
         // manager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,calendar.getTimeInMillis(),manager.INTERVAL_HALF_HOUR,intent);
         stopService(intent);
@@ -295,18 +333,23 @@ public class MapActivity extends AppCompatActivity {
                 mapboxMap.setOnMarkerClickListener(new MapboxMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(@NonNull Marker marker) {
-                        if (Integer.parseInt(marker.getTitle()) == 0) {
-                            Toast.makeText(MapActivity.this, marker.getSnippet(), Toast.LENGTH_LONG).show();
-                            return false;
-                        } else {
-                            showDetails(Integer.parseInt(marker.getTitle()));
-                            if (mbottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
-                                mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                        if (marker != null) {
+                            if (Integer.parseInt(marker.getTitle()) == 0) {
+                                Toast.makeText(MapActivity.this, marker.getSnippet(), Toast.LENGTH_LONG).show();
+                                return false;
                             } else {
-                                mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                                mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                                showDetails(Integer.parseInt(marker.getTitle()));
+
+//                                if (mbottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+//                                    mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+//                                } else {
+//                                    mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+//                                    mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+//                                }
+                                return true;
                             }
-                            return true;
+                        } else {
+                            return false;
                         }
                     }
 
@@ -317,7 +360,7 @@ public class MapActivity extends AppCompatActivity {
 
     public void showDetails(int id) {
         String base_url = Constants.UPLOAD_URL;
-        LinearLayout view = findViewById(R.id.bottom_sheet);
+        view = getLayoutInflater().inflate(R.layout.fragment_bottom_sheet_details,null);
         com.labs.botdev.zouglou.services.models.Event e = new Event();
 
         for (Event n : events) {
@@ -347,7 +390,11 @@ public class MapActivity extends AppCompatActivity {
 
         String artist_str = "";
         for (Artist a : e.artists) {
-            artist_str = a.getName() + ",";
+            if (artist_str.equals("")) {
+                artist_str = a.getName();
+            } else {
+                artist_str = artist_str + "," + a.getName();
+            }
         }
 
         artists.setText(artist_str);
@@ -368,6 +415,11 @@ public class MapActivity extends AppCompatActivity {
                 ShowOnMap(Double.parseDouble(finalE.place.address.getLatitude()), Double.parseDouble(finalE.place.address.getLongitude()));
             }
         });
+
+        bottomdialog=null;
+        bottomdialog = new BottomSheetDialog(MapActivity.this);
+        bottomdialog.setContentView(view);
+        bottomdialog.show();
     }
 
     protected void ShowOnMap(Double lat, Double lon) {
@@ -390,6 +442,7 @@ public class MapActivity extends AppCompatActivity {
 
     private void OfflineSyncData() {
         placeEventsMarker();
+        filterZoomIn(events);
     }
 
     private void loadEventsRx() {
@@ -402,7 +455,7 @@ public class MapActivity extends AppCompatActivity {
 
             @Override
             public void onNext(EventsResponse response) {
-                Stash.put("events",response.getEvents());
+                Stash.put("events", response.getEvents());
                 //FastSave.getInstance().saveObjectsList("events", response.getEvents());
             }
 
@@ -416,12 +469,15 @@ public class MapActivity extends AppCompatActivity {
             @Override
             public void onComplete() {
                 loadArtistsRx();
-                if (Stash.getArrayList("events",Event.class) != null)
+                if (Stash.getArrayList("events", Event.class) != null)
                     events = Stash.getArrayList("events", Event.class);
                     tmpEvents = Stash.getArrayList("events", Event.class);
-                    adapter=new ListEventAdapter(events,MapActivity.this);
+                    adapter = new ListEventAdapter(events, MapActivity.this);
                     placeEventsMarker();
                     dialog.dismiss();
+                    filterZoomIn(events);
+                    //zoomIn();
+                //offlineMap();
             }
         };
 
@@ -443,7 +499,7 @@ public class MapActivity extends AppCompatActivity {
 
             @Override
             public void onNext(ArtistsResponse response) {
-                Stash.put("artists",response.getArtists());
+                Stash.put("artists", response.getArtists());
                 //FastSave.getInstance().saveObjectsList("artists", response.getArtists());
             }
 
@@ -475,7 +531,7 @@ public class MapActivity extends AppCompatActivity {
 
             @Override
             public void onNext(PlacesResponse response) {
-                Stash.put("places",response.getPlaces());
+                Stash.put("places", response.getPlaces());
                 //FastSave.getInstance().saveObjectsList("places", response.getPlaces());
             }
 
@@ -507,7 +563,31 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
+    private void offlineMap() {
+        OfflineTilePyramidRegionDefinition definition = new OfflineTilePyramidRegionDefinition(
+                "https://api.mapbox.com/styles/v1/bumblebee47/cjmhpisnl3eep2so8gt0a4fsz.html?fresh=true&title=true&access_token=pk.eyJ1IjoiYnVtYmxlYmVlNDciLCJhIjoiY2phdjA0Ym11MHFodjJ6bjAxbnF2NXdtayJ9.WW82rcFdL6_o4pVs1itgcQ#12.0/48.866500/2.317600/0",
+                new LatLngBounds.Builder()
+                        .include(new LatLng(8.21174, -5.68668))
+                        .include(new LatLng(8.21174, -5.68668))
+                        .build(),
+                5,
+                8,
+                getResources().getDisplayMetrics().density
+        );
 
+        NotificationOptions notificationOptions = NotificationOptions.builder(this)
+                .smallIconRes(R.drawable.mapbox_logo_icon)
+                .returnActivity(MapActivity.class.getName())
+                .build();
+
+        OfflinePlugin.getInstance(this).startDownload(
+                OfflineDownloadOptions.builder()
+                        .definition(definition)
+                        .metadata(OfflineUtils.convertRegionName("Ivory-Coast"))
+                        .notificationOptions(notificationOptions)
+                        .build()
+        );
+    }
 
     @Override
     public void onStart() {

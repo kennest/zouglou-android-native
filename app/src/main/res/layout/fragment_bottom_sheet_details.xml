@@ -1,78 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="400dp"
     android:background="@color/grey_200"
+    android:padding="10dp"
     android:clickable="true"
     android:elevation="2dp"
     android:foreground="?attr/selectableItemBackground"
-    android:orientation="vertical"
-    android:weightSum="8">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:elevation="2dp"
-        android:padding="10dp"
-        android:text="Details"
-        android:textColor="@color/grey_600"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="top"
-        android:orientation="horizontal">
+    android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="257dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:id="@+id/picture"
+            android:layout_width="match_parent"
+            android:layout_height="190dp"
             tools:srcCompat="@tools:sample/avatars[0]" />
 
-        <include layout="@layout/event_item" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="title"
+            android:textColor="@color/black"
+            android:textSize="35sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/place"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="place"
+            android:textColor="@color/grey_600"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/artists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="artists"
+            android:textColor="@color/dark_gray"
+            android:textSize="15sp" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal">
+            android:gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/showDetails"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:background="@color/grey_300"
-            android:clickable="true"
-            android:elevation="2dp"
-            android:foreground="?attr/selectableItemBackground"
-            android:text="Details..."
-            android:textColor="@android:color/holo_blue_dark"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/showDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@color/grey_300"
+                android:clickable="true"
+                android:elevation="2dp"
+                android:foreground="?attr/selectableItemBackground"
+                android:text="Details..."
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/showNavigation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:background="@color/grey_300"
-            android:clickable="true"
-            android:elevation="2dp"
-            android:foreground="?attr/selectableItemBackground"
-            android:text="Je veux m'y rendre..."
-            android:textColor="@android:color/holo_blue_dark"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/showNavigation"
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@color/grey_300"
+                android:clickable="true"
+                android:elevation="2dp"
+                android:foreground="?attr/selectableItemBackground"
+                android:text="Je veux m'y rendre..."
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
+        </LinearLayout>
     </LinearLayout>
-
-</LinearLayout>

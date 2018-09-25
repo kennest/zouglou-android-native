@@ -102,6 +102,7 @@ public class OnboardActivity extends AhoyOnboarderActivity {
         Stash.put("onboardpassed", true);
         Intent map = new Intent(this, MapActivity.class);
         startActivity(map);
+        finish();
     }
 
     protected void checkOnboardPassed() {
@@ -109,6 +110,7 @@ public class OnboardActivity extends AhoyOnboarderActivity {
         if (passed) {
             Intent map = new Intent(this, MapActivity.class);
             startActivity(map);
+            finish();
         }
     }
 

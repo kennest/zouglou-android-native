@@ -1,6 +1,8 @@
 package com.labs.botdev.zouglou.activities;
 
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     LoginButton loginButton;
     CallbackManager callbackManager;
     private AccessToken mAccessToken;
+    MediaPlayer mp;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,6 +105,9 @@ public class LoginActivity extends AppCompatActivity {
                         call.enqueue(new Callback() {
                             @Override
                             public void onResponse(Call call, Response response) {
+                                if(response.code()==200){
+                                    playSound("store.mp3");
+                                }
                                 Toast.makeText(getApplicationContext(),"Zouglou Server saved: "+response.toString(), Toast.LENGTH_LONG).show();
                             }
 
@@ -119,6 +125,19 @@ public class LoginActivity extends AppCompatActivity {
         parameters.putString("fields", "id,name,email,picture.width(100),gender,birthday");
         request.setParameters(parameters);
         request.executeAsync();
+    }
+
+    private void playSound(String fileName) {
+        mp = new MediaPlayer();
+        try {
+            AssetFileDescriptor afd = getApplicationContext().getAssets().openFd(fileName);
+            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+            mp.prepare();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mp.start();
     }
 
     private void Logout() {

@@ -57,14 +57,15 @@ public class ListArtistsActivity extends AppCompatActivity {
         });
 
         setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     @Override
     public boolean onNavigateUp() {
-        onBackPressed();
+        Intent main=new Intent(ListArtistsActivity.this,ListEventsActivity.class);
+        main.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        startActivity(main);
         return super.onNavigateUp();
     }
 

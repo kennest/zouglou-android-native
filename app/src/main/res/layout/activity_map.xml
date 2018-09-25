@@ -20,16 +20,30 @@
 
     </android.support.v7.widget.SearchView-->
 
-    <android.support.v7.widget.SearchView
-        android:id="@+id/searchview"
+    <LinearLayout
+        android:id="@+id/top_actions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        app:iconifiedByDefault="false"
-        android:elevation="8dp"
         android:translationZ="3dp"
-        android:visibility="visible"
-        android:queryHint="Nom du lieu,de l'artiste..."/>
+        android:elevation="8dp"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.SearchView
+            android:id="@+id/searchview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:queryHint="Nom du lieu,de l'artiste..."
+            app:iconifiedByDefault="false" />
+
+        <FrameLayout
+            android:id="@+id/suggestion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+        </FrameLayout>
+    </LinearLayout>
 
     <com.mapbox.mapboxsdk.maps.MapView
         android:id="@+id/mapView"
@@ -37,26 +51,10 @@
         android:layout_height="match_parent"
         mapbox:mapbox_cameraTargetLat="5.339547"
         mapbox:mapbox_cameraTargetLng="-4.026484"
-        mapbox:mapbox_cameraZoom="10"
-        mapbox:mapbox_cameraZoomMin="6">
+        mapbox:mapbox_cameraZoom="1"
+        mapbox:mapbox_cameraZoomMin="2">
 
     </com.mapbox.mapboxsdk.maps.MapView>
-
-    <android.support.v4.widget.NestedScrollView
-        android:id="@+id/details_sheet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:translationZ="3dp"
-        android:elevation="8dp"
-        app:behavior_hideable="true"
-        app:behavior_peekHeight="0dp"
-        app:layout_behavior="@string/bottom_sheet_behavior">
-
-        <include
-            android:id="@+id/bottom_sheet"
-            layout="@layout/fragment_bottom_sheet_details" />
-
-    </android.support.v4.widget.NestedScrollView>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -70,8 +68,6 @@
             android:id="@+id/menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/ic_view_list_white_36dp"
@@ -83,7 +79,6 @@
             android:backgroundTint="#F25731"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/ic_traffic_light_white_48dp"

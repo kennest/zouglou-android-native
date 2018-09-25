@@ -124,7 +124,7 @@ public class ListArtistAdapter extends BaseAdapter implements Filterable {
         protected void publishResults(CharSequence constraint, FilterResults results) {
             adapter.artists = (List<com.labs.botdev.zouglou.services.models.Artist>) results.values;
             Stash.put("filter_artists",adapter.artists);
-            Toast.makeText(adapter.context,"Filtering artists "+adapter.artists.size(),Toast.LENGTH_LONG).show();
+            //Toast.makeText(adapter.context,"Filtering artists "+adapter.artists.size(),Toast.LENGTH_LONG).show();
             adapter.notifyDataSetChanged();
         }
     }
