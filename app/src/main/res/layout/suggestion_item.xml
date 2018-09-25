@@ -18,9 +18,9 @@
             android:id="@+id/suggestionTxt"
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:gravity="center_horizontal"
+            android:gravity="start"
             android:hint="suggestions"
-            android:textSize="20sp" />
+            android:textSize="15sp" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -164,7 +164,11 @@ public class MapActivity extends AppCompatActivity {
                         filterZoomIn(events);
                         suggestion.removeAllViews();
                         suggestionTxt.setText("");
-                        suggestionTxt.setText(String.format(Locale.FRENCH,"%d endroit(s) trouve(s)", events.size()));
+                        if(events.size()>1) {
+                            suggestionTxt.setText(String.format(Locale.FRENCH, "%d endroits trouvés pour [%s]", events.size(), newText));
+                        }else{
+                            suggestionTxt.setText(String.format(Locale.FRENCH, "%d endroit trouvé pour [%s]", events.size(), newText));
+                        }
                         suggestion.addView(suggestion_item);
                         suggestion.setVisibility(View.VISIBLE);
                     }
