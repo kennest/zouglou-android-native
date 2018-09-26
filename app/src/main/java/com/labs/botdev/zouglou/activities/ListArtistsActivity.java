@@ -30,7 +30,6 @@ public class ListArtistsActivity extends AppCompatActivity {
         lv_artists = findViewById(R.id.lv_artists);
         toolbar = findViewById(R.id.toolbar);
         searchView=findViewById(R.id.searchview);
-        toolbar.setTitle("Liste des Personnages du Zouglou");
         artists = Stash.getArrayList("artists", Artist.class);
         artistAdapter = new ListArtistAdapter(this, artists);
         searchView.setQueryHint("Nom de l'artiste...");
@@ -56,23 +55,24 @@ public class ListArtistsActivity extends AppCompatActivity {
             }
         });
 
+        toolbar.setTitle("Liste des Personnages du Zouglou");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
-    @Override
-    public boolean onNavigateUp() {
-        Intent main=new Intent(ListArtistsActivity.this,ListEventsActivity.class);
-        main.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-        startActivity(main);
-        return super.onNavigateUp();
-    }
 
     @Override
     public void onBackPressed() {
         Intent main=new Intent(ListArtistsActivity.this,ListEventsActivity.class);
         main.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         startActivity(main);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 }

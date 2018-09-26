@@ -31,8 +31,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.ListEventsActivity" />
-        <activity android:name=".activities.DetailsEventActivity" />
+        <activity android:name=".activities.ListEventsActivity"
+            android:launchMode="singleTop"/>
+        <activity android:name=".activities.DetailsEventActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.ListEventsActivity" />
+        </activity>
         <activity android:name=".activities.DoNavigationActivity" />
         <activity android:name=".activities.LoginActivity" />
         <activity android:name=".activities.MapActivity" />

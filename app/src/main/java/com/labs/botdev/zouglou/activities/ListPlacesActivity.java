@@ -34,7 +34,8 @@ Toolbar toolbar;
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+       getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        getSupportActionBar().setHomeButtonEnabled(true);
 
         places= Stash.getArrayList("places",Place.class);
         adapter=new ListPlaceAdapter(places,this);
@@ -54,19 +55,11 @@ Toolbar toolbar;
         });
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        Intent events=new Intent(ListPlacesActivity.this,ListEventsActivity.class);
-//        events.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-//        startActivity(events);
-//    }
 
     @Override
-    public boolean onNavigateUp() {
-        Intent main=new Intent(ListPlacesActivity.this,ListEventsActivity.class);
-        main.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-        startActivity(main);
-        return super.onNavigateUp();
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 
     @Override

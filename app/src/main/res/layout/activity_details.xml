@@ -46,8 +46,7 @@
                 android:visibility="visible"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light" /-->
-            <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+            <android.support.v7.widget.Toolbar
                 android:id="@+id/anim_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"

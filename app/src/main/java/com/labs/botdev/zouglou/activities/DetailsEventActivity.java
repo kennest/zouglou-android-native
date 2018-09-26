@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -87,10 +88,6 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         loader.show();
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
 
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
         Intent intent = getIntent();
         int id = intent.getIntExtra("event_id", 0);
 
@@ -121,6 +118,10 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         collapsingToolbarLayout.setTitle(e.getTitle());
 
         toolbar.setTitle(e.getBegin());
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         loadArtists(e.artists);
 
         InitAppBar();
@@ -236,6 +237,7 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
 
     @Override
     public boolean onNavigateUp() {
+        Toast.makeText(getApplicationContext(),"Arrow Clicked",Toast.LENGTH_LONG).show();
         onBackPressed();
         return true;
     }
