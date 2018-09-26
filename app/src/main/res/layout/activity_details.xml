@@ -93,7 +93,7 @@
             app:fabSize="normal" />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/share"
+            android:id="@+id/share_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -126,7 +126,7 @@
             app:srcCompat="@drawable/ic_navigation_white_48dp" />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/bottom_share"
+            android:id="@+id/share_bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"

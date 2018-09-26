@@ -1,4 +1,4 @@
-package com.labs.botdev.zouglou.services.models;
+package com.labs.botdev.zouglou.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

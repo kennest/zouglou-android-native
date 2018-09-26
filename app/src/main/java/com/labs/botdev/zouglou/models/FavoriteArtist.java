@@ -1,4 +1,4 @@
-package com.labs.botdev.zouglou.services.models;
+package com.labs.botdev.zouglou.models;
 
 public class FavoriteArtist {
     private int artist_id;

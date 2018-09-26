@@ -12,7 +12,7 @@ import android.widget.SearchView;
 import com.fxn.stash.Stash;
 import com.gmail.samehadar.iosdialog.IOSDialog;
 import com.labs.botdev.zouglou.R;
-import com.labs.botdev.zouglou.services.models.Event;
+import com.labs.botdev.zouglou.models.Event;
 
 import java.util.List;
 

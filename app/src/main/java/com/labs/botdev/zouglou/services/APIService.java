@@ -1,15 +1,13 @@
 package com.labs.botdev.zouglou.services;
 
 import com.google.gson.JsonObject;
-import com.labs.botdev.zouglou.models.User;
-import com.labs.botdev.zouglou.services.models.Artist;
-import com.labs.botdev.zouglou.services.models.ArtistsResponse;
-import com.labs.botdev.zouglou.services.models.CustomerResponse;
-import com.labs.botdev.zouglou.services.models.EventsResponse;
-import com.labs.botdev.zouglou.services.models.FavoriteArtist;
-import com.labs.botdev.zouglou.services.models.FavoritePlace;
-import com.labs.botdev.zouglou.services.models.Place;
-import com.labs.botdev.zouglou.services.models.PlacesResponse;
+import com.labs.botdev.zouglou.models.Customer;
+import com.labs.botdev.zouglou.models.ArtistsResponse;
+import com.labs.botdev.zouglou.models.CustomerResponse;
+import com.labs.botdev.zouglou.models.EventsResponse;
+import com.labs.botdev.zouglou.models.FavoriteArtist;
+import com.labs.botdev.zouglou.models.FavoritePlace;
+import com.labs.botdev.zouglou.models.PlacesResponse;
 
 import io.reactivex.Observable;
 import retrofit2.Call;
@@ -42,8 +40,8 @@ public interface APIService {
     @GET("api/placeshistory")
     Observable<PlacesResponse> getPlacesHistory();
 
-    @GET("api/customer/{fb_id?}")
-    Observable<CustomerResponse> getCustomerInfo(@Path("fb_id") String fb_id);
+    @GET("api/customer/{fb_id}")
+    Call<Customer> getCustomerInfo(@Path("fb_id") String fb_id);
 
     @Headers({"Content-Type: application/json","Accept:application/json"})
     @POST("api/favoriteartist")
@@ -55,6 +53,6 @@ public interface APIService {
 
     @Headers({"Content-Type: application/json","Accept:application/json"})
     @POST("api/addcustomer")
-    Call<JsonObject> addCustomer(@Body User request);
+    Call<JsonObject> addCustomer(@Body Customer request);
 
 }

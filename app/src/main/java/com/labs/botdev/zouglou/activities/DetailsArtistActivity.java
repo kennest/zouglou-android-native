@@ -37,7 +37,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.labs.botdev.zouglou.R;
-import com.labs.botdev.zouglou.services.models.Artist;
+import com.labs.botdev.zouglou.models.Artist;
 import com.labs.botdev.zouglou.utils.Constants;
 
 import java.util.ArrayList;

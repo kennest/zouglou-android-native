@@ -5,14 +5,19 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.media.MediaPlayer;
 import android.support.multidex.MultiDexApplication;
 import com.fxn.stash.Stash;
+import com.google.android.gms.ads.MobileAds;
+import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.services.APIClient;
 import com.labs.botdev.zouglou.services.APIService;
 
 public class AppController extends MultiDexApplication {
     static APIService service;
     private static AppController mInstance;
+    MediaPlayer mp;
 
     public static synchronized AppController getInstance() {
         return mInstance;
@@ -40,5 +45,18 @@ public class AppController extends MultiDexApplication {
     public void quitApp() {
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(1);
+    }
+
+    public void playSound(String fileName) {
+        mp = new MediaPlayer();
+        try {
+            AssetFileDescriptor afd = getApplicationContext().getAssets().openFd(fileName);
+            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+            mp.prepare();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mp.start();
     }
 }

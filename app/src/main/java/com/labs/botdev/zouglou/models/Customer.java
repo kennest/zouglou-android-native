@@ -1,20 +1,57 @@
 package com.labs.botdev.zouglou.models;
 
-public class User {
-    private String id;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+import java.util.List;
+
+public class Customer implements Serializable {
+    @SerializedName("id")
+    @Expose
+    private int id;
+
+    @SerializedName("name")
+    @Expose
     private String name;
+
+    @SerializedName("email")
+    @Expose
     private String email;
+
+    @SerializedName("picture")
+    @Expose
     private String picture;
+
+    @SerializedName("token")
+    @Expose
     private String token;
+
+    @SerializedName("birthday")
+    @Expose
     private String birthday;
+
+    @SerializedName("gender")
+    @Expose
     private String gender;
+
+    @SerializedName("fb_id")
+    @Expose
     private String fb_id;
 
-    public String getId() {
+    @SerializedName("artists")
+    @Expose
+    public List<Artist> artists;
+
+    @SerializedName("places")
+    @Expose
+    public List<Place> places;
+
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -72,5 +109,21 @@ public class User {
 
     public void setFb_id(String fb_id) {
         this.fb_id = fb_id;
+    }
+
+    public List<Artist> getArtists() {
+        return artists;
+    }
+
+    public void setArtists(List<Artist> artists) {
+        this.artists = artists;
+    }
+
+    public List<Place> getPlaces() {
+        return places;
+    }
+
+    public void setPlaces(List<Place> places) {
+        this.places = places;
     }
 }

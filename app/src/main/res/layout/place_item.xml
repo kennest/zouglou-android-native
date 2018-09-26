@@ -10,6 +10,19 @@
     android:translationZ="3dp"
     android:foreground="?attr/selectableItemBackground">
 
+
+        <TextView
+            app:layout_anchor="@+id/picture"
+            android:id="@+id/followedTxt"
+            android:textSize="25sp"
+            android:visibility="gone"
+            android:background="@color/mapboxYellow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Vous suivez ce endroit"
+            android:translationZ="3dp"
+            android:textColor="@color/white"/>
+
     <ImageView
         android:id="@+id/picture"
         android:layout_width="match_parent"

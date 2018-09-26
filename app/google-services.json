@@ -1,0 +1,43 @@
+{
+  "project_info": {
+    "project_number": "255941145436",
+    "firebase_url": "https://zouglou-185314.firebaseio.com",
+    "project_id": "zouglou-185314",
+    "storage_bucket": "zouglou-185314.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:255941145436:android:695626f235152b22",
+        "android_client_info": {
+          "package_name": "com.labs.botdev.zouglou"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "255941145436-dt1g50acjgfun4i7vmtvpselg54hjpq8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6j3as88dI1o_XgoHdPDmZ3EZju8ERDE4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      },
+      "admob_app_id": "ca-app-pub-3139652425216188~1464104929"
+    }
+  ],
+  "configuration_version": "1"
+}

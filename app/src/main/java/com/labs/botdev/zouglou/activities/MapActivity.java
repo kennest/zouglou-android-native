@@ -7,7 +7,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +17,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +25,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.fxn.stash.Stash;
 import com.gmail.samehadar.iosdialog.IOSDialog;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.jetradarmobile.rxlocationsettings.RxLocationSettings;
@@ -36,11 +35,11 @@ import com.labs.botdev.zouglou.services.APIClient;
 import com.labs.botdev.zouglou.services.APIService;
 import com.labs.botdev.zouglou.services.PusherEventService;
 import com.labs.botdev.zouglou.services.TrackGPS;
-import com.labs.botdev.zouglou.services.models.Artist;
-import com.labs.botdev.zouglou.services.models.ArtistsResponse;
-import com.labs.botdev.zouglou.services.models.Event;
-import com.labs.botdev.zouglou.services.models.EventsResponse;
-import com.labs.botdev.zouglou.services.models.PlacesResponse;
+import com.labs.botdev.zouglou.models.Artist;
+import com.labs.botdev.zouglou.models.ArtistsResponse;
+import com.labs.botdev.zouglou.models.Event;
+import com.labs.botdev.zouglou.models.EventsResponse;
+import com.labs.botdev.zouglou.models.PlacesResponse;
 import com.labs.botdev.zouglou.utils.Constants;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Marker;
@@ -67,7 +66,7 @@ import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
+
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -362,7 +361,7 @@ public class MapActivity extends AppCompatActivity {
     public void showDetails(int id) {
         String base_url = Constants.UPLOAD_URL;
         view = getLayoutInflater().inflate(R.layout.fragment_bottom_sheet_details,null);
-        com.labs.botdev.zouglou.services.models.Event e = new Event();
+        Event e = new Event();
         events=Stash.getArrayList("events",Event.class);
         for (Event n : events) {
             if (n.getId() == id) {

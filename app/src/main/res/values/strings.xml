@@ -12,4 +12,5 @@
     <string name="facebook_app_id">347726122436559</string>
     <string name="fb_login_protocol_scheme">fb347726122436559</string>
     <string name="mapKey">AIzaSyAm22782Qnz2c0pr4KguKqfv-ZvazalvG0</string>
+    <string name="admobkey">ca-app-pub-3139652425216188~1464104929</string>
 </resources>

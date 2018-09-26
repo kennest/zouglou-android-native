@@ -9,6 +9,8 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,11 +44,17 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.labs.botdev.zouglou.R;
-import com.labs.botdev.zouglou.services.models.Artist;
-import com.labs.botdev.zouglou.services.models.Event;
+import com.labs.botdev.zouglou.models.Artist;
+import com.labs.botdev.zouglou.models.Event;
 import com.labs.botdev.zouglou.utils.Constants;
+import com.labs.botdev.zouglou.utils.FetchDownloader;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +65,7 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
     ImageView event_picture;
     Toolbar toolbar;
     TextView description, place, begin, end;
-    FloatingActionButton navigation_top, navigation_bottom;
+    FloatingActionButton navigation_top, navigation_bottom,share_top,share_bottom;
     List<Event> events = new ArrayList<>();
     Event e = new Event();
     LinearLayout artists_layout, top_actions, bottom_actions;
@@ -66,11 +74,18 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
     IOSDialog loader;
     ImageView place_picture;
     CollapsingToolbarLayout collapsingToolbar;
+    private AdView mAdView;
+    FetchDownloader fetch=new FetchDownloader();
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+
+        //MobileAds.initialize(this, getString(R.string.admobkey));
+        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+
         event_picture = findViewById(R.id.header);
         toolbar = findViewById(R.id.anim_toolbar);
         description = findViewById(R.id.event_description);
@@ -80,10 +95,21 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         place_picture = findViewById(R.id.place_picture);
         navigation_top = findViewById(R.id.navigation_top);
         navigation_bottom = findViewById(R.id.navigation_bottom);
+        share_top=findViewById(R.id.share_top);
+        share_bottom=findViewById(R.id.share_bottom);
         artists_layout = findViewById(R.id.artists_layout);
         playerView = findViewById(R.id.playerView);
         top_actions = findViewById(R.id.top_actions);
         bottom_actions = findViewById(R.id.bottom_actions);
+
+        View v=findViewById(R.id.content);
+        mAdView = v.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+//        AdRequest adRequest = new AdRequest.Builder()
+//                .addTestDevice("33BE2250B43518CCDA7DE426D04EE231")  // An example device ID
+//                .build();
+        mAdView.loadAd(adRequest);
+
         loader = LoaderProgress("Un instant", "Nous chargons les données");
         loader.show();
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
@@ -141,6 +167,53 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
             }
         });
 
+        share_top.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareOnSocialNetwork(e);
+                //whatsappShare();
+            }
+        });
+
+        share_bottom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareOnSocialNetwork(e);
+            }
+        });
+
+        mAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+                Toast.makeText(getApplicationContext(),"Ads loaded",Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                // Code to be executed when an ad request fails.
+                Log.d("ADMOB_ERROR_CODE", "admob error code: " + errorCode);
+                Toast.makeText(getApplicationContext(),"Ads fail to loaded: "+errorCode,Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onAdOpened() {
+                // Code to be executed when an ad opens an overlay that
+                // covers the screen.
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+            }
+
+            @Override
+            public void onAdClosed() {
+                // Code to be executed when when the user is about to return
+                // to the app after tapping on an ad.
+            }
+        });
+
         loader.dismiss();
 //        Toast.makeText(getApplicationContext(),"Artists IDS"+e.getArtists_id(),Toast.LENGTH_LONG).show();
     }
@@ -178,6 +251,18 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
             navigation.putExtra("destination", destination);
             startActivity(navigation);
         }
+    }
+
+    private String downloadedPicture(String url,String outputfile){
+        String pic="";
+        File imgFile = new  File(Constants.EVENTS_PICTURES_DIR + outputfile);
+        if(imgFile.exists()){
+            pic=Constants.EVENTS_PICTURES_DIR + outputfile;
+        }else {
+            pic = fetch.downloadFile(this, url, Constants.EVENTS_PICTURES_DIR + outputfile);
+            Log.e("Activity Dir",Constants.EVENTS_PICTURES_DIR + outputfile);
+        }
+        return pic;
     }
 
     protected void playSample(String url, ImageView play, ImageView pause) {
@@ -228,6 +313,48 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
             parent.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             artists_layout.addView(parent);
         }
+    }
+
+    private void shareOnSocialNetwork(Event e){
+         String artist_str = "";
+        for (Artist a : e.artists) {
+            if (artist_str.equals("")) {
+                artist_str = a.getName();
+            } else {
+                artist_str = artist_str + "," + a.getName();
+            }
+        }
+        Uri pictureUri = Uri.parse(Constants.UPLOAD_URL+e.getPicture());
+        String geoUri = "http://maps.google.com/maps?q=loc:" + e.place.address.getLatitude() + "," +
+                e.place.address.getLongitude() ;
+        String text=new StringBuilder()
+                .append("\n"+Constants.UPLOAD_URL+e.getPicture())
+                .append("\n"+e.getTitle().toUpperCase())
+                .append("\n"+"ARTISTES INVITES:"+artist_str)
+                .append("\n"+"Position GPS:\n"+geoUri)
+                .toString();
+
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, text);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, pictureUri);
+        //shareIntent.setType("image/*");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, e.getTitle());
+        startActivity(Intent.createChooser(shareIntent, "Partager sur les réseaux sociaux..."));
+    }
+
+    private void whatsappShare(){
+        final Intent shareIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "The Subject");
+        shareIntent.putExtra(
+                Intent.EXTRA_TEXT,
+                Html.fromHtml(new StringBuilder()
+                        .append("<p><b>Some Content</b></p>")
+                        .append("<small><p>More content</p></small>")
+                        .toString())
+        );
     }
 
     @Override

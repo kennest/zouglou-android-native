@@ -7,15 +7,13 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
 
-import com.arlib.floatingsearchview.util.view.SearchInputView;
 import com.fxn.stash.Stash;
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.adapters.ListPlaceAdapter;
-import com.labs.botdev.zouglou.services.models.Place;
+import com.labs.botdev.zouglou.models.Place;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class ListPlacesActivity extends AppCompatActivity {
 ListView list;

@@ -2,7 +2,6 @@ package com.labs.botdev.zouglou.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +10,13 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.fxn.stash.Stash;
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.activities.DetailsEventActivity;
-import com.labs.botdev.zouglou.services.models.Artist;
+import com.labs.botdev.zouglou.models.Artist;
+import com.labs.botdev.zouglou.models.Event;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +24,13 @@ import java.util.Objects;
 
 public class ListEventAdapter extends BaseAdapter implements Filterable {
 
-    List<com.labs.botdev.zouglou.services.models.Event> filterEvents;
-    private List<com.labs.botdev.zouglou.services.models.Event> eventList;
+    List<Event> filterEvents;
+    private List<Event> eventList;
     private Context context;
     private LayoutInflater inflater;
     private ValueFilter filter;
 
-    public ListEventAdapter(List<com.labs.botdev.zouglou.services.models.Event> eventList, Context context) {
+    public ListEventAdapter(List<Event> eventList, Context context) {
         this.eventList = eventList;
         this.context = context;
         this.filterEvents = eventList;
@@ -44,7 +43,7 @@ public class ListEventAdapter extends BaseAdapter implements Filterable {
     }
 
     @Override
-    public com.labs.botdev.zouglou.services.models.Event getItem(int position) {
+    public Event getItem(int position) {
         return eventList.get(position);
     }
 
@@ -57,7 +56,7 @@ public class ListEventAdapter extends BaseAdapter implements Filterable {
     public View getView(int position, View view, ViewGroup parent) {
         String base_url = "http://www.berakatravel.com/zouglou/public/uploads/";
         view = inflater.inflate(R.layout.event_item, parent, false);
-        com.labs.botdev.zouglou.services.models.Event e = eventList.get(position);
+        Event e = eventList.get(position);
 
         ImageView picture = view.findViewById(R.id.picture);
         TextView title = view.findViewById(R.id.title);
@@ -107,10 +106,10 @@ public class ListEventAdapter extends BaseAdapter implements Filterable {
     }
 
     public class ValueFilter extends Filter {
-        List<com.labs.botdev.zouglou.services.models.Event> filterEvents;
+        List<Event> filterEvents;
         ListEventAdapter adapter;
 
-        ValueFilter(List<com.labs.botdev.zouglou.services.models.Event> filterEvents, ListEventAdapter adapter) {
+        ValueFilter(List<Event> filterEvents, ListEventAdapter adapter) {
             this.filterEvents = filterEvents;
             this.adapter = adapter;
         }
@@ -122,7 +121,7 @@ public class ListEventAdapter extends BaseAdapter implements Filterable {
 
             if (constraint != null && constraint.length() > 0) {
 
-                ArrayList<com.labs.botdev.zouglou.services.models.Event> filterList = new ArrayList<>();
+                ArrayList<Event> filterList = new ArrayList<>();
 
                 for (int i = 0; i < filterEvents.size(); i++) {
                     if ((filterEvents.get(i).getTitle().toUpperCase()).contains(constraint.toString().toUpperCase()) || (filterEvents.get(i).place.getTitle().toUpperCase()).contains(constraint.toString().toUpperCase())) {
@@ -146,7 +145,7 @@ public class ListEventAdapter extends BaseAdapter implements Filterable {
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            adapter.eventList = (List<com.labs.botdev.zouglou.services.models.Event>) results.values;
+            adapter.eventList = (List<Event>) results.values;
             Stash.put("filter_events",adapter.eventList);
             //Toast.makeText(adapter.context,"Filtering events "+adapter.eventList.size(),Toast.LENGTH_LONG).show();
             adapter.notifyDataSetChanged();

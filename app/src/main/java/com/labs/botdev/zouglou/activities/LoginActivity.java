@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -22,11 +24,14 @@ import com.facebook.login.widget.LoginButton;
 import com.fxn.stash.Stash;
 import com.google.gson.JsonObject;
 import com.labs.botdev.zouglou.R;
-import com.labs.botdev.zouglou.models.User;
+import com.labs.botdev.zouglou.models.Customer;
 import com.labs.botdev.zouglou.services.APIClient;
 import com.labs.botdev.zouglou.services.APIService;
 
 import org.json.JSONException;
+
+import java.io.IOException;
+import java.io.Serializable;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,6 +42,8 @@ public class LoginActivity extends AppCompatActivity {
     CallbackManager callbackManager;
     private AccessToken mAccessToken;
     MediaPlayer mp;
+    Boolean login=false;
+    Customer customer=new Customer();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,7 +75,15 @@ public class LoginActivity extends AppCompatActivity {
                 mAccessToken = loginResult.getAccessToken();
                 //Toast.makeText(getApplicationContext(), "Token: " + mAccessToken.getToken(), Toast.LENGTH_LONG).show();
                 getUserProfile(mAccessToken);
-                finish();
+                Intent intent=getIntent();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        setResult(201,intent);
+                        finish();
+                    }
+                },2500);
+
             }
 
             @Override
@@ -92,31 +107,13 @@ public class LoginActivity extends AppCompatActivity {
                 (object, response) -> {
                     try {
                         Log.e("FB_JSON:",""+object.toString());
-                        User user=new User();
-                        user.setEmail(object.getString("email"));
-                        user.setFb_id(object.getString("id"));
-                        user.setName(object.getString("name"));
-                        user.setPicture(object.getJSONObject("picture").getJSONObject("data").getString("url"));
-                        user.setToken(currentAccessToken.getToken());
-                        Stash.put("facebook_user",user);
+                        customer.setEmail(object.getString("email"));
+                        customer.setFb_id(object.getString("id"));
+                        customer.setName(object.getString("name"));
+                        customer.setPicture(object.getJSONObject("picture").getJSONObject("data").getString("url"));
+                        customer.setToken(currentAccessToken.getToken());
+                        Stash.put("facebook_user", customer);
                         Toast.makeText(getApplicationContext(), object.getString("name"), Toast.LENGTH_LONG).show();
-
-                        APIService service= APIClient.getClient().create(APIService.class);
-                        Call<JsonObject> call=service.addCustomer((User) Stash.getObject("facebook_user",User.class));
-                        call.enqueue(new Callback<JsonObject>() {
-                            @Override
-                            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                                if(response.code()==200){
-                                    playSound("store.mp3");
-                                }
-                                Toast.makeText(getApplicationContext(),"Zouglou Server saved: "+response.body().toString(), Toast.LENGTH_LONG).show();
-                            }
-
-                            @Override
-                            public void onFailure(Call<JsonObject> call, Throwable t) {
-                                Toast.makeText(getApplicationContext(), "Zouglou server Error"+t.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-                        });
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -126,19 +123,6 @@ public class LoginActivity extends AppCompatActivity {
         parameters.putString("fields", "id,name,email,picture.width(100),gender,birthday");
         request.setParameters(parameters);
         request.executeAsync();
-    }
-
-    private void playSound(String fileName) {
-        mp = new MediaPlayer();
-        try {
-            AssetFileDescriptor afd = getApplicationContext().getAssets().openFd(fileName);
-            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-            afd.close();
-            mp.prepare();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        mp.start();
     }
 
     private void Logout() {

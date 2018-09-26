@@ -9,7 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -17,8 +16,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.fxn.stash.Stash;
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.activities.DetailsArtistActivity;
-import com.labs.botdev.zouglou.services.models.Artist;
-import com.labs.botdev.zouglou.services.models.Event;
+import com.labs.botdev.zouglou.models.Artist;
 import com.labs.botdev.zouglou.utils.Constants;
 
 import java.util.ArrayList;
@@ -28,7 +26,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ListArtistAdapter extends BaseAdapter implements Filterable {
     private Context context;
-    List<com.labs.botdev.zouglou.services.models.Artist> filterArtists;
+    List<Artist> filterArtists;
     private List<Artist> artists;
     private LayoutInflater inflater;
     private ListArtistAdapter.ValueFilter filter;
@@ -89,10 +87,10 @@ public class ListArtistAdapter extends BaseAdapter implements Filterable {
     }
 
     public class ValueFilter extends Filter {
-        List<com.labs.botdev.zouglou.services.models.Artist> filterArtists;
+        List<Artist> filterArtists;
         ListArtistAdapter adapter;
 
-        ValueFilter(List<com.labs.botdev.zouglou.services.models.Artist> filterArtists, ListArtistAdapter adapter) {
+        ValueFilter(List<Artist> filterArtists, ListArtistAdapter adapter) {
             this.filterArtists = filterArtists;
             this.adapter = adapter;
         }
@@ -122,7 +120,7 @@ public class ListArtistAdapter extends BaseAdapter implements Filterable {
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            adapter.artists = (List<com.labs.botdev.zouglou.services.models.Artist>) results.values;
+            adapter.artists = (List<Artist>) results.values;
             Stash.put("filter_artists",adapter.artists);
             //Toast.makeText(adapter.context,"Filtering artists "+adapter.artists.size(),Toast.LENGTH_LONG).show();
             adapter.notifyDataSetChanged();

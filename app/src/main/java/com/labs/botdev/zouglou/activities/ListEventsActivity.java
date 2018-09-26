@@ -20,14 +20,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.fxn.stash.Stash;
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.adapters.DrawerListAdapter;
 import com.labs.botdev.zouglou.adapters.EventPagerAdapter;
-import com.labs.botdev.zouglou.models.User;
+import com.labs.botdev.zouglou.models.Customer;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -124,13 +123,13 @@ public class ListEventsActivity extends Activity {
         user_stats = headerView.findViewById(R.id.stats);
         user_picture = headerView.findViewById(R.id.picture);
 
-        User user = (User) Stash.getObject("facebook_user", User.class);
+        Customer customer = (Customer) Stash.getObject("facebook_user", Customer.class);
 
         Glide.with(getApplicationContext())
-                .load(user.getPicture())
+                .load(customer.getPicture())
                 .into(user_picture);
-        user_name.setText(user.getName());
-        user_stats.setText(user.getEmail());
+        user_name.setText(customer.getName());
+        user_stats.setText(customer.getEmail());
 
         DrawerListAdapter menuAdapter = new DrawerListAdapter(mMenuOptions);
         duoMenuView.setAdapter(menuAdapter);
@@ -150,7 +149,7 @@ public class ListEventsActivity extends Activity {
                         })
                         .setNegativeButton("Non,je refuse", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
+                                // Customer cancelled the dialog
                                 dialog.dismiss();
                             }
                         });
@@ -203,7 +202,7 @@ public class ListEventsActivity extends Activity {
                                 })
                                 .setNegativeButton("Non,je refuse", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        // User cancelled the dialog
+                                        // Customer cancelled the dialog
                                         dialog.dismiss();
                                     }
                                 });

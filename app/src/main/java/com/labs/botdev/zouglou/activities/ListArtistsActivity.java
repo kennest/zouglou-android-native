@@ -11,11 +11,10 @@ import android.widget.ListView;
 import com.fxn.stash.Stash;
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.adapters.ListArtistAdapter;
-import com.labs.botdev.zouglou.services.models.Artist;
+import com.labs.botdev.zouglou.models.Artist;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class ListArtistsActivity extends AppCompatActivity {
     ListView lv_artists;
