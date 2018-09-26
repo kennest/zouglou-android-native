@@ -32,8 +32,8 @@ public class PusherEventService extends Service {
             channel.bind("event-added", new SubscriptionEventListener() {
                 @Override
                 public void onEvent(String channelName, String eventName, final String data) {
-                    System.out.println(data);
                     Toast.makeText(getApplicationContext(), "Zouglou Event added...", Toast.LENGTH_LONG).show();
+                    System.out.println(data);
                 }
             });
 

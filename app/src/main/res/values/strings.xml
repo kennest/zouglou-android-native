@@ -5,10 +5,10 @@
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus ut urna ornare erat tristique faucibus eget sit amet enim. Nullam in erat nibh. Vestibulum volutpat urna eu ligula vestibulum, in porta orci pulvinar. Quisque finibus aliquam tellus, viverra viverra augue accumsan a. Etiam ante eros, tincidunt vel posuere a, sodales eu neque. Donec nec hendrerit augue, at cursus sem. Proin volutpat, erat at semper porttitor, dui tellus pellentesque mauris, ut hendrerit orci lacus lobortis elit.
     </string>
     <string name="start">C\'est parti!</string>
-    <string name="onboard2_title">feature1</string>
-    <string name="onboard2_description">feature_desc_1</string>
-    <string name="onboard3_title">feature2</string>
-    <string name="onboard3_description">feature_desc_2</string>
+    <string name="onboard2_title">Navigation et Recherche via la carte.</string>
+    <string name="onboard2_description">Trouvez vos artistes préféres là où ils se trouvent en un clic!</string>
+    <string name="onboard3_title">De la bonne zik!</string>
+    <string name="onboard3_description">Ecoutez en avant-première les morceaux de vos idoles.</string>
     <string name="facebook_app_id">347726122436559</string>
     <string name="fb_login_protocol_scheme">fb347726122436559</string>
     <string name="mapKey">AIzaSyAm22782Qnz2c0pr4KguKqfv-ZvazalvG0</string>

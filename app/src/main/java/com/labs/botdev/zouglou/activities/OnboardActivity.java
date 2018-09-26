@@ -44,7 +44,7 @@ public class OnboardActivity extends AhoyOnboarderActivity {
             facebookLogin();
         }
 
-        AhoyOnboarderCard navigationCard = new AhoyOnboarderCard(getString(R.string.onboard2_title), getString(R.string.onboard2_description), R.drawable.navigation);
+        AhoyOnboarderCard navigationCard = new AhoyOnboarderCard(getString(R.string.onboard2_title), getString(R.string.onboard2_description), R.mipmap.navigation_feature_round);
         navigationCard.setBackgroundColor(R.color.black_transparent);
         navigationCard.setTitleColor(R.color.white);
         navigationCard.setDescriptionColor(R.color.grey_200);

@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.fxn.stash.Stash;
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.activities.DoNavigationActivity;
@@ -64,6 +66,7 @@ public class ListPlaceAdapter extends BaseAdapter implements Filterable {
         Place p=placeList.get(position);
 
         Glide.with(activity)
+                .applyDefaultRequestOptions(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
                 .load(Constants.UPLOAD_URL+p.getPicture())
                 .into(picture);
 

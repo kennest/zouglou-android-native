@@ -20,6 +20,7 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.fxn.stash.Stash;
+import com.google.gson.JsonObject;
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.models.User;
 import com.labs.botdev.zouglou.services.APIClient;
@@ -93,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                         Log.e("FB_JSON:",""+object.toString());
                         User user=new User();
                         user.setEmail(object.getString("email"));
-                        user.setId(object.getString("id"));
+                        user.setFb_id(object.getString("id"));
                         user.setName(object.getString("name"));
                         user.setPicture(object.getJSONObject("picture").getJSONObject("data").getString("url"));
                         user.setToken(currentAccessToken.getToken());
@@ -101,18 +102,18 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), object.getString("name"), Toast.LENGTH_LONG).show();
 
                         APIService service= APIClient.getClient().create(APIService.class);
-                        Call call=service.addCustomer((User) Stash.getObject("facebook_user",User.class));
-                        call.enqueue(new Callback() {
+                        Call<JsonObject> call=service.addCustomer((User) Stash.getObject("facebook_user",User.class));
+                        call.enqueue(new Callback<JsonObject>() {
                             @Override
-                            public void onResponse(Call call, Response response) {
+                            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                                 if(response.code()==200){
                                     playSound("store.mp3");
                                 }
-                                Toast.makeText(getApplicationContext(),"Zouglou Server saved: "+response.toString(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(),"Zouglou Server saved: "+response.body().toString(), Toast.LENGTH_LONG).show();
                             }
 
                             @Override
-                            public void onFailure(Call call, Throwable t) {
+                            public void onFailure(Call<JsonObject> call, Throwable t) {
                                 Toast.makeText(getApplicationContext(), "Zouglou server Error"+t.getMessage(), Toast.LENGTH_LONG).show();
                             }
                         });

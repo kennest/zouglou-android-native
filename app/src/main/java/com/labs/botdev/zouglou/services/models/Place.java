@@ -10,15 +10,19 @@ public class Place {
     @SerializedName("address")
     @Expose
     public Address address;
+
     @SerializedName("events")
     @Expose
     public ArrayList<Event> events;
+
     @SerializedName("id")
     @Expose
     protected int id;
+
     @SerializedName("title")
     @Expose
     protected String title;
+
     @SerializedName("picture")
     @Expose
     protected String picture;

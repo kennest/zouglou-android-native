@@ -2,6 +2,8 @@ package com.labs.botdev.zouglou.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,6 +23,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.fxn.stash.Stash;
 import com.gmail.samehadar.iosdialog.IOSDialog;
 import com.google.android.gms.location.LocationRequest;
@@ -77,24 +81,28 @@ public class MapActivity extends AppCompatActivity {
     double latitude;
     IOSDialog dialog;
     List<Event> events = new ArrayList<>();
+    List<Event> passed_events = new ArrayList<>();
     List<Event> tmpEvents = new ArrayList<>();
+    List<Event> tmpEvents2 = new ArrayList<>();
     private MapView mapView;
     private MapboxMap map;
     private MapboxNavigation navigation;
     private TrackGPS gps;
     private LocationLayerPlugin locationPlugin;
     SearchView searchView;
-    ListEventAdapter adapter;
+    ListEventAdapter adapter,adapter2;
     private BuildingPlugin buildingPlugin;
     private TrafficPlugin trafficPlugin;
     ClusterManagerPlugin clusterManagerPlugin;
     MarkerManager markerManager;
-    LatLngBounds latLngBounds;
     BottomSheetDialog bottomdialog;
     View view;
     FrameLayout suggestion;
     TextView suggestionTxt;
     View suggestion_item;
+    private static long sayBackPress;
+    MediaPlayer mp;
+
 
     @SuppressLint("CheckResult")
     @Override
@@ -281,24 +289,23 @@ public class MapActivity extends AppCompatActivity {
 
     private void filterZoomIn(List<Event> events) {
         List<LatLng> latLngs = new ArrayList<>();
+        LatLng me = (LatLng) Stash.getObject("my_position", LatLng.class);
+        latLngs.add(me);
         for (Event e : events) {
             LatLng p = new LatLng(Double.parseDouble(e.place.address.getLatitude()), Double.parseDouble(e.place.address.getLongitude()));
             latLngs.add(p);
         }
-        LatLng me = (LatLng) Stash.getObject("my_position", LatLng.class);
-        latLngs.add(me);
-        if(latLngs.size()>1) {
-            latLngBounds=null;
-            latLngBounds = new LatLngBounds.Builder()
-                    .includes(latLngs)
-                    .build();
+
             mapView.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(MapboxMap mapboxMap) {
-                    mapboxMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 50), 7000);
+                    if(latLngs.size()>1) {
+                        mapboxMap.animateCamera(CameraUpdateFactory.newLatLngBounds(new LatLngBounds.Builder()
+                                .includes(latLngs)
+                                .build(), 50), 7000);
+                    }
                 }
             });
-        }
     }
 
     private void clearMap() {
@@ -337,24 +344,14 @@ public class MapActivity extends AppCompatActivity {
                 mapboxMap.setOnMarkerClickListener(new MapboxMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(@NonNull Marker marker) {
-                        if (marker != null) {
                             if (Integer.parseInt(marker.getTitle()) == 0) {
                                 Toast.makeText(MapActivity.this, marker.getSnippet(), Toast.LENGTH_LONG).show();
                                 return false;
                             } else {
+                                playSound("touch.mp3");
                                 showDetails(Integer.parseInt(marker.getTitle()));
-
-//                                if (mbottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
-//                                    mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-//                                } else {
-//                                    mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-//                                    mbottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-//                                }
                                 return true;
                             }
-                        } else {
-                            return false;
-                        }
                     }
 
                 });
@@ -366,7 +363,7 @@ public class MapActivity extends AppCompatActivity {
         String base_url = Constants.UPLOAD_URL;
         view = getLayoutInflater().inflate(R.layout.fragment_bottom_sheet_details,null);
         com.labs.botdev.zouglou.services.models.Event e = new Event();
-
+        events=Stash.getArrayList("events",Event.class);
         for (Event n : events) {
             if (n.getId() == id) {
                 e = n;
@@ -386,11 +383,12 @@ public class MapActivity extends AppCompatActivity {
         String url = base_url + e.getPicture();
         Glide
                 .with(getApplicationContext())
+                .applyDefaultRequestOptions(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
                 .load(url)
                 .into(picture);
 
         title.setText(e.getTitle());
-        place.setText(Objects.requireNonNull(e.place.getTitle()));
+        place.setText(e.place.getTitle());
 
         String artist_str = "";
         for (Artist a : e.artists) {
@@ -442,11 +440,18 @@ public class MapActivity extends AppCompatActivity {
 
     private void RemoteSyncData() {
         loadEventsRx();
+        loadPassedEventsRx();
     }
 
     private void OfflineSyncData() {
+        dialog.show();
+        events = Stash.getArrayList("events", Event.class);
+        tmpEvents = Stash.getArrayList("events", Event.class);
+        adapter = new ListEventAdapter(events, MapActivity.this);
         placeEventsMarker();
-        filterZoomIn(events);
+        dialog.dismiss();
+        if(!events.isEmpty())
+            filterZoomIn(events);
     }
 
     private void loadEventsRx() {
@@ -472,7 +477,6 @@ public class MapActivity extends AppCompatActivity {
 
             @Override
             public void onComplete() {
-                loadArtistsRx();
                 if (Stash.getArrayList("events", Event.class) != null)
                     events = Stash.getArrayList("events", Event.class);
                     tmpEvents = Stash.getArrayList("events", Event.class);
@@ -482,11 +486,53 @@ public class MapActivity extends AppCompatActivity {
                     filterZoomIn(events);
                     //zoomIn();
                 //offlineMap();
+                loadArtistsRx();
             }
         };
 
         APIService service = APIClient.getClient().create(APIService.class);
         Observable<EventsResponse> observable = service.getEventsList();
+        observable
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.single())
+                .subscribe(mObserver);
+    }
+
+    private void loadPassedEventsRx() {
+        Observer mObserver = new Observer<EventsResponse>() {
+            @Override
+            public void onSubscribe(Disposable disposable) {
+                dialog.show();
+                //Toast.makeText(getApplicationContext(), getLocalClassName() + " Data load Init", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onNext(EventsResponse response) {
+                Stash.put("passed_events", response.getEvents());
+                //FastSave.getInstance().saveObjectsList("events", response.getEvents());
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Toast.makeText(getApplicationContext(), "Data load Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                dialog.dismiss();
+                Log.e("Data load error: ", e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+                if (Stash.getArrayList("passed_events", Event.class) != null)
+                    passed_events = Stash.getArrayList("passed_events", Event.class);
+                    tmpEvents2 = Stash.getArrayList("passed_events", Event.class);
+                    adapter2 = new ListEventAdapter(passed_events, MapActivity.this);
+                    dialog.dismiss();
+                //zoomIn();
+                //offlineMap();
+            }
+        };
+
+        APIService service = APIClient.getClient().create(APIService.class);
+        Observable<EventsResponse> observable = service.getPassedEventsList();
         observable
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
@@ -591,6 +637,30 @@ public class MapActivity extends AppCompatActivity {
                         .notificationOptions(notificationOptions)
                         .build()
         );
+    }
+
+    private void playSound(String fileName) {
+        mp = new MediaPlayer();
+        try {
+            AssetFileDescriptor afd = getApplicationContext().getAssets().openFd(fileName);
+            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+            mp.prepare();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mp.start();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (sayBackPress + 2000 > System.currentTimeMillis()){
+            super.onBackPressed();
+        }
+        else{
+            Toast.makeText(MapActivity.this, "Appuyer sur retour encore pour sortir", Toast.LENGTH_SHORT).show();
+            sayBackPress = System.currentTimeMillis();
+        }
     }
 
     @Override

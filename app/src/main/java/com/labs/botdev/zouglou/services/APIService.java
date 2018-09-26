@@ -24,14 +24,17 @@ public interface APIService {
     @GET("api/activeevents")
     Observable<EventsResponse> getEventsList();
 
+    @GET("api/inactiveevents")
+    Observable<EventsResponse> getPassedEventsList();
+
     @GET("api/artists")
     Observable<ArtistsResponse> getArtistsList();
 
-    @GET("api/artist/{id}")
-    Observable<Artist> getArtist(@Path("id") String id);
-
-    @GET("api/places/{id}")
-    Observable<Place> getPlace(@Path("id") String id);
+//    @GET("api/artist/{id}")
+//    Observable<Artist> getArtist(@Path("id") String id);
+//
+//    @GET("api/places/{id}")
+//    Observable<Place> getPlace(@Path("id") String id);
 
     @GET("api/places")
     Observable<PlacesResponse> getPlaces();

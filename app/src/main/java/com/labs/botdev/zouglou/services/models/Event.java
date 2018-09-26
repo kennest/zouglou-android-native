@@ -9,24 +9,31 @@ public class Event {
     @SerializedName("place")
     @Expose
     public Place place;
+
     @SerializedName("artists")
     @Expose
     public ArrayList<Artist> artists;
+
     @SerializedName("id")
     @Expose
     private int id;
+
     @SerializedName("title")
     @Expose
     private String title;
+
     @SerializedName("description")
     @Expose
     private String description;
+
     @SerializedName("picture")
     @Expose
     private String picture;
+
     @SerializedName("begin")
     @Expose
     private String begin;
+
     @SerializedName("end")
     @Expose
     private String end;
@@ -85,5 +92,13 @@ public class Event {
 
     public void setArtists(ArrayList<Artist> artists) {
         this.artists = artists;
+    }
+
+    public Place getPlace() {
+        return place;
+    }
+
+    public void setPlace(Place place) {
+        this.place = place;
     }
 }

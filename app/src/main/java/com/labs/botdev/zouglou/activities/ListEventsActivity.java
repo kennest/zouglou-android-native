@@ -1,6 +1,9 @@
 package com.labs.botdev.zouglou.activities;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -17,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.fxn.stash.Stash;
@@ -39,7 +43,7 @@ public class ListEventsActivity extends Activity {
     Toolbar toolbar;
     LayoutInflater inflater;
     FloatingActionButton mapBtn;
-    TextView user_name, user_email;
+    TextView user_name, user_stats;
     ImageView user_picture;
 
     @Override
@@ -117,7 +121,7 @@ public class ListEventsActivity extends Activity {
 
         View headerView = duoMenuView.getHeaderView();
         user_name = headerView.findViewById(R.id.duo_header_title);
-        user_email = headerView.findViewById(R.id.duo_header_sub_title);
+        user_stats = headerView.findViewById(R.id.stats);
         user_picture = headerView.findViewById(R.id.picture);
 
         User user = (User) Stash.getObject("facebook_user", User.class);
@@ -126,7 +130,7 @@ public class ListEventsActivity extends Activity {
                 .load(user.getPicture())
                 .into(user_picture);
         user_name.setText(user.getName());
-        user_email.setText(user.getEmail());
+        user_stats.setText(user.getEmail());
 
         DrawerListAdapter menuAdapter = new DrawerListAdapter(mMenuOptions);
         duoMenuView.setAdapter(menuAdapter);
@@ -134,6 +138,25 @@ public class ListEventsActivity extends Activity {
         duoMenuView.setOnMenuClickListener(new DuoMenuView.OnMenuClickListener() {
             @Override
             public void onFooterClicked() {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(ListEventsActivity.this);
+                builder.setMessage("Vous êtes sur le point de vous déconnecter et de remettre à zero les données de l'application?")
+                        .setCancelable(false)
+                        .setPositiveButton("Oui,je le veux", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // FIRE ZE MISSILES!
+                                clearAppData();
+                            }
+                        })
+                        .setNegativeButton("Non,je refuse", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                                dialog.dismiss();
+                            }
+                        });
+                // Create the AlertDialog object and return it
+                AlertDialog dialog = builder.create();
+                dialog.show();
 
             }
 
@@ -169,7 +192,25 @@ public class ListEventsActivity extends Activity {
 
                         break;
                     case 6:
-                        quitApp();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ListEventsActivity.this);
+                        builder.setMessage("Voulez-vous quitter l'application?")
+                                .setCancelable(false)
+                                .setPositiveButton("Oui,je le veux", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        // FIRE ZE MISSILES!
+                                        quitApp();
+                                    }
+                                })
+                                .setNegativeButton("Non,je refuse", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        // User cancelled the dialog
+                                        dialog.dismiss();
+                                    }
+                                });
+                        // Create the AlertDialog object and return it
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+
                         break;
                 }
             }
@@ -195,6 +236,22 @@ public class ListEventsActivity extends Activity {
             startActivity(Intent.createChooser(share, "PersianCoders"));
         } catch (Exception e) {
             Log.e("ShareApp", e.getMessage());
+        }
+    }
+
+    private void clearAppData() {
+        try {
+            // clearing app data
+            if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
+                ((ActivityManager) getSystemService(ACTIVITY_SERVICE)).clearApplicationUserData(); // note: it has a return value!
+            } else {
+                String packageName = getApplicationContext().getPackageName();
+                Runtime runtime = Runtime.getRuntime();
+                runtime.exec("pm clear " + packageName);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

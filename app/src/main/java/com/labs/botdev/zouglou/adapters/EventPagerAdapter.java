@@ -17,9 +17,9 @@ import com.labs.botdev.zouglou.services.models.Event;
 import java.util.List;
 
 public class EventPagerAdapter extends PagerAdapter {
-    ListView list;
-    ListEventAdapter adapter;
-    IOSDialog dialog;
+    ListView list,list2;
+    ListEventAdapter adapter,adapter2;
+    IOSDialog dialog,dialog2;
     private List<View> fragmentList;
     private Context context;
 
@@ -43,6 +43,7 @@ public class EventPagerAdapter extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         View view = null;
         SearchView mSearchView=null;
+        SearchView mSearchView2=null;
         switch (position) {
             case 0:
                 //Current Events
@@ -53,7 +54,10 @@ public class EventPagerAdapter extends PagerAdapter {
                 view = fragmentList.get(0);
                 list = view.findViewById(R.id.curent_events);
                 list.setAdapter(adapter);
-
+                View empty=view.findViewById(R.id.empty_list);
+                if(events.size()==0){
+                    empty.setVisibility(View.VISIBLE);
+                }
                  mSearchView = view.findViewById(R.id.searchview);
                  mSearchView.setQueryHint("Nom artiste,maquis...");
                  mSearchView.setIconified(true);
@@ -75,7 +79,36 @@ public class EventPagerAdapter extends PagerAdapter {
                 break;
             case 1:
                 //Passed Events
+                dialog = LoaderProgress("Un instant", "Nous chargons les données");
+                dialog.show();
                 view = fragmentList.get(1);
+                List<Event> events2 = Stash.getArrayList("passed_events", Event.class);
+                adapter2 = new ListEventAdapter(events2, context);
+                View empty2=view.findViewById(R.id.empty_list);
+                if(events2.size()==0){
+                    empty2.setVisibility(View.VISIBLE);
+                }
+                list2 = view.findViewById(R.id.passed_events);
+                list2.setAdapter(adapter2);
+
+                mSearchView2 = view.findViewById(R.id.searchview);
+                mSearchView2.setQueryHint("Nom artiste,maquis...");
+                mSearchView2.setIconified(true);
+                mSearchView2.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        //Toast.makeText(context,"Query Text "+newText,Toast.LENGTH_LONG).show();
+                        adapter2.getFilter().filter(newText);
+                        adapter2.notifyDataSetChanged();
+                        return false;
+                    }
+                });
+                dialog.dismiss();
                 break;
         }
         container.addView(view);
