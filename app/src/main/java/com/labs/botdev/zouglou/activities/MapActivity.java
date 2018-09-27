@@ -76,7 +76,7 @@ import io.reactivex.schedulers.Schedulers;
 import rx.functions.Action1;
 
 public class MapActivity extends AppCompatActivity {
-    FloatingActionButton menu, traffic;
+    FloatingActionButton menu, reload;
     double longitude;
     double latitude;
     IOSDialog dialog;
@@ -119,7 +119,7 @@ public class MapActivity extends AppCompatActivity {
         ensureLocationSettings();
 
         searchView = findViewById(R.id.searchview);
-        traffic = findViewById(R.id.traffic);
+        reload = findViewById(R.id.reload);
 
         suggestion=findViewById(R.id.suggestion);
         suggestion_item=getLayoutInflater().inflate(R.layout.suggestion_item,null);
@@ -263,11 +263,16 @@ public class MapActivity extends AppCompatActivity {
             }
         });
 
-        traffic.setOnClickListener(new View.OnClickListener() {
+        reload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (map != null) {
-                    trafficPlugin.setVisibility(!trafficPlugin.isVisible());
+                    //trafficPlugin.setVisibility(!trafficPlugin.isVisible());
+                    if (Constants.isNetworkConnected(getApplicationContext())) {
+                        RemoteSyncData();
+                    } else {
+                        OfflineSyncData();
+                    }
                 }
             }
         });

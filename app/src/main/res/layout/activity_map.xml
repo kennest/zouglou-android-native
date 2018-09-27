@@ -26,7 +26,8 @@
         android:layout_height="wrap_content"
         android:translationZ="3dp"
         android:elevation="8dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:focusableInTouchMode="true">
 
         <android.support.v7.widget.SearchView
             android:id="@+id/searchview"
@@ -75,13 +76,13 @@
             />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/traffic"
-            android:backgroundTint="#F25731"
+            android:id="@+id/reload"
+            android:backgroundTint="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/ic_traffic_light_white_48dp"
+            android:src="@drawable/ic_reload_black_48dp"
             mapbox:layout_anchor="@+id/mapView" />
     </LinearLayout>
 

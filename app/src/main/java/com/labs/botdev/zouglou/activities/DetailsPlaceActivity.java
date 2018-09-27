@@ -9,6 +9,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -36,7 +37,10 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigation;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -151,7 +155,11 @@ public class DetailsPlaceActivity extends AppCompatActivity {
 
 
         InitAppBar();
-        loadEvents(p.events);
+        try {
+            loadEvents(p.events);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     private void InitAppBar() {
@@ -175,31 +183,67 @@ public class DetailsPlaceActivity extends AppCompatActivity {
         });
     }
 
-    private void loadEvents(List<Event> events) {
+    private void loadEvents(List<Event> events) throws ParseException {
+//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+//        Date date = new Date();
         for (Event a : events) {
-            //Toast.makeText(getApplicationContext(), "Artist added" + a.getAvatar(), Toast.LENGTH_LONG).show();
-            LinearLayout parent = new LinearLayout(getApplicationContext());
-            parent = (LinearLayout) getLayoutInflater().inflate(R.layout.artist_item, null);
-            CircleImageView avatar = parent.findViewById(R.id.avatar);
-            ImageView pause = parent.findViewById(R.id.pause);
-            ImageView play = parent.findViewById(R.id.play);
-            play.setVisibility(View.GONE);
-            TextView artist_name = parent.findViewById(R.id.artist_name);
-            Glide
-                    .with(getApplicationContext())
-                    .applyDefaultRequestOptions(new RequestOptions()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL))
-                    .load(Constants.UPLOAD_URL + a.getPicture())
-                    .into(avatar);
-            parent.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
-            artist_name.setText(a.getTitle());
-            parent.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            events_layout.addView(parent);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date strDate = sdf.parse(a.getEnd());
+            Log.e("Event date:",strDate.toString());
+            if (new Date().before(strDate)) {
+                //Toast.makeText(getApplicationContext(), "Artist added" + a.getAvatar(), Toast.LENGTH_LONG).show();
+                LinearLayout parent = new LinearLayout(getApplicationContext());
+                parent = (LinearLayout) getLayoutInflater().inflate(R.layout.artist_item, null);
+                CircleImageView avatar = parent.findViewById(R.id.avatar);
+                ImageView pause = parent.findViewById(R.id.pause);
+                ImageView play = parent.findViewById(R.id.play);
+                play.setVisibility(View.GONE);
+                TextView artist_name = parent.findViewById(R.id.artist_name);
+                Glide
+                        .with(getApplicationContext())
+                        .applyDefaultRequestOptions(new RequestOptions()
+                                .diskCacheStrategy(DiskCacheStrategy.ALL))
+                        .load(Constants.UPLOAD_URL + a.getPicture())
+                        .into(avatar);
+                parent.setTag(a.getId());
+                parent.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent details = new Intent(getApplicationContext(), DetailsEventActivity.class);
+                        details.putExtra("event_id", (int) v.getTag());
+                        startActivity(details);
+                    }
+                });
+                artist_name.setText(a.getTitle());
+                parent.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                events_layout.addView(parent);
+            }else{
+                LinearLayout parent = new LinearLayout(getApplicationContext());
+                parent = (LinearLayout) getLayoutInflater().inflate(R.layout.artist_item, null);
+                CircleImageView avatar = parent.findViewById(R.id.avatar);
+                ImageView pause = parent.findViewById(R.id.pause);
+                ImageView play = parent.findViewById(R.id.play);
+                play.setVisibility(View.GONE);
+                TextView artist_name = parent.findViewById(R.id.artist_name);
+                Glide
+                        .with(getApplicationContext())
+                        .applyDefaultRequestOptions(new RequestOptions()
+                                .diskCacheStrategy(DiskCacheStrategy.ALL))
+                        .load(Constants.UPLOAD_URL + a.getPicture())
+                        .into(avatar);
+                parent.setTag(a.getId());
+                parent.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent details = new Intent(getApplicationContext(), DetailsPassedEventActivity.class);
+                        details.putExtra("event_id", (int) v.getTag());
+                        startActivity(details);
+                    }
+                });
+                artist_name.setText(a.getTitle());
+                parent.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                events_layout.addView(parent);
+            }
         }
     }
 
