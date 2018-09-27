@@ -10,14 +10,20 @@
     android:orientation="vertical"
     tools:context=".activities.ListPlacesActivity">
 
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/MainTheme.AppBarOverlay">
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/MainTheme.PopupOverlay"
             app:titleTextColor="@color/white">
 
         </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
 
         <android.support.v7.widget.SearchView
             android:id="@+id/searchview"

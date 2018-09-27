@@ -54,7 +54,7 @@ public class ListArtistsActivity extends AppCompatActivity {
             }
         });
 
-        toolbar.setTitle("Liste des Personnages du Zouglou");
+        toolbar.setTitle("Mes gars sûrs");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        getSupportActionBar().setDisplayShowHomeEnabled(true);

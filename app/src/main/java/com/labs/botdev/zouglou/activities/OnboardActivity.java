@@ -26,14 +26,18 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.labs.botdev.zouglou.R;
+import com.labs.botdev.zouglou.models.Artist;
 import com.labs.botdev.zouglou.models.Customer;
+import com.labs.botdev.zouglou.models.Place;
 import com.labs.botdev.zouglou.services.APIClient;
 import com.labs.botdev.zouglou.services.APIService;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,6 +47,8 @@ public class OnboardActivity extends AhoyOnboarderActivity {
     //private FacebookLogin facebookLogin;
     final APIService service = APIClient.getClient().create(APIService.class);
     MediaPlayer mp;
+    Set<String> user_places = new HashSet<>();
+    Set<String> user_artists = new HashSet<>();
 
     @SuppressLint("LogNotTimber")
     @Override
@@ -173,6 +179,7 @@ public class OnboardActivity extends AhoyOnboarderActivity {
                 if(response.isSuccessful()) {
                     Customer c = response.body();
                     Stash.put("facebook_user", c);
+                    setCustomerFavorite(c);
                     playSound("store.mp3");
                 }
             }
@@ -182,6 +189,26 @@ public class OnboardActivity extends AhoyOnboarderActivity {
 
             }
         });
+    }
+
+    private void setCustomerFavorite(Customer c){
+        if(c.places!=null) {
+            if (c.places.size() > 0) {
+                for (Place p : c.places) {
+                    user_places.add(String.valueOf(p.getId()));
+                }
+                Stash.put("user_places", user_places);
+            }
+        }
+
+        if(c.artists!=null) {
+            if (c.artists.size() > 0) {
+                for (Artist a : c.artists) {
+                    user_artists.add(String.valueOf(a.getId()));
+                }
+                Stash.put("user_artists", user_artists);
+            }
+        }
     }
 
     private void playSound(String fileName) {

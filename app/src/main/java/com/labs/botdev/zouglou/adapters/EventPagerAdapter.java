@@ -18,7 +18,8 @@ import java.util.List;
 
 public class EventPagerAdapter extends PagerAdapter {
     ListView list,list2;
-    ListEventAdapter adapter,adapter2;
+    ListEventAdapter adapter;
+    ListPassedEventAdapter adapter2;
     IOSDialog dialog,dialog2;
     private List<View> fragmentList;
     private Context context;
@@ -83,7 +84,7 @@ public class EventPagerAdapter extends PagerAdapter {
                 dialog.show();
                 view = fragmentList.get(1);
                 List<Event> events2 = Stash.getArrayList("passed_events", Event.class);
-                adapter2 = new ListEventAdapter(events2, context);
+                adapter2 = new ListPassedEventAdapter(events2, context);
                 View empty2=view.findViewById(R.id.empty_list);
                 if(events2.size()==0){
                     empty2.setVisibility(View.VISIBLE);

@@ -22,15 +22,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+            <android.support.design.widget.CoordinatorLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+                <ImageView
+                    app:layout_anchor="@+id/picture"
+                    android:id="@+id/followed"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:translationZ="8dp"
+                    android:src="@drawable/ic_bookmark_check_white_48dp"
+                    android:tint="@color/mapboxYellow"
+                    android:textColor="@color/white"/>
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/picture"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_weight="1"
-                android:elevation="8dp"
-                android:padding="8dp"
-                app:srcCompat="@drawable/fifth_bg" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/picture"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:elevation="7dp"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/fifth_bg" />
+            </android.support.design.widget.CoordinatorLayout>
 
             <TextView
                 android:id="@+id/name"

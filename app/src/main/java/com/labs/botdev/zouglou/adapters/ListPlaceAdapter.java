@@ -1,5 +1,6 @@
 package com.labs.botdev.zouglou.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
@@ -23,6 +24,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.fxn.stash.Stash;
 import com.google.gson.JsonObject;
 import com.labs.botdev.zouglou.R;
+import com.labs.botdev.zouglou.activities.DetailsPlaceActivity;
 import com.labs.botdev.zouglou.activities.DoNavigationActivity;
 import com.labs.botdev.zouglou.models.Customer;
 import com.labs.botdev.zouglou.services.APIClient;
@@ -72,6 +74,7 @@ public class ListPlaceAdapter extends BaseAdapter implements Filterable {
         return 0;
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         convertView = inflater.inflate(R.layout.place_item, null);
@@ -79,13 +82,14 @@ public class ListPlaceAdapter extends BaseAdapter implements Filterable {
         ImageView picture = convertView.findViewById(R.id.picture);
         placename = convertView.findViewById(R.id.placename);
         details = convertView.findViewById(R.id.details);
+        ImageView followed = convertView.findViewById(R.id.followed);
         FloatingActionButton navigation = convertView.findViewById(R.id.navigation);
         FloatingActionButton bookmark = convertView.findViewById(R.id.bookmark);
 
 
         Place p = placeList.get(position);
 
-        if(Stash.getStringSet("user_places",new HashSet<>())!=null) {
+        if (Stash.getStringSet("user_places", new HashSet<>()) != null) {
             Set<String> favoritePlaces = Stash.getStringSet("user_places", new HashSet<>());
             for (String x : favoritePlaces) {
                 if (p.getId() == Integer.parseInt(x)) {
@@ -93,6 +97,7 @@ public class ListPlaceAdapter extends BaseAdapter implements Filterable {
                     bookmark.setClickable(false);
                     bookmark.setFocusable(false);
                     bookmark.setVisibility(View.GONE);
+                    followed.setVisibility(View.VISIBLE);
                 }
             }
         }
@@ -114,38 +119,52 @@ public class ListPlaceAdapter extends BaseAdapter implements Filterable {
         bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                APIService service = APIClient.getClient().create(APIService.class);
-                Customer u = (Customer) Stash.getObject("facebook_user", Customer.class);
-                FavoritePlace favoritePlace = new FavoritePlace();
-                favoritePlace.setCustomer_id(u.getId());
-                favoritePlace.setPlace_id(p.getId());
-                Call<JsonObject> call = service.setFavoritePlace(favoritePlace);
-                call.enqueue(new Callback<JsonObject>() {
-                    @Override
-                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                        if (response.code() == 200 && response.body().get("response")!=null && response.body().get("response").getAsString()!="error") {
-                            String place = response.body().get("response").getAsString();
-                            Log.e("Response place ID:",""+place);
-                            if(Stash.getStringSet("user_places",new HashSet<>())!=null){
-                                user_places=Stash.getStringSet("user_places",new HashSet<>());
-                            }
-                            user_places.add(place);
-                            Stash.put("user_places",user_places);
-                            playSound("store.mp3");
-                        }else{
-                            try {
-                                call.execute();
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                if (Constants.isNetworkConnected(activity)) {
+                    APIService service = APIClient.getClient().create(APIService.class);
+                    Customer u = (Customer) Stash.getObject("facebook_user", Customer.class);
+                    FavoritePlace favoritePlace = new FavoritePlace();
+                    favoritePlace.setCustomer_id(u.getId());
+                    favoritePlace.setPlace_id(p.getId());
+                    Call<JsonObject> call = service.setFavoritePlace(favoritePlace);
+                    call.enqueue(new Callback<JsonObject>() {
+                        @Override
+                        public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                            if (response.code() == 200 && response.body().get("response") != null && response.body().get("response").getAsString() != "error") {
+                                String place = response.body().get("response").getAsString();
+                                Log.e("Response place ID:", "" + place);
+                                if (Stash.getStringSet("user_places", new HashSet<>()) != null) {
+                                    user_places = Stash.getStringSet("user_places", new HashSet<>());
+                                }
+                                user_places.add(place);
+                                Stash.put("user_places", user_places);
+                                playSound("store.mp3");
+                                notifyDataSetChanged();
+                            } else {
+                                try {
+                                    call.execute();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<JsonObject> call, Throwable t) {
-                        Toast.makeText(activity,"Error:"+t.getMessage(),Toast.LENGTH_LONG).show();
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<JsonObject> call, Throwable t) {
+                            Toast.makeText(activity, "Error:" + t.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } else {
+                    Toast.makeText(activity, "Vous devez être connecté à internet pour cela.", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent details = new Intent(activity, DetailsPlaceActivity.class);
+                details.putExtra("place_id", p.getId());
+                activity.startActivity(details);
             }
         });
         return convertView;
@@ -211,6 +230,7 @@ public class ListPlaceAdapter extends BaseAdapter implements Filterable {
             adapter.notifyDataSetChanged();
         }
     }
+
     private void playSound(String fileName) {
         mp = new MediaPlayer();
         try {

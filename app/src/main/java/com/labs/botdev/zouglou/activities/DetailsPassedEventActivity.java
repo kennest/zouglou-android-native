@@ -61,7 +61,7 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class DetailsEventActivity extends AppCompatActivity implements Player.EventListener {
+public class DetailsPassedEventActivity extends AppCompatActivity implements Player.EventListener {
     ImageView event_picture;
     Toolbar toolbar;
     TextView description, place, begin, end;
@@ -117,7 +117,7 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         Intent intent = getIntent();
         int id = intent.getIntExtra("event_id", 0);
 
-        events = Stash.getArrayList("events", Event.class);
+        events = Stash.getArrayList("passed_events", Event.class);
         for (Event n : events) {
             if (n.getId() == id) {
                 e = n;
@@ -246,7 +246,7 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         if (mapIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(mapIntent);
         } else {
-            Intent navigation = new Intent(DetailsEventActivity.this, DoNavigationActivity.class);
+            Intent navigation = new Intent(DetailsPassedEventActivity.this, DoNavigationActivity.class);
             String destination = lat + ":" + lon;
             navigation.putExtra("destination", destination);
             startActivity(navigation);
@@ -432,7 +432,7 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
     }
 
     public IOSDialog LoaderProgress(String title, String content) {
-        final IOSDialog dialog = new IOSDialog.Builder(DetailsEventActivity.this)
+        final IOSDialog dialog = new IOSDialog.Builder(DetailsPassedEventActivity.this)
                 .setTitle(title)
                 .setMessageContent(content)
                 .setSpinnerColorRes(R.color.colorPrimary)

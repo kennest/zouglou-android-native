@@ -47,8 +47,6 @@
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light" /-->
             <android.support.v7.widget.Toolbar
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/anim_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
@@ -63,7 +61,7 @@
 
     <include
         android:id="@+id/content"
-        layout="@layout/fragment_artist_details" />
+        layout="@layout/fragment_place_details" />
 
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/playerView"
@@ -84,26 +82,58 @@
         app:layout_anchorGravity="bottom|right|end">
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/play_sample"
+            android:id="@+id/navigation_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/ic_play_white_48dp"
+            android:src="@drawable/ic_navigation_white_48dp"
             app:backgroundTint="#279AF1"
             app:fabSize="normal" />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/bookmark"
+            android:id="@+id/share_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:clickable="true"
             android:focusable="true"
-            app:backgroundTint="#ede610"
             app:fabSize="normal"
-            app:srcCompat="@drawable/ic_star_white_48dp" />
+            app:srcCompat="@drawable/ic_share_variant_white_48dp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/bottom_actions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_anchor="@+id/content"
+        app:layout_anchorGravity="bottom|right|end">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/navigation_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:backgroundTint="#279AF1"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/ic_navigation_white_48dp" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/share_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/ic_share_variant_white_48dp" />
 
     </LinearLayout>
 

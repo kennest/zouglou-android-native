@@ -6,6 +6,7 @@ import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.FloatingActionButton;
@@ -114,6 +115,9 @@ public class MapActivity extends AppCompatActivity {
         setContentView(R.layout.activity_map);
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
+
+        ensureLocationSettings();
+
         searchView = findViewById(R.id.searchview);
         traffic = findViewById(R.id.traffic);
 
@@ -199,7 +203,6 @@ public class MapActivity extends AppCompatActivity {
         });
 
         //getLocation();
-        ensureLocationSettings();
         //facebookLogin();
     }
 
@@ -212,7 +215,7 @@ public class MapActivity extends AppCompatActivity {
                 .subscribe(new Action1<Boolean>() {
                     @Override
                     public void call(Boolean enabled) {
-                        Toast.makeText(MapActivity.this, enabled ? "Enabled" : "Failed", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(MapActivity.this, enabled ? "Enabled" : "Failed", Toast.LENGTH_LONG).show();
                         if (enabled) {
                             startLocationService();
                         }
@@ -234,7 +237,7 @@ public class MapActivity extends AppCompatActivity {
             Stash.put("my_position", me);
 
             PlaceMe();
-            zoomIn();
+            //zoomIn();
             //Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
         } else {
             gps.showSettingsAlert();
@@ -328,6 +331,7 @@ public class MapActivity extends AppCompatActivity {
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
+                //mapboxMap.clear();
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(new LatLng(lat, lon))
                         .setTitle(String.valueOf(id))
@@ -480,9 +484,16 @@ public class MapActivity extends AppCompatActivity {
                     events = Stash.getArrayList("events", Event.class);
                     tmpEvents = Stash.getArrayList("events", Event.class);
                     adapter = new ListEventAdapter(events, MapActivity.this);
-                    placeEventsMarker();
-                    dialog.dismiss();
-                    filterZoomIn(events);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            placeEventsMarker();
+                            filterZoomIn(events);
+                            dialog.dismiss();
+                        }
+                    },1500);
+
+                    Toast.makeText(getApplicationContext(), "Events size: " + events.size(), Toast.LENGTH_LONG).show();
                     //zoomIn();
                 //offlineMap();
                 loadArtistsRx();

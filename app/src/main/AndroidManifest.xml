@@ -9,7 +9,8 @@
     <uses-permission android:name="android.permission.INTERNET" /> <!-- Storage -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:name=".utils.AppController"
         android:allowBackup="true"
@@ -21,9 +22,11 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3139652425216188~1464104929"/>
+            android:value="ca-app-pub-3139652425216188~1464104929" />
 
-        <activity android:name=".activities.ListPlacesActivity">
+        <activity
+            android:name=".activities.ListPlacesActivity"
+            android:exported="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.ListEventsActivity" />
@@ -35,8 +38,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.ListEventsActivity"
-            android:launchMode="singleTop"/>
+        <activity
+            android:name=".activities.ListEventsActivity"
+            android:launchMode="singleTop" />
         <activity android:name=".activities.DetailsEventActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -56,7 +60,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.ListPlacesActivity" />
         </activity>
-        <activity android:name=".activities.ListArtistsActivity">
+        <activity
+            android:name=".activities.ListArtistsActivity"
+            android:exported="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.ListEventsActivity" />
@@ -85,6 +91,11 @@
 
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
+        </activity>
+        <activity android:name=".activities.DetailsPassedEventActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.ListEventsActivity" />
         </activity>
 
         <receiver

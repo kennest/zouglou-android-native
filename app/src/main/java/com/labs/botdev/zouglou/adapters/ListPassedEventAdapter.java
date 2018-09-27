@@ -17,6 +17,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.fxn.stash.Stash;
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.activities.DetailsEventActivity;
+import com.labs.botdev.zouglou.activities.DetailsPassedEventActivity;
 import com.labs.botdev.zouglou.models.Artist;
 import com.labs.botdev.zouglou.models.Event;
 
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ListEventAdapter extends BaseAdapter implements Filterable {
+public class ListPassedEventAdapter extends BaseAdapter implements Filterable {
 
     List<Event> filterEvents;
     private List<Event> eventList;
@@ -32,7 +33,7 @@ public class ListEventAdapter extends BaseAdapter implements Filterable {
     private LayoutInflater inflater;
     private ValueFilter filter;
 
-    public ListEventAdapter(List<Event> eventList, Context context) {
+    public ListPassedEventAdapter(List<Event> eventList, Context context) {
         this.eventList = eventList;
         this.context = context;
         this.filterEvents = eventList;
@@ -92,7 +93,7 @@ public class ListEventAdapter extends BaseAdapter implements Filterable {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent details = new Intent(context, DetailsEventActivity.class);
+                Intent details = new Intent(context, DetailsPassedEventActivity.class);
                 details.putExtra("event_id", (int) v.getTag());
                 context.startActivity(details);
             }
@@ -110,9 +111,9 @@ public class ListEventAdapter extends BaseAdapter implements Filterable {
 
     public class ValueFilter extends Filter {
         List<Event> filterEvents;
-        ListEventAdapter adapter;
+        ListPassedEventAdapter adapter;
 
-        ValueFilter(List<Event> filterEvents, ListEventAdapter adapter) {
+        ValueFilter(List<Event> filterEvents, ListPassedEventAdapter adapter) {
             this.filterEvents = filterEvents;
             this.adapter = adapter;
         }

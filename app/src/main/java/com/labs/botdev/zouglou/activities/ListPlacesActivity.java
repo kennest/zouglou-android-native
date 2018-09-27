@@ -6,12 +6,10 @@ import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
-
 import com.fxn.stash.Stash;
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.adapters.ListPlaceAdapter;
 import com.labs.botdev.zouglou.models.Place;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +30,7 @@ Toolbar toolbar;
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-       getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 //        getSupportActionBar().setHomeButtonEnabled(true);
 
         places= Stash.getArrayList("places",Place.class);

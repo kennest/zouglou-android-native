@@ -27,12 +27,19 @@ import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.adapters.DrawerListAdapter;
 import com.labs.botdev.zouglou.adapters.EventPagerAdapter;
 import com.labs.botdev.zouglou.models.Customer;
+import com.labs.botdev.zouglou.models.Event;
+import com.labs.botdev.zouglou.models.Place;
+import com.labs.botdev.zouglou.utils.AppController;
+import com.labs.botdev.zouglou.utils.Constants;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import nl.psdcompany.duonavigationdrawer.views.DuoDrawerLayout;
 import nl.psdcompany.duonavigationdrawer.views.DuoMenuView;
@@ -94,12 +101,14 @@ public class ListEventsActivity extends Activity {
         });
 
         InitSideMenu();
+        downloadEventsPictures();
+        downloadPlacesPictures();
     }
 
     private void InitSideMenu() {
         toolbar = findViewById(R.id.toolbar);
-        String timeStamp = new SimpleDateFormat("dd.MM.yy").format(new Date());
-        toolbar.setTitle("Salut,aujourd'hui est " + timeStamp);
+        //String timeStamp = new SimpleDateFormat("dd.MM.yy").format(new Date());
+        toolbar.setTitle("Liste des evenements");
         DuoDrawerLayout drawerLayout = (DuoDrawerLayout) findViewById(R.id.drawerlayout);
         DuoDrawerToggle drawerToggle = new DuoDrawerToggle(this, drawerLayout, toolbar,
                 R.string.navigation_drawer_open,
@@ -107,7 +116,7 @@ public class ListEventsActivity extends Activity {
 
         ArrayList<String> mMenuOptions = new ArrayList<>();
         mMenuOptions.add("Voir carte");
-        mMenuOptions.add("Personnages Zouglou");
+        mMenuOptions.add("Mes gars sûrs");
         mMenuOptions.add("Les coins chauds");
         mMenuOptions.add("Partager l'application");
         mMenuOptions.add("Termes et conditions");
@@ -122,6 +131,18 @@ public class ListEventsActivity extends Activity {
         user_name = headerView.findViewById(R.id.duo_header_title);
         user_stats = headerView.findViewById(R.id.stats);
         user_picture = headerView.findViewById(R.id.picture);
+        TextView favPlace=headerView.findViewById(R.id.placetxt);
+        TextView favArtist=headerView.findViewById(R.id.artistxt);
+
+        Set<String> user_places=Stash.getStringSet("user_places");
+        Set<String> user_artists=Stash.getStringSet("user_artists");
+        if(user_places!=null) {
+            favPlace.setText(String.format(Locale.FRENCH, "%d coins chauds", user_places.size()));
+        }
+
+        if(user_artists!=null) {
+            favArtist.setText(String.format(Locale.FRENCH, "%d gars sûrs", user_artists.size()));
+        }
 
         Customer customer = (Customer) Stash.getObject("facebook_user", Customer.class);
 
@@ -129,7 +150,7 @@ public class ListEventsActivity extends Activity {
                 .load(customer.getPicture())
                 .into(user_picture);
         user_name.setText(customer.getName());
-        user_stats.setText(customer.getEmail());
+        user_stats.setText("Vos Favoris");
 
         DrawerListAdapter menuAdapter = new DrawerListAdapter(mMenuOptions);
         duoMenuView.setAdapter(menuAdapter);
@@ -254,9 +275,20 @@ public class ListEventsActivity extends Activity {
         }
     }
 
-    private void ShowArtistList() {
-
+    private void downloadEventsPictures() {
+    List<Event> events=Stash.getArrayList("events",Event.class);
+        for(Event e:events){
+        AppController.getInstance().downloadedPicture(Constants.UPLOAD_URL+e.getPicture());
+        }
     }
+
+    private void downloadPlacesPictures() {
+        List<Place> places=Stash.getArrayList("places",Place.class);
+        for(Place e:places){
+            AppController.getInstance().downloadedPicture(Constants.UPLOAD_URL+e.getPicture());
+        }
+    }
+
 
     public void quitApp() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {

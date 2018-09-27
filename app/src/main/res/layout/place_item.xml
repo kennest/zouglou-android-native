@@ -11,16 +11,15 @@
     android:foreground="?attr/selectableItemBackground">
 
 
-        <TextView
+        <ImageView
             app:layout_anchor="@+id/picture"
-            android:id="@+id/followedTxt"
-            android:textSize="25sp"
+            android:id="@+id/followed"
             android:visibility="gone"
-            android:background="@color/mapboxYellow"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Vous suivez ce endroit"
             android:translationZ="3dp"
+            android:src="@drawable/ic_bookmark_check_white_48dp"
+            android:tint="@color/mapboxYellow"
             android:textColor="@color/white"/>
 
     <ImageView
@@ -63,27 +62,25 @@
         android:layout_width="wrap_content"
         android:layout_height="60dp"
         android:orientation="horizontal"
-        android:padding="5dp"
         app:layout_anchor="@+id/picture"
         app:layout_anchorGravity="right|bottom">
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/navigation"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="true"
-            app:srcCompat="@drawable/ic_navigation_white_48dp" />
+            android:src="@drawable/ic_navigation_white_48dp" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/bookmark"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:backgroundTint="@color/mapboxYellow"
             android:clickable="true"
             android:focusable="true"
-            app:srcCompat="@drawable/ic_star_white_48dp" />
+            android:src="@drawable/ic_star_white_48dp" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
