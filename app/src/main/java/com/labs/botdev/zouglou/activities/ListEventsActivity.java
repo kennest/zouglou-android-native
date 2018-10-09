@@ -1,5 +1,6 @@
 package com.labs.botdev.zouglou.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -14,11 +15,14 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -26,6 +30,9 @@ import com.fxn.stash.Stash;
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.adapters.DrawerListAdapter;
 import com.labs.botdev.zouglou.adapters.EventPagerAdapter;
+import com.labs.botdev.zouglou.adapters.ListArtistAdapter;
+import com.labs.botdev.zouglou.adapters.ListPlaceAdapter;
+import com.labs.botdev.zouglou.models.Artist;
 import com.labs.botdev.zouglou.models.Customer;
 import com.labs.botdev.zouglou.models.Event;
 import com.labs.botdev.zouglou.models.Place;
@@ -129,10 +136,9 @@ public class ListEventsActivity extends Activity {
 
         View headerView = duoMenuView.getHeaderView();
         user_name = headerView.findViewById(R.id.duo_header_title);
-        user_stats = headerView.findViewById(R.id.stats);
         user_picture = headerView.findViewById(R.id.picture);
-        TextView favPlace=headerView.findViewById(R.id.placetxt);
-        TextView favArtist=headerView.findViewById(R.id.artistxt);
+        Button favPlace=headerView.findViewById(R.id.placetxt);
+        Button favArtist=headerView.findViewById(R.id.artistxt);
 
         Set<String> user_places=Stash.getStringSet("user_places");
         Set<String> user_artists=Stash.getStringSet("user_artists");
@@ -144,13 +150,121 @@ public class ListEventsActivity extends Activity {
             favArtist.setText(String.format(Locale.FRENCH, "%d gars sûrs", user_artists.size()));
         }
 
+        favArtist.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NewApi")
+            @Override
+            public void onClick(View v) {
+                View view=getLayoutInflater().inflate(R.layout.activity_list_artist,null);
+                ListView list=view.findViewById(R.id.lv_artists);
+                SearchView searchView=view.findViewById(R.id.searchview);
+                Toolbar toolbar = view.findViewById(R.id.toolbar);
+                toolbar.setVisibility(View.GONE);
+                List<Artist> artists=new ArrayList<>(Stash.getArrayList("artists",Artist.class));
+                List<Artist> tmp=new ArrayList<>();
+                for(Artist a:artists){
+                    for(String s:user_artists) {
+                        if (a.getId() == Integer.parseInt(s)){
+                           tmp.add(a);
+                        }
+                    }
+                }
+                ListArtistAdapter artistAdapter=new ListArtistAdapter(ListEventsActivity.this,tmp);
+                searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        return false;
+                    }
+
+                    //Rechercher sur la carte(Not finished yet!!)
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        if (artistAdapter != null) {
+                            artistAdapter.getFilter().filter(newText);
+                            artistAdapter.notifyDataSetChanged();
+//                            artists = Stash.getArrayList("filter_artists", Artist.class);
+//                            Stash.put("artists", artists);
+                        }
+                        return false;
+                    }
+                });
+                list.setAdapter(artistAdapter);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(ListEventsActivity.this);
+                builder.setTitle("Artistes suivis")
+                        .setView(view)
+                        .setCancelable(false)
+                        .setNegativeButton("Fermer", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // Customer cancelled the dialog
+                                dialog.dismiss();
+                            }
+                        });
+                // Create the AlertDialog object and return it
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
+        favPlace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View view=getLayoutInflater().inflate(R.layout.activity_list_places,null);
+                ListView list=view.findViewById(R.id.places_list);
+                SearchView searchView=view.findViewById(R.id.searchview);
+                Toolbar toolbar = view.findViewById(R.id.toolbar);
+                toolbar.setVisibility(View.GONE);
+                List<Place> places=new ArrayList<>(Stash.getArrayList("places",Place.class));
+                List<Place> tmp=new ArrayList<>();
+                for(Place a:places){
+                    for(String s:user_places) {
+                        if (a.getId() == Integer.parseInt(s)){
+                            tmp.add(a);
+                        }
+                    }
+                }
+                ListPlaceAdapter placeAdapter=new ListPlaceAdapter(tmp,ListEventsActivity.this);
+                searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        return false;
+                    }
+
+                    //Rechercher sur la carte(Not finished yet!!)
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        if (placeAdapter != null) {
+                            placeAdapter.getFilter().filter(newText);
+                            placeAdapter.notifyDataSetChanged();
+//                            artists = Stash.getArrayList("filter_artists", Artist.class);
+//                            Stash.put("artists", artists);
+                        }
+                        return false;
+                    }
+                });
+                list.setAdapter(placeAdapter);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(ListEventsActivity.this);
+                builder.setTitle("Places suivis")
+                        .setView(view)
+                        .setCancelable(false)
+                        .setNegativeButton("Fermer", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // Customer cancelled the dialog
+                                dialog.dismiss();
+                            }
+                        });
+                // Create the AlertDialog object and return it
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
         Customer customer = (Customer) Stash.getObject("facebook_user", Customer.class);
 
         Glide.with(getApplicationContext())
                 .load(customer.getPicture())
                 .into(user_picture);
         user_name.setText(customer.getName());
-        user_stats.setText("Vos Favoris");
 
         DrawerListAdapter menuAdapter = new DrawerListAdapter(mMenuOptions);
         duoMenuView.setAdapter(menuAdapter);

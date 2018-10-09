@@ -11,6 +11,7 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
@@ -19,7 +20,10 @@ import android.widget.Toast;
 import com.codemybrainsout.onboarder.AhoyOnboarderActivity;
 import com.codemybrainsout.onboarder.AhoyOnboarderCard;
 import com.fxn.stash.Stash;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.gson.JsonObject;
+import com.jetradarmobile.rxlocationsettings.RxLocationSettings;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -42,6 +46,7 @@ import java.util.Set;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.functions.Action1;
 
 public class OnboardActivity extends AhoyOnboarderActivity {
     //private FacebookLogin facebookLogin;
@@ -126,8 +131,8 @@ public class OnboardActivity extends AhoyOnboarderActivity {
     protected void checkOnboardPassed() {
         boolean passed = Stash.getBoolean("onboardpassed");
         if (passed) {
-            Intent map = new Intent(this, MapActivity.class);
-            startActivity(map);
+            Intent splash = new Intent(this, SplashScreenActivity.class);
+            startActivity(splash);
             finish();
         }
     }
@@ -144,6 +149,7 @@ public class OnboardActivity extends AhoyOnboarderActivity {
             Customer c= (Customer) Stash.getObject("facebook_user",Customer.class);
             Log.e("Customer FB_ID",c.getFb_id());
             addCustomer(c);
+            Stash.put("downloadedmap",false);
         }
     }
 

@@ -13,4 +13,6 @@
     <string name="fb_login_protocol_scheme">fb347726122436559</string>
     <string name="mapKey">AIzaSyAm22782Qnz2c0pr4KguKqfv-ZvazalvG0</string>
     <string name="admobkey">ca-app-pub-3139652425216188~1464104929</string>
+    <string name="simple_offline_end_progress_success">telechargement Termine</string>
+    <string name="basic_offline_deleted_toast">Suppression</string>
 </resources>

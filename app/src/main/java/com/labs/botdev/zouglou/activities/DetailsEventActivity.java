@@ -1,15 +1,20 @@
 package com.labs.botdev.zouglou.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -23,6 +28,13 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookSdk;
+import com.facebook.share.ShareApi;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
 import com.fxn.stash.Stash;
 import com.gmail.samehadar.iosdialog.IOSDialog;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -65,7 +77,7 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
     ImageView event_picture;
     Toolbar toolbar;
     TextView description, place, begin, end;
-    FloatingActionButton navigation_top, navigation_bottom,share_top,share_bottom;
+    FloatingActionButton navigation_top, navigation_bottom, share_top, share_bottom;
     List<Event> events = new ArrayList<>();
     Event e = new Event();
     LinearLayout artists_layout, top_actions, bottom_actions;
@@ -75,16 +87,19 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
     ImageView place_picture;
     CollapsingToolbarLayout collapsingToolbar;
     private AdView mAdView;
-    FetchDownloader fetch=new FetchDownloader();
-
+    FetchDownloader fetch = new FetchDownloader();
+    CallbackManager callbackManager;
+    ShareDialog shareDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
 
+
         //MobileAds.initialize(this, getString(R.string.admobkey));
         MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+        FacebookSdk.sdkInitialize(getApplicationContext());
 
         event_picture = findViewById(R.id.header);
         toolbar = findViewById(R.id.anim_toolbar);
@@ -95,14 +110,14 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         place_picture = findViewById(R.id.place_picture);
         navigation_top = findViewById(R.id.navigation_top);
         navigation_bottom = findViewById(R.id.navigation_bottom);
-        share_top=findViewById(R.id.share_top);
-        share_bottom=findViewById(R.id.share_bottom);
+        share_top = findViewById(R.id.share_top);
+        share_bottom = findViewById(R.id.share_bottom);
         artists_layout = findViewById(R.id.artists_layout);
         playerView = findViewById(R.id.playerView);
         top_actions = findViewById(R.id.top_actions);
         bottom_actions = findViewById(R.id.bottom_actions);
 
-        View v=findViewById(R.id.content);
+        View v = findViewById(R.id.content);
         mAdView = v.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
 //        AdRequest adRequest = new AdRequest.Builder()
@@ -170,15 +185,15 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         share_top.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareOnSocialNetwork(e);
-                //whatsappShare();
+            //InitFacebookShare(e);
+                facebookShare(e);
             }
         });
 
         share_bottom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareOnSocialNetwork(e);
+            facebookShare(e);
             }
         });
 
@@ -186,14 +201,14 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
             @Override
             public void onAdLoaded() {
                 // Code to be executed when an ad finishes loading.
-                Toast.makeText(getApplicationContext(),"Ads loaded",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Ads loaded", Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
                 // Code to be executed when an ad request fails.
                 Log.d("ADMOB_ERROR_CODE", "admob error code: " + errorCode);
-                Toast.makeText(getApplicationContext(),"Ads fail to loaded: "+errorCode,Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Ads fail to loaded: " + errorCode, Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -216,6 +231,12 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
 
         loader.dismiss();
 //        Toast.makeText(getApplicationContext(),"Artists IDS"+e.getArtists_id(),Toast.LENGTH_LONG).show();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void InitAppBar() {
@@ -303,8 +324,8 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         }
     }
 
-    private void shareOnSocialNetwork(Event e){
-         String artist_str = "";
+    private void whatsAppShare(Event e) {
+        String artist_str = "";
         for (Artist a : e.artists) {
             if (artist_str.equals("")) {
                 artist_str = a.getName();
@@ -312,38 +333,101 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
                 artist_str = artist_str + "," + a.getName();
             }
         }
-        String pic_url= AppController.getInstance().downloadedPicture(Constants.UPLOAD_URL+e.getPicture());
+        String pic_url = AppController.getInstance().downloadedPicture(Constants.UPLOAD_URL + e.getPicture());
         Uri pictureUri = Uri.parse(pic_url);
         String geoUri = "http://maps.google.com/maps?q=loc:" + e.place.address.getLatitude() + "," +
-                e.place.address.getLongitude() ;
-        String text=new StringBuilder()
-                .append("\n"+e.getTitle().toUpperCase())
-                .append("\n"+"ARTISTES INVITES:"+artist_str)
-                .append("\n"+"Position GPS:\n"+geoUri)
+                e.place.address.getLongitude();
+        String text = new StringBuilder()
+                .append("\n" + e.getTitle().toUpperCase())
+                .append("\n" + "ARTISTES INVITES:" + artist_str)
+                .append("\n" + "Voir sur Google Maps:\n" + geoUri)
                 .toString();
 
+        List<Intent> intentShareList = new ArrayList<Intent>();
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.setType("image/*");
-        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, text);
-        shareIntent.putExtra(Intent.EXTRA_STREAM, pictureUri);
+        shareIntent.setType("text/plain");
         //shareIntent.setType("image/*");
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, e.getTitle());
-        startActivity(Intent.createChooser(shareIntent, "Partager sur les réseaux sociaux..."));
+        List<ResolveInfo> resolveInfoList = getPackageManager().queryIntentActivities(shareIntent, 0);
+
+        for (ResolveInfo resInfo : resolveInfoList) {
+            String packageName = resInfo.activityInfo.packageName;
+            String name = resInfo.activityInfo.name;
+            Log.d("System Out", "Package Name : " + packageName);
+            Log.d("System Out", "Name : " + name);
+
+            if (packageName.contains("com.whatsapp")) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.setType("image/*");
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.putExtra(Intent.EXTRA_TEXT, text);
+                intent.putExtra(Intent.EXTRA_STREAM, pictureUri);
+                //shareIntent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_SUBJECT, e.getTitle());
+                intentShareList.add(intent);
+            }
+
+            if (intentShareList.isEmpty()) {
+                Toast.makeText(DetailsEventActivity.this, "No apps to share !", Toast.LENGTH_SHORT).show();
+            } else {
+                Intent chooserIntent = Intent.createChooser(intentShareList.remove(0), "Partager sur les media sociaux:");
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentShareList.toArray(new Parcelable[]{}));
+                startActivity(chooserIntent);
+            }
+        }
     }
 
-    private void whatsappShare(){
-        final Intent shareIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "The Subject");
-        shareIntent.putExtra(
-                Intent.EXTRA_TEXT,
-                Html.fromHtml(new StringBuilder()
-                        .append("<p><b>Some Content</b></p>")
-                        .append("<small><p>More content</p></small>")
-                        .toString())
-        );
+    public void facebookShare(Event e) {
+
+        String artist_str = "";
+        for (Artist a : e.artists) {
+            if (artist_str.equals("")) {
+                artist_str = a.getName();
+            } else {
+                artist_str = artist_str + "," + a.getName();
+            }
+        }
+        String pic_url = AppController.getInstance().downloadedPicture(Constants.UPLOAD_URL + e.getPicture());
+        Uri pictureUri = Uri.parse(pic_url);
+        String geoUri = "http://maps.google.com/maps?q=loc:" + e.place.address.getLatitude() + "," +
+                e.place.address.getLongitude();
+        String text = new StringBuilder()
+                .append("\n" + e.getTitle().toUpperCase())
+                .append("\n" + "ARTISTES INVITES:" + artist_str)
+                .append("\n" + "Voir sur Google Maps:\n" + geoUri)
+                .toString();
+
+        String msg=e.place.address.getCommune();
+        String name=e.getTitle();
+        String caption=artist_str;
+        String desc=e.getDescription();
+        String pic=Constants.UPLOAD_URL+e.getPicture();
+
+        ShareLinkContent shareLinkContent = new ShareLinkContent.Builder()
+                .setContentTitle(msg)
+                .setContentDescription(desc+"\n" + "ARTISTES INVITES:" + artist_str)
+                .setContentUrl(Uri.parse(geoUri))
+                .setImageUrl(Uri.parse(pic))
+                .build();
+
+        Bitmap image= BitmapFactory.decodeFile(pic_url);
+
+        SharePhoto photo = new SharePhoto.Builder()
+                .setBitmap(image)
+                .build();
+
+        SharePhotoContent content = new SharePhotoContent.Builder()
+                .addPhoto(photo)
+                .setContentUrl(Uri.parse(geoUri))
+                .build();
+
+        //ShareApi.share(content, null);
+
+        ShareDialog.show(DetailsEventActivity.this,content);
+
     }
+
 
     @Override
     protected void onPause() {
@@ -352,7 +436,7 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
 
     @Override
     public boolean onNavigateUp() {
-        Toast.makeText(getApplicationContext(),"Arrow Clicked",Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Arrow Clicked", Toast.LENGTH_LONG).show();
         onBackPressed();
         return true;
     }
@@ -453,6 +537,11 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
 }

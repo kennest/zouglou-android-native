@@ -1,18 +1,11 @@
 package com.labs.botdev.zouglou.utils;
 
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
-
 import com.fxn.stash.Stash;
-import com.google.android.gms.ads.MobileAds;
-import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.services.APIClient;
 import com.labs.botdev.zouglou.services.APIService;
 

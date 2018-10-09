@@ -1,6 +1,8 @@
 package com.labs.botdev.zouglou.activities;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
@@ -34,6 +36,7 @@ import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.adapters.ListEventAdapter;
 import com.labs.botdev.zouglou.services.APIClient;
 import com.labs.botdev.zouglou.services.APIService;
+import com.labs.botdev.zouglou.services.DownloadOfflineMapService;
 import com.labs.botdev.zouglou.services.PusherEventService;
 import com.labs.botdev.zouglou.services.TrackGPS;
 import com.labs.botdev.zouglou.models.Artist;
@@ -102,6 +105,7 @@ public class MapActivity extends AppCompatActivity {
     View suggestion_item;
     private static long sayBackPress;
     MediaPlayer mp;
+    Boolean isDownloadedMap=false;
 
 
     @SuppressLint("CheckResult")
@@ -117,6 +121,11 @@ public class MapActivity extends AppCompatActivity {
         mapView.onCreate(savedInstanceState);
 
         ensureLocationSettings();
+
+        isDownloadedMap= Stash.getBoolean("downloadedmap");
+        if(!isDownloadedMap){
+            showDownloadOfflineMapDialog();
+        }
 
         searchView = findViewById(R.id.searchview);
         reload = findViewById(R.id.reload);
@@ -209,7 +218,7 @@ public class MapActivity extends AppCompatActivity {
     //Check if Lacation is enabled and launch teask
     private void ensureLocationSettings() {
         LocationSettingsRequest locationSettingsRequest = new LocationSettingsRequest.Builder()
-                .addLocationRequest(LocationRequest.create().setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY))
+                .addLocationRequest(LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY))
                 .build();
         RxLocationSettings.with(MapActivity.this).ensure(locationSettingsRequest)
                 .subscribe(new Action1<Boolean>() {
@@ -452,14 +461,11 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void OfflineSyncData() {
-        dialog.show();
         events = Stash.getArrayList("events", Event.class);
         tmpEvents = Stash.getArrayList("events", Event.class);
         adapter = new ListEventAdapter(events, MapActivity.this);
         placeEventsMarker();
-        dialog.dismiss();
-        if(!events.isEmpty())
-            filterZoomIn(events);
+        filterZoomIn(events);
     }
 
     private void loadEventsRx() {
@@ -498,7 +504,7 @@ public class MapActivity extends AppCompatActivity {
                         }
                     },1500);
 
-                    Toast.makeText(getApplicationContext(), "Events size: " + events.size(), Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(), "Events size: " + events.size(), Toast.LENGTH_LONG).show();
                     //zoomIn();
                 //offlineMap();
                 loadArtistsRx();
@@ -628,32 +634,6 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
-    private void offlineMap() {
-        OfflineTilePyramidRegionDefinition definition = new OfflineTilePyramidRegionDefinition(
-                "https://api.mapbox.com/styles/v1/bumblebee47/cjmhpisnl3eep2so8gt0a4fsz.html?fresh=true&title=true&access_token=pk.eyJ1IjoiYnVtYmxlYmVlNDciLCJhIjoiY2phdjA0Ym11MHFodjJ6bjAxbnF2NXdtayJ9.WW82rcFdL6_o4pVs1itgcQ#12.0/48.866500/2.317600/0",
-                new LatLngBounds.Builder()
-                        .include(new LatLng(8.21174, -5.68668))
-                        .include(new LatLng(8.21174, -5.68668))
-                        .build(),
-                5,
-                8,
-                getResources().getDisplayMetrics().density
-        );
-
-        NotificationOptions notificationOptions = NotificationOptions.builder(this)
-                .smallIconRes(R.drawable.mapbox_logo_icon)
-                .returnActivity(MapActivity.class.getName())
-                .build();
-
-        OfflinePlugin.getInstance(this).startDownload(
-                OfflineDownloadOptions.builder()
-                        .definition(definition)
-                        .metadata(OfflineUtils.convertRegionName("Ivory-Coast"))
-                        .notificationOptions(notificationOptions)
-                        .build()
-        );
-    }
-
     private void playSound(String fileName) {
         mp = new MediaPlayer();
         try {
@@ -665,6 +645,31 @@ public class MapActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         mp.start();
+    }
+
+    private void showDownloadOfflineMapDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity.this);
+        builder.setMessage("Voulez-vous telecharger la carte pour mieux utiliser l'application hors-ligne?")
+                .setCancelable(false)
+                .setPositiveButton("Oui,Télécharger", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // FIRE ZE MISSILES!
+                        Stash.put("downloadedmap",true);
+                        Intent intent = new Intent(MapActivity.this, DownloadOfflineMapService.class);
+                        // manager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,calendar.getTimeInMillis(),manager.INTERVAL_HALF_HOUR,intent);
+                        stopService(intent);
+                        startService(intent);
+                    }
+                })
+                .setNegativeButton("Non, ne pas télécharger", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Customer cancelled the dialog
+                        dialog.dismiss();
+                    }
+                });
+        // Create the AlertDialog object and return it
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override

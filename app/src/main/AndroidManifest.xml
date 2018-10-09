@@ -71,7 +71,10 @@
 
         <service android:name=".services.TrackGPS" />
         <service android:name=".services.PusherEventService" />
-
+        <service android:name=".services.DownloadOfflineMapService" />
+        <provider android:authorities="com.facebook.app.FacebookContentProvider347726122436559"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true"/>
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -97,8 +100,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.ListEventsActivity" />
         </activity>
+        <activity android:name=".activities.SimpleOfflineMapActivity" />
+        <activity android:name=".activities.FacebookActivity" />
+		<activity android:name=".activities.SplashScreenActivity" />
 
-        <receiver
+		<receiver
             android:name=".services.BroadcastReceiverOnBootComplete"
             android:enabled="true"
             android:exported="false">

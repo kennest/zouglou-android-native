@@ -1,16 +1,13 @@
 package com.labs.botdev.zouglou.activities;
 
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -22,20 +19,10 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.fxn.stash.Stash;
-import com.google.gson.JsonObject;
 import com.labs.botdev.zouglou.R;
 import com.labs.botdev.zouglou.models.Customer;
-import com.labs.botdev.zouglou.services.APIClient;
-import com.labs.botdev.zouglou.services.APIService;
 
 import org.json.JSONException;
-
-import java.io.IOException;
-import java.io.Serializable;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
     LoginButton loginButton;

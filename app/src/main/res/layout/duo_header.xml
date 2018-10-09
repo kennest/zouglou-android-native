@@ -19,7 +19,6 @@
             android:layout_height="80dp"
             android:padding="5dp"
             tools:srcCompat="@tools:sample/avatars[0]" />
-
         <TextView
             android:id="@+id/duo_header_title"
             android:layout_width="wrap_content"
@@ -32,26 +31,14 @@
             android:textSize="24sp"
             android:textStyle="bold" />
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/stats"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Vos Favoris"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/white"
-            android:textStyle="italic"
-            android:visibility="visible" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
             android:orientation="vertical">
 
             <LinearLayout
@@ -61,16 +48,23 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/map_marker_dark" />
-                <TextView
+                <!--<ImageView-->
+                    <!--android:layout_width="30dp"-->
+                    <!--android:layout_height="30dp"-->
+                    <!--android:src="@drawable/map_marker_dark" />-->
+                <!--<TextView-->
+                    <!--android:id="@+id/placetxt"-->
+                    <!--android:hint="place"-->
+                    <!--android:textSize="15sp"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="30dp" />-->
+                <Button
                     android:id="@+id/placetxt"
-                    android:hint="place"
-                    android:textSize="15sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp" />
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:drawableStart="@drawable/map_marker_dark"
+                    android:text="place"
+                    tools:ignore="RtlCompat" />
             </LinearLayout>
 
             <LinearLayout
@@ -79,18 +73,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:tint="@color/mapboxYellow"
-                    android:src="@drawable/ic_account_card_details_white_24dp" />
-                <TextView
+                <!--<ImageView-->
+                    <!--android:layout_width="30dp"-->
+                    <!--android:layout_height="30dp"-->
+                    <!--android:tint="@color/mapboxYellow"-->
+                    <!--android:src="@drawable/ic_account_card_details_white_24dp" />-->
+                <!--<TextView-->
+                    <!--android:id="@+id/artistxt"-->
+                    <!--android:hint="artists"-->
+                    <!--android:textSize="15sp"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="30dp" />-->
+                <Button
                     android:id="@+id/artistxt"
-                    android:hint="artists"
-                    android:textSize="15sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp" />
+                    android:text="artists"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:drawableTint="@color/mapboxYellow"
+                    android:drawableStart="@drawable/ic_account_card_details_white_24dp"
+                    tools:ignore="RtlCompat" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
 </LinearLayout>

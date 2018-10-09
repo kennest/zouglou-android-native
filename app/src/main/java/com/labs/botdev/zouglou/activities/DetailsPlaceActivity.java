@@ -186,10 +186,11 @@ public class DetailsPlaceActivity extends AppCompatActivity {
     private void loadEvents(List<Event> events) throws ParseException {
 //        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 //        Date date = new Date();
+        if(events.size()>0){
         for (Event a : events) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date strDate = sdf.parse(a.getEnd());
-            Log.e("Event date:",strDate.toString());
+            Log.e("Event date:", strDate.toString());
             if (new Date().before(strDate)) {
                 //Toast.makeText(getApplicationContext(), "Artist added" + a.getAvatar(), Toast.LENGTH_LONG).show();
                 LinearLayout parent = new LinearLayout(getApplicationContext());
@@ -217,7 +218,7 @@ public class DetailsPlaceActivity extends AppCompatActivity {
                 artist_name.setText(a.getTitle());
                 parent.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 events_layout.addView(parent);
-            }else{
+            } else {
                 LinearLayout parent = new LinearLayout(getApplicationContext());
                 parent = (LinearLayout) getLayoutInflater().inflate(R.layout.artist_item, null);
                 CircleImageView avatar = parent.findViewById(R.id.avatar);
@@ -244,6 +245,13 @@ public class DetailsPlaceActivity extends AppCompatActivity {
                 parent.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 events_layout.addView(parent);
             }
+        }
+        }else{
+            TextView emptytxt=new TextView(DetailsPlaceActivity.this);
+            emptytxt.setText("Aucun Evenement!");
+            LinearLayout parent = new LinearLayout(getApplicationContext());
+            parent.addView(emptytxt);
+            events_layout.addView(parent);
         }
     }
 

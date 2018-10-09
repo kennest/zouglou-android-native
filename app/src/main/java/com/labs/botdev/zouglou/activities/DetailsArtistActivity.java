@@ -1,5 +1,6 @@
 package com.labs.botdev.zouglou.activities;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -70,6 +71,7 @@ public class DetailsArtistActivity extends AppCompatActivity implements Player.E
     SimpleExoPlayer player;
     Set<String> user_artists=new HashSet<>();
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +90,18 @@ public class DetailsArtistActivity extends AppCompatActivity implements Player.E
         for (Artist a : artists) {
             if (a.getId() == id) {
                 artist = a;
+            }
+        }
+
+        if (Stash.getStringSet("user_artists", new HashSet<>()) != null) {
+            Set<String> favoriteArtists = Stash.getStringSet("user_artists", new HashSet<>());
+            for (String x : favoriteArtists) {
+                if (artist.getId() == Integer.parseInt(x)) {
+                    bookmark.setEnabled(false);
+                    bookmark.setClickable(false);
+                    bookmark.setFocusable(false);
+                    bookmark.setVisibility(View.GONE);
+                }
             }
         }
 
