@@ -68,7 +68,7 @@ public class ListEventAdapter extends BaseAdapter implements Filterable {
 
         view.setTag(e.getId());
 
-        String url = base_url + e.getPicture();
+        String url =e.getPicture();
         Glide
                 .with(context)
                 .applyDefaultRequestOptions(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))

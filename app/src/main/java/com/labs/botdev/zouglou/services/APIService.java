@@ -12,6 +12,7 @@ import com.labs.botdev.zouglou.models.PlacesResponse;
 import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
@@ -48,8 +49,16 @@ public interface APIService {
     Call<JsonObject> setFavoriteArtist(@Body FavoriteArtist request);
 
     @Headers({"Content-Type: application/json","Accept:application/json"})
+    @DELETE("api/favoriteartist")
+    Call<JsonObject> unsetFavoriteArtist(@Body FavoriteArtist request);
+
+    @Headers({"Content-Type: application/json","Accept:application/json"})
     @POST("api/favoriteplace")
     Call<JsonObject> setFavoritePlace(@Body FavoritePlace request);
+
+    @Headers({"Content-Type: application/json","Accept:application/json"})
+    @DELETE("api/favoriteplace")
+    Call<JsonObject> unsetFavoritePlace(@Body FavoritePlace request);
 
     @Headers({"Content-Type: application/json","Accept:application/json"})
     @POST("api/addcustomer")

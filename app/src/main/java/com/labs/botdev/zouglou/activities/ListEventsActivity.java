@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -392,15 +393,35 @@ public class ListEventsActivity extends Activity {
     private void downloadEventsPictures() {
     List<Event> events=Stash.getArrayList("events",Event.class);
         for(Event e:events){
-        AppController.getInstance().downloadedPicture(Constants.UPLOAD_URL+e.getPicture());
+            String url=Constants.UPLOAD_URL+e.getPicture();
+            String outputfile =url.substring(url.lastIndexOf("/") + 1);
+            File f = new File(Constants.EVENTS_PICTURES_DIR + outputfile);
+            if(f.exists()){
+                e.setPicture(Constants.EVENTS_PICTURES_DIR + outputfile);
+            }else{
+                String s=AppController.getInstance().downloadedPicture(Constants.UPLOAD_URL+e.getPicture());
+                e.setPicture(s);
+            }
+
         }
+        Stash.put("events", events);
     }
 
     private void downloadPlacesPictures() {
         List<Place> places=Stash.getArrayList("places",Place.class);
         for(Place e:places){
-            AppController.getInstance().downloadedPicture(Constants.UPLOAD_URL+e.getPicture());
+            String url=Constants.UPLOAD_URL+e.getPicture();
+            String outputfile =url.substring(url.lastIndexOf("/") + 1);
+            File f = new File(Constants.EVENTS_PICTURES_DIR + outputfile);
+            if(f.exists()){
+                e.setPicture(Constants.EVENTS_PICTURES_DIR + outputfile);
+            }else{
+                String s=AppController.getInstance().downloadedPicture(Constants.UPLOAD_URL+e.getPicture());
+                e.setPicture(s);
+            }
         }
+
+        Stash.put("places",places);
     }
 
 

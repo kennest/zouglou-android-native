@@ -31,9 +31,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.share.ShareApi;
-import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.model.SharePhoto;
-import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.model.*;
 import com.facebook.share.widget.ShareDialog;
 import com.fxn.stash.Stash;
 import com.gmail.samehadar.iosdialog.IOSDialog;
@@ -96,10 +94,9 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
 
-
         //MobileAds.initialize(this, getString(R.string.admobkey));
         MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
-        FacebookSdk.sdkInitialize(getApplicationContext());
+        FacebookSdk.sdkInitialize(DetailsEventActivity.this);
 
         event_picture = findViewById(R.id.header);
         toolbar = findViewById(R.id.anim_toolbar);
@@ -142,7 +139,7 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         Glide
                 .with(getApplicationContext())
                 .applyDefaultRequestOptions(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
-                .load(Constants.UPLOAD_URL + e.getPicture())
+                .load(e.getPicture())
                 .into(event_picture);
 
         Glide
@@ -379,7 +376,6 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
     }
 
     public void facebookShare(Event e) {
-
         String artist_str = "";
         for (Artist a : e.artists) {
             if (artist_str.equals("")) {
@@ -390,8 +386,10 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         }
         String pic_url = AppController.getInstance().downloadedPicture(Constants.UPLOAD_URL + e.getPicture());
         Uri pictureUri = Uri.parse(pic_url);
+
         String geoUri = "http://maps.google.com/maps?q=loc:" + e.place.address.getLatitude() + "," +
                 e.place.address.getLongitude();
+
         String text = new StringBuilder()
                 .append("\n" + e.getTitle().toUpperCase())
                 .append("\n" + "ARTISTES INVITES:" + artist_str)
@@ -402,30 +400,44 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         String name=e.getTitle();
         String caption=artist_str;
         String desc=e.getDescription();
-        String pic=Constants.UPLOAD_URL+e.getPicture();
 
-        ShareLinkContent shareLinkContent = new ShareLinkContent.Builder()
-                .setContentTitle(msg)
-                .setContentDescription(desc+"\n" + "ARTISTES INVITES:" + artist_str)
-                .setContentUrl(Uri.parse(geoUri))
-                .setImageUrl(Uri.parse(pic))
-                .build();
+//        ShareLinkContent shareLinkContent = new ShareLinkContent.Builder()
+//                .setContentTitle(msg)
+//                //.setContentDescription(desc)
+//                .setContentUrl(Uri.parse(pic))
+//                .setImageUrl(Uri.parse(geoUri))
+//                .build();
 
-        Bitmap image= BitmapFactory.decodeFile(pic_url);
-
+        Bitmap image= BitmapFactory.decodeFile(e.getPicture());
         SharePhoto photo = new SharePhoto.Builder()
                 .setBitmap(image)
                 .build();
 
-        SharePhotoContent content = new SharePhotoContent.Builder()
-                .addPhoto(photo)
-                .setContentUrl(Uri.parse(geoUri))
+        // Create an object
+        ShareOpenGraphObject object = new ShareOpenGraphObject.Builder()
+                .putString("og:type", "article")
+                .putString("og:url", geoUri)
+                .putString("og:title", name)
+                .putString("og:description", desc+"\n" + "ARTISTES INVITES:" + caption)
+                .putPhoto("og:image", photo)
+                .build();
+
+
+        // Create an action
+        ShareOpenGraphAction action = new ShareOpenGraphAction.Builder()
+                .setActionType("news.publishes")
+                .putObject("article", object)
+                .build();
+
+        // Create the content
+        ShareOpenGraphContent graphContent = new ShareOpenGraphContent.Builder()
+                .setPreviewPropertyName("article")
+                .setAction(action)
                 .build();
 
         //ShareApi.share(content, null);
-
-        ShareDialog.show(DetailsEventActivity.this,content);
-
+        shareDialog=new ShareDialog(this);
+        shareDialog.show(graphContent);
     }
 
 
