@@ -136,7 +136,7 @@ public class MapActivity extends AppCompatActivity {
 
         dialog = LoaderProgress("Un instant", "Nous chargons les données");
        // mbottomSheetBehavior = BottomSheetBehavior.from(bottomsheet);
-        searchView.setQueryHint("Nom artiste,maquis...");
+        searchView.setQueryHint("artiste,maquis,commune...");
         searchView.setIconified(true);
 
         menu = findViewById(R.id.menu);

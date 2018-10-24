@@ -221,12 +221,16 @@ public class DetailsArtistActivity extends AppCompatActivity implements Player.E
 
     @Override
     public boolean onNavigateUp() {
+        if (player != null)
+            player.release();
         onBackPressed();
         return true;
     }
 
     @Override
     public void onBackPressed() {
+        if (player != null)
+            player.release();
         super.onBackPressed();
     }
 

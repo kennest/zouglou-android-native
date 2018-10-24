@@ -6,7 +6,7 @@
     android:id="@+id/whatsapp"
     android:layout_weight="1"
     android:layout_width="match_parent"
-    android:src="@drawable/whatsapp"
+    android:src="@drawable/ic_whatsapp_black_48dp"
     android:layout_height="90dp"
     android:tint="#65B43D"
     android:tag="whatsapp"/>
@@ -14,7 +14,7 @@
         android:id="@+id/facebook"
         android:layout_weight="1"
         android:layout_width="match_parent"
-        android:src="@drawable/facebook_box"
+        android:src="@drawable/ic_facebook_box_black_48dp"
         android:layout_height="90dp"
         android:tint="#3625B6"
         android:tag="facebook"/>

@@ -29,8 +29,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.share.DeviceShareDialog;
 import com.facebook.share.ShareApi;
+import com.facebook.share.Sharer;
 import com.facebook.share.model.*;
 import com.facebook.share.widget.ShareDialog;
 import com.fxn.stash.Stash;
@@ -63,7 +67,6 @@ import com.labs.botdev.zouglou.models.Artist;
 import com.labs.botdev.zouglou.models.Event;
 import com.labs.botdev.zouglou.utils.AppController;
 import com.labs.botdev.zouglou.utils.Constants;
-import com.labs.botdev.zouglou.utils.FetchDownloader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,9 +88,9 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
     ImageView place_picture;
     CollapsingToolbarLayout collapsingToolbar;
     private AdView mAdView;
-    FetchDownloader fetch = new FetchDownloader();
     CallbackManager callbackManager;
     ShareDialog shareDialog;
+    AlertDialog dialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -183,14 +186,14 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
             @Override
             public void onClick(View v) {
             //InitFacebookShare(e);
-                facebookShare(e);
+                globalShare();
             }
         });
 
         share_bottom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            facebookShare(e);
+            globalShare();
             }
         });
 
@@ -234,6 +237,7 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void InitAppBar() {
@@ -269,6 +273,46 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
             navigation.putExtra("destination", destination);
             startActivity(navigation);
         }
+    }
+
+    private void globalShare(){
+        View view=getLayoutInflater().inflate(R.layout.social_share_layout,null);
+        ImageView whatsapp=view.findViewById(R.id.whatsapp);
+        ImageView facebook=view.findViewById(R.id.facebook);
+
+        facebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                facebookShare(e);
+                if(dialog!=null){
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        whatsapp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                whatsAppShare(e);
+                if(dialog!=null){
+                    dialog.dismiss();
+                }
+            }
+        });
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetailsEventActivity.this);
+        builder.setTitle("Partager")
+                .setView(view)
+                .setCancelable(false)
+
+                .setNegativeButton("Fermer", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Customer cancelled the dialog
+                        dialog.dismiss();
+                    }
+                });
+        // Create the AlertDialog object and return it
+        dialog = builder.create();
+        dialog.show();
     }
 
     protected void playSample(String url, ImageView play, ImageView pause) {
@@ -375,80 +419,89 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
         }
     }
 
-    public void facebookShare(Event e) {
-        String artist_str = "";
-        for (Artist a : e.artists) {
-            if (artist_str.equals("")) {
-                artist_str = a.getName();
-            } else {
-                artist_str = artist_str + "," + a.getName();
+    private void facebookShare(Event e) {
+        if (ShareDialog.canShow(ShareOpenGraphContent.class)) {
+            String artist_str = "";
+            for (Artist a : e.artists) {
+                if (artist_str.equals("")) {
+                    artist_str = a.getName();
+                } else {
+                    artist_str = artist_str + "," + a.getName();
+                }
             }
+
+            String geoUri = "http://maps.google.com/maps?q=loc:" + e.place.address.getLatitude() + "," +
+                    e.place.address.getLongitude();
+
+            String name = e.getTitle();
+            String caption = artist_str;
+            String desc = e.getDescription();
+
+            Bitmap image = BitmapFactory.decodeFile(e.getPicture());
+            SharePhoto photo = new SharePhoto.Builder()
+                    .setBitmap(image)
+                    .build();
+
+            // Create an object
+            ShareOpenGraphObject object = new ShareOpenGraphObject.Builder()
+                    .putString("og:type", "article")
+                    .putString("og:url", geoUri)
+                    .putString("og:title", name)
+                    .putString("og:description", desc + "\n" + "ARTISTES INVITES:" + caption)
+                    .putPhoto("og:image", photo)
+                    .build();
+
+
+            // Create an action
+            ShareOpenGraphAction action = new ShareOpenGraphAction.Builder()
+                    .setActionType("news.publishes")
+                    .putObject("article", object)
+                    .build();
+
+            // Create the content
+            ShareOpenGraphContent graphContent = new ShareOpenGraphContent.Builder()
+                    .setPreviewPropertyName("article")
+                    .setAction(action)
+                    .build();
+
+            //ShareApi.share(content, null);
+            shareDialog = new ShareDialog(this);
+//            shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+//
+//                @Override
+//                public void onSuccess(Sharer.Result result) {
+//                    //always gets called
+//                    Toast.makeText(getApplicationContext(), "Publication envoyee", Toast.LENGTH_LONG).show();
+//                }
+//
+//                @Override
+//                public void onCancel() {
+//                    //do something
+//
+//                }
+//
+//                @Override
+//                public void onError(FacebookException error) {
+//                    // TODO Auto-generated method stub
+//                    Toast.makeText(getApplicationContext(), "Erreur d'envoi de la publication", Toast.LENGTH_LONG).show();
+//                }
+//
+//            });
+            shareDialog.show(graphContent);
         }
-        String pic_url = AppController.getInstance().downloadedPicture(Constants.UPLOAD_URL + e.getPicture());
-        Uri pictureUri = Uri.parse(pic_url);
-
-        String geoUri = "http://maps.google.com/maps?q=loc:" + e.place.address.getLatitude() + "," +
-                e.place.address.getLongitude();
-
-        String text = new StringBuilder()
-                .append("\n" + e.getTitle().toUpperCase())
-                .append("\n" + "ARTISTES INVITES:" + artist_str)
-                .append("\n" + "Voir sur Google Maps:\n" + geoUri)
-                .toString();
-
-        String msg=e.place.address.getCommune();
-        String name=e.getTitle();
-        String caption=artist_str;
-        String desc=e.getDescription();
-
-//        ShareLinkContent shareLinkContent = new ShareLinkContent.Builder()
-//                .setContentTitle(msg)
-//                //.setContentDescription(desc)
-//                .setContentUrl(Uri.parse(pic))
-//                .setImageUrl(Uri.parse(geoUri))
-//                .build();
-
-        Bitmap image= BitmapFactory.decodeFile(e.getPicture());
-        SharePhoto photo = new SharePhoto.Builder()
-                .setBitmap(image)
-                .build();
-
-        // Create an object
-        ShareOpenGraphObject object = new ShareOpenGraphObject.Builder()
-                .putString("og:type", "article")
-                .putString("og:url", geoUri)
-                .putString("og:title", name)
-                .putString("og:description", desc+"\n" + "ARTISTES INVITES:" + caption)
-                .putPhoto("og:image", photo)
-                .build();
-
-
-        // Create an action
-        ShareOpenGraphAction action = new ShareOpenGraphAction.Builder()
-                .setActionType("news.publishes")
-                .putObject("article", object)
-                .build();
-
-        // Create the content
-        ShareOpenGraphContent graphContent = new ShareOpenGraphContent.Builder()
-                .setPreviewPropertyName("article")
-                .setAction(action)
-                .build();
-
-        //ShareApi.share(content, null);
-        shareDialog=new ShareDialog(this);
-        shareDialog.show(graphContent);
     }
 
 
     @Override
     protected void onPause() {
+        if (player != null)
+            player.release();
         super.onPause();
     }
 
     @Override
     public boolean onNavigateUp() {
-        Toast.makeText(getApplicationContext(), "Arrow Clicked", Toast.LENGTH_LONG).show();
+        player.release();
         onBackPressed();
         return true;
     }
@@ -548,6 +601,8 @@ public class DetailsEventActivity extends AppCompatActivity implements Player.Ev
 
     @Override
     public void onBackPressed() {
+        if (player != null)
+            player.release();
         super.onBackPressed();
     }
 

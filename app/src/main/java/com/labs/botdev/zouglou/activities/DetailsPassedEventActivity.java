@@ -73,9 +73,7 @@ public class DetailsPassedEventActivity extends AppCompatActivity implements Pla
     SimpleExoPlayer player;
     IOSDialog loader;
     ImageView place_picture;
-    CollapsingToolbarLayout collapsingToolbar;
     private AdView mAdView;
-    FetchDownloader fetch=new FetchDownloader();
 
 
     @Override

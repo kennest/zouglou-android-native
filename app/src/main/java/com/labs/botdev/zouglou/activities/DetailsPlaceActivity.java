@@ -89,7 +89,7 @@ public class DetailsPlaceActivity extends AppCompatActivity {
         Glide
                 .with(getApplicationContext())
                 .applyDefaultRequestOptions(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
-                .load(Constants.UPLOAD_URL + p.getPicture())
+                .load(p.getPicture())
                 .into(place_picture);
         collapsingToolbarLayout.setTitle(p.getTitle());
 

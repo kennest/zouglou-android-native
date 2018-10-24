@@ -104,7 +104,7 @@ public class ListPlaceAdapter extends BaseAdapter implements Filterable {
 
         Glide.with(activity)
                 .applyDefaultRequestOptions(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
-                .load(Constants.UPLOAD_URL + p.getPicture())
+                .load(p.getPicture())
                 .into(picture);
 
         placename.setText(p.getTitle());

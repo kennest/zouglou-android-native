@@ -119,15 +119,12 @@ public class ListEventAdapter extends BaseAdapter implements Filterable {
 
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-
             FilterResults results = new FilterResults();
-
             if (constraint != null && constraint.length() > 0) {
-
                 ArrayList<Event> filterList = new ArrayList<>();
 
                 for (int i = 0; i < filterEvents.size(); i++) {
-                    if ((filterEvents.get(i).getTitle().toUpperCase()).contains(constraint.toString().toUpperCase()) || (filterEvents.get(i).place.getTitle().toUpperCase()).contains(constraint.toString().toUpperCase())) {
+                    if ((filterEvents.get(i).getTitle().toUpperCase()).contains(constraint.toString().toUpperCase()) || (filterEvents.get(i).place.getTitle().toUpperCase()).contains(constraint.toString().toUpperCase()) || (filterEvents.get(i).place.address.getCommune().toUpperCase().contains(constraint.toString().toUpperCase()))) {
                         filterList.add(filterEvents.get(i));
                     }else {
                         for (Artist a : filterEvents.get(i).artists) {

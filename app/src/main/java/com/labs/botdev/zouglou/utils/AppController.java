@@ -5,6 +5,8 @@ import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
+
+import com.facebook.appevents.AppEventsLogger;
 import com.fxn.stash.Stash;
 import com.labs.botdev.zouglou.services.APIClient;
 import com.labs.botdev.zouglou.services.APIService;
@@ -29,6 +31,7 @@ public class AppController extends MultiDexApplication {
         mInstance = this;
         //FastSave.init(getApplicationContext());
         service = APIClient.getClient().create(APIService.class);
+        AppEventsLogger.activateApp(this);
         //boxStore = MyObjectBox.builder().androidContext(this).build();
         //InitFacebook();
     }

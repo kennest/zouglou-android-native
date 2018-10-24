@@ -155,108 +155,112 @@ public class ListEventsActivity extends Activity {
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {
-                View view=getLayoutInflater().inflate(R.layout.activity_list_artist,null);
-                ListView list=view.findViewById(R.id.lv_artists);
-                SearchView searchView=view.findViewById(R.id.searchview);
-                Toolbar toolbar = view.findViewById(R.id.toolbar);
-                toolbar.setVisibility(View.GONE);
-                List<Artist> artists=new ArrayList<>(Stash.getArrayList("artists",Artist.class));
-                List<Artist> tmp=new ArrayList<>();
-                for(Artist a:artists){
-                    for(String s:user_artists) {
-                        if (a.getId() == Integer.parseInt(s)){
-                           tmp.add(a);
+                if (Stash.getStringSet("user_artists") != null) {
+                    View view = getLayoutInflater().inflate(R.layout.activity_list_artist, null);
+                    ListView list = view.findViewById(R.id.lv_artists);
+                    SearchView searchView = view.findViewById(R.id.searchview);
+                    Toolbar toolbar = view.findViewById(R.id.toolbar);
+                    toolbar.setVisibility(View.GONE);
+                    List<Artist> artists = new ArrayList<>(Stash.getArrayList("artists", Artist.class));
+                    List<Artist> tmp = new ArrayList<>();
+                    for (Artist a : artists) {
+                        for (String s : user_artists) {
+                            if (a.getId() == Integer.parseInt(s)) {
+                                tmp.add(a);
+                            }
                         }
                     }
-                }
-                ListArtistAdapter artistAdapter=new ListArtistAdapter(ListEventsActivity.this,tmp);
-                searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String query) {
-                        return false;
-                    }
+                    ListArtistAdapter artistAdapter = new ListArtistAdapter(ListEventsActivity.this, tmp);
+                    searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+                        @Override
+                        public boolean onQueryTextSubmit(String query) {
+                            return false;
+                        }
 
-                    //Rechercher sur la carte(Not finished yet!!)
-                    @Override
-                    public boolean onQueryTextChange(String newText) {
-                        if (artistAdapter != null) {
-                            artistAdapter.getFilter().filter(newText);
-                            artistAdapter.notifyDataSetChanged();
+                        //Rechercher sur la carte(Not finished yet!!)
+                        @Override
+                        public boolean onQueryTextChange(String newText) {
+                            if (artistAdapter != null) {
+                                artistAdapter.getFilter().filter(newText);
+                                artistAdapter.notifyDataSetChanged();
 //                            artists = Stash.getArrayList("filter_artists", Artist.class);
 //                            Stash.put("artists", artists);
-                        }
-                        return false;
-                    }
-                });
-                list.setAdapter(artistAdapter);
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(ListEventsActivity.this);
-                builder.setTitle("Artistes suivis")
-                        .setView(view)
-                        .setCancelable(false)
-                        .setNegativeButton("Fermer", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // Customer cancelled the dialog
-                                dialog.dismiss();
                             }
-                        });
-                // Create the AlertDialog object and return it
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                            return false;
+                        }
+                    });
+                    list.setAdapter(artistAdapter);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ListEventsActivity.this);
+                    builder.setTitle("Artistes suivis")
+                            .setView(view)
+                            .setCancelable(false)
+                            .setNegativeButton("Fermer", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // Customer cancelled the dialog
+                                    dialog.dismiss();
+                                }
+                            });
+                    // Create the AlertDialog object and return it
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
             }
         });
 
         favPlace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View view=getLayoutInflater().inflate(R.layout.activity_list_places,null);
-                ListView list=view.findViewById(R.id.places_list);
-                SearchView searchView=view.findViewById(R.id.searchview);
-                Toolbar toolbar = view.findViewById(R.id.toolbar);
-                toolbar.setVisibility(View.GONE);
-                List<Place> places=new ArrayList<>(Stash.getArrayList("places",Place.class));
-                List<Place> tmp=new ArrayList<>();
-                for(Place a:places){
-                    for(String s:user_places) {
-                        if (a.getId() == Integer.parseInt(s)){
-                            tmp.add(a);
+                if (Stash.getStringSet("user_places")!=null) {
+                    View view = getLayoutInflater().inflate(R.layout.activity_list_places, null);
+                    ListView list = view.findViewById(R.id.places_list);
+                    SearchView searchView = view.findViewById(R.id.searchview);
+                    Toolbar toolbar = view.findViewById(R.id.toolbar);
+                    toolbar.setVisibility(View.GONE);
+                    List<Place> places = new ArrayList<>(Stash.getArrayList("places", Place.class));
+                    List<Place> tmp = new ArrayList<>();
+                    for (Place a : places) {
+                        for (String s : user_places) {
+                            if (a.getId() == Integer.parseInt(s)) {
+                                tmp.add(a);
+                            }
                         }
                     }
-                }
-                ListPlaceAdapter placeAdapter=new ListPlaceAdapter(tmp,ListEventsActivity.this);
-                searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String query) {
-                        return false;
-                    }
+                    ListPlaceAdapter placeAdapter = new ListPlaceAdapter(tmp, ListEventsActivity.this);
+                    searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+                        @Override
+                        public boolean onQueryTextSubmit(String query) {
+                            return false;
+                        }
 
-                    //Rechercher sur la carte(Not finished yet!!)
-                    @Override
-                    public boolean onQueryTextChange(String newText) {
-                        if (placeAdapter != null) {
-                            placeAdapter.getFilter().filter(newText);
-                            placeAdapter.notifyDataSetChanged();
+                        //Rechercher sur la carte(Not finished yet!!)
+                        @Override
+                        public boolean onQueryTextChange(String newText) {
+                            if (placeAdapter != null) {
+                                placeAdapter.getFilter().filter(newText);
+                                placeAdapter.notifyDataSetChanged();
 //                            artists = Stash.getArrayList("filter_artists", Artist.class);
 //                            Stash.put("artists", artists);
-                        }
-                        return false;
-                    }
-                });
-                list.setAdapter(placeAdapter);
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(ListEventsActivity.this);
-                builder.setTitle("Places suivis")
-                        .setView(view)
-                        .setCancelable(false)
-                        .setNegativeButton("Fermer", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // Customer cancelled the dialog
-                                dialog.dismiss();
                             }
-                        });
-                // Create the AlertDialog object and return it
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                            return false;
+                        }
+                    });
+                    list.setAdapter(placeAdapter);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ListEventsActivity.this);
+                    builder.setTitle("Places suivis")
+                            .setView(view)
+                            .setCancelable(false)
+                            .setNegativeButton("Fermer", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // Customer cancelled the dialog
+                                    dialog.dismiss();
+                                }
+                            });
+                    // Create the AlertDialog object and return it
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
             }
         });
 
